@@ -65,12 +65,13 @@ async def main():
         # 7/8: shed resize moves east-wall items, PNG matches size
         eg=await uid_by(pg,'East Garage Door'); ch=await uid_by(pg,'CRAFTSMAN')
         before=await pg.evaluate(f"()=>[items['{eg}'].x,items['{ch}'].x]")
-        await pg.fill('#shedW','50'); await pg.fill('#shedH','70'); await pg.click('text=Apply')
+        await pg.evaluate('()=>{sel.clear();afterSelChange()}')
+        await pg.fill('#shedW','50'); await pg.keyboard.press('Enter'); await pg.fill('#shedH','70'); await pg.keyboard.press('Enter')
         after=await pg.evaluate(f"()=>[items['{eg}'].x,items['{ch}'].x,shedW]")
         ok('shed resize: east door + chest follow wall', after[0]==before[0]+100 and after[1]==before[1]+100, f'{before}->{after}')
         cv=await pg.evaluate("()=>{const c=renderCanvas('dark',1);return [c.width,c.height]}")
         ok('PNG canvas matches shed size', cv==[580,780+56], str(cv))
-        await pg.keyboard.press('Control+z')
+        await pg.keyboard.press('Control+z'); await pg.keyboard.press('Control+z')
         ok('undo shed resize', await pg.evaluate("()=>[shedW,shedH]")==[40,60])
         # 9: XSS via import
         evil={'version':3,'shedW':40,'shedH':60,'items':[{'label':'<img src=x onerror="window.pwned=1">','cat':'Custom','w':50,'h':50,'x':100,'y':100}]}
@@ -119,8 +120,8 @@ async def main():
         await pg.click('summary:has-text("Utilities")'); await pg.click('.lib-item:has-text("240V Drop")')
         ok('library click adds item', await pg.evaluate("()=>Object.keys(items).length")==n+1)
         x,y=await center(pg,saw); await pg.mouse.dblclick(x,y); await pg.wait_for_timeout(100)
-        ok('dbl-click opens edit', await pg.is_visible('#dlgOv'))
-        await pg.fill('#dW','6'); await pg.fill('#cB','5'); await pg.keyboard.press('Enter')
+        ok('dbl-click focuses the name field', await pg.evaluate("()=>document.activeElement.id")=='pName')
+        await pg.fill('#pW','6'); await pg.keyboard.press('Enter'); await pg.fill('#cB','5'); await pg.keyboard.press('Enter')
         w=await pg.evaluate(f"()=>[items['{saw}'].w,items['{saw}'].clr]")
         ok('edit applies size + clearance', w[0]==60 and w[1].get('b')==5, str(w))
         cl=await pg.evaluate("()=>issues.clrCount")
