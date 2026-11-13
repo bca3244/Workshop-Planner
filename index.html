@@ -3,1340 +3,1886 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Workshop Planner — 40×60 ft</title>
+<title>Workshop Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;600;700;900&display=swap"/>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
-:root {
+:root{
   --bg:#1a1a1a; --panel:#242424; --border:#3a3a3a;
-  --accent:#e8a020; --text:#e0e0e0; --text-dim:#888;
+  --accent:#e8a020; --text:#e0e0e0; --text-dim:#888; --bad:#ff5252; --good:#81c784;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
-header{background:var(--panel);border-bottom:2px solid var(--accent);padding:8px 20px;display:flex;align-items:center;gap:16px;flex-shrink:0;}
-header h1{font-size:30px;font-weight:900;letter-spacing:2px;color:var(--accent);text-transform:uppercase;}
-header .sub{font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--text-dim);}
-.toolbar{margin-left:auto;display:flex;gap:8px;align-items:center;}
-.btn{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;letter-spacing:1px;text-transform:uppercase;padding:0 14px;height:34px;border:1.5px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;border-radius:3px;transition:all .12s;box-sizing:border-box;line-height:1;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;}
-.btn:hover{border-color:var(--accent);color:var(--accent);}
+button,select,input{font-family:inherit;}
+
+/* ── Header / toolbar ─────────────────────────────────────────── */
+header{background:var(--panel);border-bottom:2px solid var(--accent);padding:6px 16px;display:flex;align-items:center;gap:16px;flex-shrink:0;flex-wrap:wrap;}
+header h1{font-size:28px;font-weight:900;letter-spacing:2px;color:var(--accent);text-transform:uppercase;line-height:1.1;}
+header .sub{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--text-dim);}
+.toolbar{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+.tsep{width:1px;height:26px;background:var(--border);margin:0 2px;}
+.btn{font-weight:700;font-size:15px;letter-spacing:.5px;text-transform:uppercase;padding:0 9px;height:32px;border:1.5px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;border-radius:3px;transition:all .12s;line-height:1;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;}
+.btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn:disabled{opacity:.4;cursor:default;}
 .btn.pri{background:var(--accent);color:#111;border-color:var(--accent);}
-.btn.pri:hover{background:#ffc040;}
-.snap-badge{font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--text-dim);padding:4px 8px;border:1px solid var(--border);border-radius:3px;}
-.main{display:flex;flex:1;overflow:hidden;}
-.sidebar{width:195px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
+.btn.pri:hover:not(:disabled){background:#ffc040;color:#111;}
+.btn.on{border-color:var(--accent);color:#111;background:var(--accent);}
+.btn.sm{height:26px;font-size:13px;padding:0 8px;}
+.snap-badge{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--text-dim);padding:4px 8px;border:1px solid var(--border);border-radius:3px;}
+.sel{font-weight:700;font-size:16px;letter-spacing:1px;text-transform:uppercase;padding:4px 6px;height:32px;border:1.5px solid var(--border);background:var(--panel);color:var(--text);border-radius:3px;cursor:pointer;outline:none;}
+
+@media (max-width:1400px){ .toolbar .bt{display:none;} .toolbar .btn{padding:0 8px;font-size:17px;} }
+@media (max-width:900px){ header .sub,.snap-badge{display:none;} header h1{font-size:22px;} }
+/* ── Layout ───────────────────────────────────────────────────── */
+.main{display:flex;flex:1;overflow:hidden;min-height:0;}
+.sidebar{width:230px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
 .sb-sec{padding:9px;border-bottom:1px solid var(--border);}
-.sb-sec h3{font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:7px;}
-
-
-
-.fi{background:#141414;border:1px solid var(--border);color:var(--text);padding:5px 7px;font-family:'Barlow Condensed',sans-serif;font-size:18px;border-radius:3px;width:100%;outline:none;transition:border-color .12s;}
+.sb-sec h3,.sb-sec>summary{font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:7px;cursor:default;}
+.sb-sec>summary{cursor:pointer;list-style:none;margin-bottom:0;}
+.sb-sec>summary::before{content:'▸ ';}
+.sb-sec[open]>summary::before{content:'▾ ';}
+.sb-sec[open]>summary{margin-bottom:7px;}
+.fi{background:#141414;border:1px solid var(--border);color:var(--text);padding:5px 7px;font-size:17px;border-radius:3px;width:100%;outline:none;transition:border-color .12s;}
 .fi:focus{border-color:var(--accent);}
-.canvas-wrap{flex:1;overflow:auto;background:#0f0f0f;position:relative;}
-#floor{position:relative;width:700px;height:720px;}
-.item{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.15;font-family:'Barlow Condensed',sans-serif;font-weight:700;overflow:hidden;border-radius:2px;cursor:grab;user-select:none;transition:box-shadow .1s;z-index:10;}
-.item:hover{z-index:20;filter:brightness(1.2);}
-.item.dragging{cursor:grabbing;opacity:.88;z-index:50;box-shadow:0 0 0 2px var(--accent),0 6px 20px rgba(0,0,0,.7);}
-.item.selected{box-shadow:0 0 0 2px var(--accent),0 0 0 4px rgba(232,160,32,.25)!important;z-index:30;}
-.ilabel{pointer-events:none;padding:1px 3px;text-shadow:0 1px 3px rgba(0,0,0,.9);word-break:break-word;width:100%;display:none;}
-.lock-badge{display:none;}
-.lbl-tip{position:fixed;pointer-events:none;z-index:100;background:rgba(10,10,10,0.92);border:1px solid var(--border);
-  border-radius:3px;padding:3px 7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16.5px;
-  color:#eee;text-shadow:none;white-space:nowrap;display:none;transform:translate(-50%,-50%);
-  letter-spacing:.5px;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,0,0,.7);}
-.info-bar{background:var(--panel);border-top:1px solid var(--border);padding:4px 16px;font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--text-dim);display:flex;gap:20px;flex-shrink:0;}
-.info-bar span{color:var(--text);}
-.ctx{position:fixed;background:var(--panel);border:1px solid var(--border);border-radius:4px;z-index:2000;display:none;min-width:170px;box-shadow:0 4px 20px rgba(0,0,0,.7);}
-.ctx.show{display:block;}
-.cxi{padding:8px 14px;font-size:19.5px;font-weight:600;cursor:pointer;transition:background .1s;}
-.cxi:hover{background:var(--border);color:var(--accent);}
-.cxi.sep{border-top:1px solid var(--border);}
-.cxi.del{color:#ef9a9a;}
-.cxi.del:hover{background:#c62828;color:#fff;}
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;display:none;align-items:center;justify-content:center;}
-.ov.show{display:flex;}
-.dlg{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:22px;min-width:300px;box-shadow:0 8px 40px rgba(0,0,0,.8);}
-.dlg h2{font-size:22.5px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;}
-.drow{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
-.drow label{font-size:15px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
-.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.dacts{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
-::-webkit-scrollbar{width:36px;height:36px;}
-::-webkit-scrollbar-track{background:#111;}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.flabel{font-size:13px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;}
+.err{font-size:14px;color:#ef9a9a;min-height:0;}
 
-.item.locked-item{cursor:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='25'%20height='25'%20viewBox='0%200%2025%2025'%3E%20%20%20%3C!--%20drop%20shadow%20rect%20for%20contrast%20--%3E%20%20%20%3Crect%20x='5'%20y='11'%20width='15'%20height='11'%20rx='2'%20fill='%23000'%20opacity='0.4'%20transform='translate(1,1)'/%3E%20%20%20%3C!--%20body%20--%3E%20%20%20%3Crect%20x='5'%20y='11'%20width='15'%20height='11'%20rx='2'%20fill='%23FFD700'%20stroke='%23333'%20stroke-width='2'/%3E%20%20%20%3C!--%20shackle%20-%20drawn%20as%20a%20thick%20arc/path,%20well%20above%20body%20--%3E%20%20%20%3Cpath%20d='M8%2011V7.5a4.5%204.5%200%200%201%209%200V11'%20fill='none'%20stroke='%23333'%20stroke-width='3'%20stroke-linecap='round'/%3E%20%20%20%3Cpath%20d='M8%2011V7.5a4.5%204.5%200%200%201%209%200V11'%20fill='none'%20stroke='%23FFD700'%20stroke-width='1.5'%20stroke-linecap='round'/%3E%20%20%20%3C!--%20keyhole%20--%3E%20%20%20%3Ccircle%20cx='12.5'%20cy='16'%20r='2'%20fill='%23333'/%3E%20%20%20%3Crect%20x='11.5'%20y='16'%20width='2'%20height='3'%20rx='0.5'%20fill='%23333'/%3E%20%3C/svg%3E") 12 12, not-allowed;}
+/* library */
+.lib-group{margin-bottom:4px;}
+.lib-group>summary{font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);cursor:pointer;padding:3px 0;list-style:none;}
+.lib-group>summary::before{content:'▸ ';color:var(--text-dim);}
+.lib-group[open]>summary::before{content:'▾ ';}
+.lib-items{display:flex;flex-direction:column;gap:3px;padding:3px 0 6px 10px;}
+.lib-item{display:flex;align-items:center;gap:6px;padding:3px 6px;border:1px solid var(--border);border-left:4px solid var(--c);border-radius:3px;background:#1c1c1c;cursor:grab;font-size:15px;font-weight:600;user-select:none;}
+.lib-item:hover{border-color:var(--accent);border-left-color:var(--c);}
+.lib-item .sz{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);}
+.lib-item .x{color:#ef9a9a;cursor:pointer;padding:0 2px;}
 
-.zoom-rail{width:72px;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:8px;flex-shrink:0;user-select:none;}
+/* layers */
+.layer-row{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:600;padding:2px 0;cursor:pointer;}
+.layer-row input{accent-color:var(--accent);width:15px;height:15px;cursor:pointer;}
+.layer-row .sw{width:12px;height:12px;border:2px solid var(--c);background:var(--bgc);border-radius:2px;}
+.layer-row .cnt{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);}
+.help{font-size:14px;color:var(--text-dim);line-height:1.65;}
+.help b{color:var(--text);}
+
+/* ── Canvas ───────────────────────────────────────────────────── */
+.canvas-area{flex:1;position:relative;display:flex;min-width:0;}
+.canvas-wrap{flex:1;overflow:auto;background:#0f0f0f;position:relative;touch-action:none;}
+.canvas-wrap.panning,.canvas-wrap.space{cursor:grab;}
+.canvas-wrap.measuring,.canvas-wrap.measuring .item{cursor:crosshair;}
+#stage{position:relative;}
+#floor{position:absolute;left:0;top:0;transform-origin:0 0;--iz:1;}
+#floor>svg{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;}
+#gridSvg{z-index:0;}
+#underlay{z-index:3;}
+#pinLayer{position:absolute;left:0;top:0;width:0;height:0;z-index:10000;pointer-events:none;}
+#overlay{z-index:10001;}
+#hitLayer{z-index:9999;}
+
+.item{position:absolute;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;font-weight:700;
+  border-style:solid;border-width:clamp(.75px,calc(1.5px * var(--iz)),3px);border-color:var(--c);background:var(--bg);color:var(--fg);
+  border-radius:2px;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;overflow:hidden;}
+.item:hover{filter:brightness(1.25);}
+.item.util{border-radius:50%;}
+.item.util.rect{border-radius:3px;}
+.item.dragging{opacity:.85;cursor:grabbing;}
+.item.selected{box-shadow:0 0 0 calc(2px * var(--iz)) var(--accent),0 0 0 calc(5px * var(--iz)) rgba(232,160,32,.25);}
+.item.hit{outline:calc(2px * var(--iz)) dashed var(--bad);outline-offset:calc(1px * var(--iz));}
+.item.locked{opacity:.7;cursor:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='25'%20height='25'%20viewBox='0%200%2025%2025'%3E%3Crect%20x='5'%20y='11'%20width='15'%20height='11'%20rx='2'%20fill='%23000'%20opacity='0.4'%20transform='translate(1,1)'/%3E%3Crect%20x='5'%20y='11'%20width='15'%20height='11'%20rx='2'%20fill='%23FFD700'%20stroke='%23333'%20stroke-width='2'/%3E%3Cpath%20d='M8%2011V7.5a4.5%204.5%200%200%201%209%200V11'%20fill='none'%20stroke='%23333'%20stroke-width='3'%20stroke-linecap='round'/%3E%3Cpath%20d='M8%2011V7.5a4.5%204.5%200%200%201%209%200V11'%20fill='none'%20stroke='%23FFD700'%20stroke-width='1.5'%20stroke-linecap='round'/%3E%3Ccircle%20cx='12.5'%20cy='16'%20r='2'%20fill='%23333'/%3E%3Crect%20x='11.5'%20y='16'%20width='2'%20height='3'%20rx='0.5'%20fill='%23333'/%3E%3C/svg%3E") 12 12, not-allowed;}
+.ilabel{pointer-events:none;white-space:pre-line;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.9);}
+.item[data-front]::after{content:'';position:absolute;background:var(--c);}
+.item[data-front=S]::after{left:30%;right:30%;bottom:0;height:calc(3px * var(--iz));}
+.item[data-front=N]::after{left:30%;right:30%;top:0;height:calc(3px * var(--iz));}
+.item[data-front=W]::after{top:30%;bottom:30%;left:0;width:calc(3px * var(--iz));}
+.item[data-front=E]::after{top:30%;bottom:30%;right:0;width:calc(3px * var(--iz));}
+.chip{position:absolute;transform:translate(-50%,-50%);font-size:calc(14px * var(--iz));font-weight:700;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;
+  padding:calc(1px * var(--iz)) calc(6px * var(--iz));background:rgba(10,10,10,.88);color:#eee;border:calc(1px * var(--iz)) solid var(--border);
+  border-radius:calc(3px * var(--iz));box-shadow:0 calc(2px * var(--iz)) calc(6px * var(--iz)) rgba(0,0,0,.6);}
+.chip.sel{border-color:var(--accent);color:var(--accent);}
+
+/* HUD (compass + scale bar) */
+.hud{position:absolute;top:10px;right:84px;display:flex;align-items:center;gap:14px;pointer-events:none;z-index:5;
+  background:rgba(20,20,20,.75);border:1px solid var(--border);border-radius:4px;padding:4px 10px;}
+.scalebar{display:flex;flex-direction:column;align-items:flex-start;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);}
+.scalebar .bar{height:6px;border:2px solid #666;border-top:none;}
+
+/* zoom rail */
+.zoom-rail{width:72px;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:8px;flex-shrink:0;user-select:none;}
 .zoom-rail label{font-size:13.5px;font-weight:700;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;}
-.zoom-rail span{font-size:13.5px;font-weight:700;color:var(--accent);letter-spacing:.5px;writing-mode:horizontal-tb;}
-#zoomSlider{-webkit-appearance:none;appearance:none;width:220px;height:36px;cursor:pointer;transform:rotate(-90deg);transform-origin:center center;background:transparent;}
+#zoomPct{font-size:14px;font-weight:700;color:var(--accent);letter-spacing:.5px;}
+.zb{width:48px;height:36px;font-size:22px;font-weight:900;border:1.5px solid var(--border);background:#1c1c1c;color:var(--text);border-radius:4px;cursor:pointer;}
+.zb.txt{font-size:14px;letter-spacing:1px;}
+.zb:hover{border-color:var(--accent);color:var(--accent);}
+#zoomSlider{-webkit-appearance:none;appearance:none;width:200px;height:36px;cursor:pointer;transform:rotate(-90deg);background:transparent;}
 #zoomSlider::-webkit-slider-runnable-track{height:36px;background:var(--border);border-radius:4px;}
 #zoomSlider::-moz-range-track{height:36px;background:var(--border);border-radius:4px;}
 #zoomSlider::-webkit-slider-thumb{-webkit-appearance:none;width:36px;height:36px;border-radius:4px;background:var(--accent);cursor:pointer;border:2px solid #333;}
 #zoomSlider::-moz-range-thumb{width:36px;height:36px;border-radius:4px;background:var(--accent);cursor:pointer;border:2px solid #333;}
-.dim-line{stroke:#e8a020;stroke-width:1.5;stroke-dasharray:5,3;}
-.dim-cap{stroke:#e8a020;stroke-width:1.5;}
-.dim-label{fill:#e8a020;font-family:"Share Tech Mono",monospace;font-size:13px;font-weight:700;}
+
+/* ── Info bar ─────────────────────────────────────────────────── */
+.info-bar{background:var(--panel);border-top:1px solid var(--border);padding:4px 16px;font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--text-dim);display:flex;gap:20px;flex-shrink:0;flex-wrap:wrap;}
+.info-bar span{color:var(--text);}
+#iIssues.ok{color:var(--good);}
+#iIssues.bad{color:var(--bad);cursor:pointer;text-decoration:underline dotted;}
+
+/* ── Menus, dialogs, toast, tooltip ───────────────────────────── */
+.tip{position:fixed;pointer-events:none;z-index:4000;background:rgba(10,10,10,.92);border:1px solid var(--border);border-radius:3px;padding:3px 8px;
+  font-weight:700;font-size:16px;color:#eee;white-space:nowrap;display:none;transform:translate(-50%,-100%);letter-spacing:.5px;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,0,0,.7);}
+.tip small{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);text-transform:none;margin-left:6px;}
+.ctx{position:fixed;background:var(--panel);border:1px solid var(--border);border-radius:4px;z-index:5000;display:none;min-width:190px;box-shadow:0 4px 20px rgba(0,0,0,.7);}
+.ctx.show{display:block;}
+.cxi{padding:7px 14px;font-size:18px;font-weight:600;cursor:pointer;transition:background .1s;display:flex;justify-content:space-between;gap:14px;}
+.cxi kbd{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);align-self:center;}
+.cxi:hover{background:var(--border);color:var(--accent);}
+.cxi.sep{border-top:1px solid var(--border);}
+.cxi.del{color:#ef9a9a;}
+.cxi.del:hover{background:#c62828;color:#fff;}
+.cxi.dis{opacity:.35;pointer-events:none;}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:6000;display:none;align-items:center;justify-content:center;}
+.ov.show{display:flex;}
+.dlg{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:20px;min-width:300px;max-width:94vw;max-height:90vh;overflow:auto;box-shadow:0 8px 40px rgba(0,0,0,.8);}
+.dlg h2{font-size:22px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+.drow{display:flex;flex-direction:column;gap:3px;margin-bottom:10px;}
+.drow label,.dsec{font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.dsec{margin:6px 0 6px;border-top:1px solid var(--border);padding-top:10px;}
+.dsec small{text-transform:none;letter-spacing:0;font-weight:400;}
+.dgrid{display:grid;grid-template-columns:repeat(var(--n,2),1fr);gap:8px;}
+.dchk{display:flex;gap:18px;font-size:16px;font-weight:600;margin:4px 0;}
+.dchk input{accent-color:var(--accent);margin-right:5px;}
+.dacts{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;}
+.ver-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);}
+.ver-row .nm{font-weight:700;font-size:16px;}
+.ver-row .meta{font-size:12px;color:var(--text-dim);}
+#toast{position:fixed;left:50%;bottom:44px;transform:translateX(-50%);background:#111;border:1px solid var(--accent);color:var(--text);padding:8px 16px;border-radius:4px;
+  font-size:17px;font-weight:600;z-index:7000;opacity:0;transition:opacity .2s;pointer-events:none;}
+#toast.show{opacity:1;}
+::-webkit-scrollbar{width:36px;height:36px;}
+::-webkit-scrollbar-track{background:#111;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.sidebar::-webkit-scrollbar{width:10px;}
+.dlg ::-webkit-scrollbar,.dlg::-webkit-scrollbar{width:10px;}
+
+#printArea{display:none;}
+@media print{
+  @page{margin:0.4in;}
+  body{display:block;height:auto;overflow:visible;background:#fff;}
+  body>*{display:none!important;}
+  #printArea{display:block!important;color:#000;}
+  #printArea img{width:100%;max-height:95vh;object-fit:contain;}
+}
 </style>
 </head>
 <body>
 <header>
   <div>
     <h1>Workshop Planner</h1>
-    <div class="sub" id="headerSub">40 × 60 ft &nbsp;|&nbsp; 1 sq = 1 ft &nbsp;|&nbsp; drag to move · right-click to edit/resize</div>
+    <div class="sub" id="headerSub"></div>
   </div>
   <div class="toolbar">
-    <div style="display:flex;align-items:center;gap:6px;">
-      <span class="snap-badge">SNAP</span>
-      <select id="snapSelect" onchange="changeSnap(this.value)"
-        style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;
-               letter-spacing:1px;text-transform:uppercase;padding:5px 8px;
-               border:1.5px solid var(--border);background:var(--panel);color:var(--text);
-               border-radius:3px;cursor:pointer;outline:none;">
-        <option value="0">OFF</option>
-        <option value="5">0.5 ft</option>
-        <option value="10" selected>1 ft</option>
-        <option value="15">1.5 ft</option>
-        <option value="20">2 ft</option>
-        <option value="25">2.5 ft</option>
-        <option value="30">3 ft</option>
-        <option value="35">3.5 ft</option>
-        <option value="40">4 ft</option>
-      </select>
-    </div>
-    <button class="btn" id="btnUndo" onclick="undo()" disabled title="Undo (Ctrl+Z)">↩ Undo</button>
-    <button class="btn" id="btnRedo" onclick="redo()" disabled title="Redo (Ctrl+Y)">↪ Redo</button>
-    <button class="btn" onclick="openVersionsDlg()">💾 Versions</button>
-    <button class="btn" onclick="resetLayout()">Reset</button>
-    <button class="btn" onclick="exportJSON()">⬇ JSON</button>
-    <label class="btn" style="cursor:pointer" title="Import JSON layout file">⬆ JSON<input id="jsonImport" type="file" accept=".json" style="display:none" onchange="importJSON(event)"/></label>
-    <button class="btn pri" onclick="exportImage()">📷 Export PNG</button>
+    <span class="snap-badge" title="Snap grid">SNAP</span>
+    <select id="snapSelect" class="sel" title="Snap grid (anchored to the inside wall faces)">
+      <option value="0">OFF</option><option value="5">0.5 ft</option><option value="10">1 ft</option><option value="15">1.5 ft</option>
+      <option value="20">2 ft</option><option value="25">2.5 ft</option><option value="30">3 ft</option><option value="35">3.5 ft</option><option value="40">4 ft</option>
+    </select>
+    <button class="btn" id="btnUndo" onclick="undo()" disabled title="Undo (Ctrl+Z)">↩</button>
+    <button class="btn" id="btnRedo" onclick="redo()" disabled title="Redo (Ctrl+Y)">↪</button>
+    <button class="btn" id="btnMeasure" onclick="toggleMeasure()" title="Measure tool (M)">📏<span class="bt"> Measure</span></button>
+    <span class="tsep"></span>
+    <button class="btn" onclick="openVersions()" title="Named snapshots saved in this browser">💾<span class="bt"> Versions</span></button>
+    <button class="btn" onclick="openShare()" title="Copy a link that contains this layout">🔗<span class="bt"> Share</span></button>
+    <button class="btn" onclick="exportJSON()" title="Download layout as JSON">⬇<span class="bt"> JSON</span></button>
+    <label class="btn" title="Load a layout JSON file">⬆<span class="bt"> JSON</span><input id="jsonImport" type="file" accept=".json,application/json" style="display:none" onchange="importJSON(event)"/></label>
+    <button class="btn" onclick="printLayout()" title="Print or save as PDF">🖨<span class="bt"> Print</span></button>
+    <button class="btn pri" onclick="exportPNG()" title="Download PNG image">📷<span class="bt"> PNG</span></button>
+    <span class="tsep"></span>
+    <button class="btn" onclick="resetLayout()" title="Reset to default layout">⟲<span class="bt"> Reset</span></button>
   </div>
 </header>
+
 <div class="main">
   <div class="sidebar">
     <div class="sb-sec" style="background:#1e1e1e;">
       <h3 style="color:var(--accent)">🏠 Shed Size</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px;">
-        <div style="display:flex;flex-direction:column;gap:3px;">
-          <label style="font-size:13.5px;color:var(--text-dim);letter-spacing:1px">WIDTH (ft)</label>
-          <input id="shedW" class="fi" type="number" min="10" max="200" step="1" value="40"/>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:3px;">
-          <label style="font-size:13.5px;color:var(--text-dim);letter-spacing:1px">DEPTH (ft)</label>
-          <input id="shedH" class="fi" type="number" min="10" max="200" step="1" value="60"/>
-        </div>
+      <div class="dgrid" style="margin-bottom:6px;gap:5px">
+        <div style="display:flex;flex-direction:column;gap:3px;"><label class="flabel" for="shedW">Width (ft)</label><input id="shedW" class="fi" type="number" min="10" max="200" step="1"/></div>
+        <div style="display:flex;flex-direction:column;gap:3px;"><label class="flabel" for="shedH">Depth (ft)</label><input id="shedH" class="fi" type="number" min="10" max="200" step="1"/></div>
       </div>
-      <button class="btn pri" style="width:100%;font-size:16.5px;padding:5px" onclick="applyShedSize()">Apply</button>
+      <button class="btn pri" style="width:100%" onclick="applyShedSize()">Apply</button>
+      <div id="shedErr" class="err"></div>
     </div>
-    <div class="sb-sec">
-      <h3>➕ Add Item</h3>
+
+    <details class="sb-sec" open>
+      <summary>📚 Library</summary>
+      <div style="font-size:13px;color:var(--text-dim);margin-bottom:5px">Click to add at view center, or drag onto the floor. Sizes are typical — edit after placing.</div>
+      <div id="library"></div>
+    </details>
+
+    <details class="sb-sec">
+      <summary>➕ Custom Item</summary>
       <div style="display:flex;flex-direction:column;gap:6px;">
         <input id="cName" class="fi" type="text" placeholder="Name"/>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
-          <input id="cW" class="fi" type="number" placeholder="W (ft)" min="0.5" max="40" step="0.5"/>
-          <input id="cH" class="fi" type="number" placeholder="D (ft)" min="0.5" max="60" step="0.5"/>
+        <div class="dgrid" style="gap:5px">
+          <input id="cW" class="fi" type="number" placeholder="W (ft)" min="0.5" max="200" step="0.5"/>
+          <input id="cH" class="fi" type="number" placeholder="D (ft)" min="0.5" max="200" step="0.5"/>
         </div>
-        <select id="cCat" class="fi" style="cursor:pointer">
-          <option value="Custom">Custom</option>
-          <option value="Metal">Metal</option>
-          <option value="Wood">Wood</option>
-          <option value="Shop">Shop</option>
-          <option value="Electrical">Electrical</option>
-          <option value="Storage">Storage</option>
-          <option value="Structure">Structure</option>
-        </select>
+        <select id="cCat" class="fi catSelect" style="cursor:pointer"></select>
+        <label class="layer-row" style="font-size:14px"><input type="checkbox" id="cLib"/> Also save to My Items</label>
         <button class="btn pri" style="width:100%" onclick="addCustom()">Add to Floor</button>
-        <div id="cErr" style="font-size:15px;color:#ef9a9a;display:none"></div>
+        <div id="cErr" class="err"></div>
       </div>
-    </div>
-    <div class="sb-sec">
-      <div style="font-size:15px;color:var(--text-dim);line-height:1.8">
-        • Drag to move<br>
-        • <b style="color:var(--text)">Right-click</b> → edit/resize<br>
-        • <b style="color:var(--text)">R</b> key: rotate 90°<br>
-        • <b style="color:var(--text)">E</b> key: open edit dialog<br>
-        • <b style="color:var(--text)">Del</b>: delete selected<br>
-        • <b style="color:var(--text)">Ctrl+Z</b>: undo &nbsp; <b style="color:var(--text)">Ctrl+Y</b>: redo
+    </details>
+
+    <details class="sb-sec" open>
+      <summary>🗂 Layers</summary>
+      <div id="layers"></div>
+    </details>
+
+    <details class="sb-sec">
+      <summary>⌨ Shortcuts</summary>
+      <div class="help">
+        <b>Drag</b> move · <b>Shift-click</b> add to selection<br>
+        <b>Drag empty floor</b> box-select<br>
+        <b>Space+drag</b> / middle-drag pan · <b>Wheel</b> zoom<br>
+        <b>Right-click</b> / long-press menu · <b>Dbl-click</b> edit<br>
+        <b>Arrows</b> nudge (Shift = 5 ft)<br>
+        <b>R</b> rotate (Shift+R back) · <b>E</b> edit<br>
+        <b>L</b> lock · <b>P</b> always show name<br>
+        <b>Ctrl+D</b> duplicate · <b>Ctrl+A</b> select all<br>
+        <b>Del</b> delete · <b>Ctrl+Z / Y</b> undo / redo<br>
+        <b>M</b> measure (Shift = straight, Alt = no snap)<br>
+        <b>F</b> fit · <b>0</b> 100% · <b>+ / −</b> zoom · <b>Esc</b> cancel
       </div>
-    </div>
+    </details>
   </div>
-  <div class="canvas-wrap" id="canvasWrap">
-    <div id="zoomPad" style="width:1014px;height:880px;position:relative;flex-shrink:0;">
-    <div id="zoomWrap" style="transform-origin:0 0;display:inline-block;position:absolute;top:267px;left:267px;">
-    <div id="floor">
-      <svg id="gridSvg" style="position:absolute;top:0;left:0;pointer-events:none" width="700" height="720" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="g1" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0L0 0 0 10" fill="none" stroke="#252525" stroke-width="0.5"/></pattern>
-          <pattern id="g5" width="50" height="50" patternUnits="userSpaceOnUse"><rect width="50" height="50" fill="url(#g1)"/><path d="M50 0L0 0 0 50" fill="none" stroke="#2e2e2e" stroke-width="1"/></pattern>
-        </defs>
-        <rect id="gridFill" x="0" y="0" width="700" height="720" fill="url(#g5)"/>
-        <g transform="translate(655,50)">
-          <circle r="22" fill="#1e1e1e" stroke="#444" stroke-width="1.5"/>
-          <polygon points="0,-17 3,-5 -3,-5" fill="#e8a020"/>
-          <polygon points="0,17 3,5 -3,5" fill="#444"/>
-          <polygon points="-17,0 -5,-3 -5,3" fill="#444"/>
-          <polygon points="17,0 5,-3 5,3" fill="#444"/>
-          <text y="-19" text-anchor="middle" font-size="13.5" font-weight="700" fill="#e8a020" font-family="Barlow Condensed,sans-serif">N</text>
-          <text y="27" text-anchor="middle" font-size="12" fill="#555" font-family="Barlow Condensed,sans-serif">S</text>
-          <text x="-25" y="4" text-anchor="middle" font-size="12" fill="#555" font-family="Barlow Condensed,sans-serif">W</text>
-          <text x="25" y="4" text-anchor="middle" font-size="12" fill="#555" font-family="Barlow Condensed,sans-serif">E</text>
-        </g>
-        <g transform="translate(570,92)">
-          <line x1="0" y1="0" x2="50" y2="0" stroke="#444" stroke-width="2"/>
-          <line x1="0" y1="-3" x2="0" y2="3" stroke="#444" stroke-width="2"/>
-          <line x1="50" y1="-3" x2="50" y2="3" stroke="#444" stroke-width="2"/>
-          <line x1="25" y1="-2" x2="25" y2="2" stroke="#444" stroke-width="1"/>
-          <text x="0" y="11" text-anchor="middle" font-size="10.5" fill="#555" font-family="Share Tech Mono,monospace">0</text>
-          <text x="25" y="11" text-anchor="middle" font-size="10.5" fill="#555" font-family="Share Tech Mono,monospace">5ft</text>
-          <text x="50" y="11" text-anchor="middle" font-size="10.5" fill="#555" font-family="Share Tech Mono,monospace">10ft</text>
-        </g>
+
+  <div class="canvas-area">
+    <div class="canvas-wrap" id="canvasWrap">
+      <div id="stage">
+        <div id="floor">
+          <svg id="gridSvg" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="g1" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0L0 0 0 10" fill="none" stroke="#252525" stroke-width="0.5"/></pattern>
+              <pattern id="g5" width="50" height="50" patternUnits="userSpaceOnUse"><rect width="50" height="50" fill="url(#g1)"/><path d="M50 0L0 0 0 50" fill="none" stroke="#2e2e2e" stroke-width="1"/></pattern>
+            </defs>
+            <rect id="gridFill" x="0" y="0" fill="url(#g5)"/>
+          </svg>
+          <svg id="underlay" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div id="pinLayer"></div>
+          <svg id="hitLayer" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="6" fill="rgba(255,82,82,.55)"/></pattern></defs><g id="hitG"></g></svg>
+          <svg id="overlay" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+      </div>
+    </div>
+    <div class="hud">
+      <div class="scalebar"><div class="bar" id="scaleBar"></div><div id="scaleLbl">10 ft</div></div>
+      <svg width="46" height="46" viewBox="-23 -23 46 46">
+        <circle r="21" fill="#1e1e1e" stroke="#444" stroke-width="1.5"/>
+        <polygon points="0,-16 3,-5 -3,-5" fill="#e8a020"/><polygon points="0,16 3,5 -3,5" fill="#444"/>
+        <polygon points="-16,0 -5,-3 -5,3" fill="#444"/><polygon points="16,0 5,-3 5,3" fill="#444"/>
+        <text y="-9" x="7" font-size="10" font-weight="700" fill="#e8a020" font-family="Barlow Condensed,sans-serif">N</text>
       </svg>
     </div>
-    </div><!-- /zoomWrap -->
-    </div><!-- /zoomPad -->
-  </div>
-  <div class="zoom-rail">
-    <label>zoom</label>
-    <span id="zoomPct">100%</span>
-    <div style="height:220px;display:flex;align-items:center;justify-content:center;overflow:visible;">
-      <input type="range" id="zoomSlider" min="100" max="400" step="1" value="100">
+    <div class="zoom-rail">
+      <label>zoom</label>
+      <button class="zb" onclick="zoomStep(1)" title="Zoom in (+)">+</button>
+      <span id="zoomPct">100%</span>
+      <div style="height:200px;display:flex;align-items:center;justify-content:center;overflow:visible;">
+        <input type="range" id="zoomSlider" min="0" max="1000" step="1" value="500" aria-label="Zoom"/>
+      </div>
+      <button class="zb" onclick="zoomStep(-1)" title="Zoom out (−)">−</button>
+      <button class="zb txt" onclick="zoomFit()" title="Fit to window (F)">FIT</button>
+      <button class="zb txt" onclick="setZoom(1)" title="100% (0)">1:1</button>
     </div>
   </div>
-  <div class="lbl-tip" id="lblTip"></div>
-  <svg id="dimOverlay" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:200;overflow:visible;display:none"></svg>
 </div>
+
 <div class="info-bar">
   <div>POS: <span id="iPos">—</span></div>
   <div>SELECTED: <span id="iSel">none</span></div>
   <div>SIZE: <span id="iSize">—</span></div>
   <div>DIST: <span id="iDist">—</span></div>
-  <div style="margin-left:auto;color:#444">auto-saves to browser</div>
+  <div>ISSUES: <span id="iIssues" onclick="selectIssues()">—</span></div>
+  <div style="margin-left:auto;color:#555">auto-saves to browser</div>
+</div>
+
+<div class="tip" id="tip"></div>
+<div id="toast"></div>
+
+<!-- CONTEXT MENU -->
+<div class="ctx" id="ctx">
+  <div class="cxi" data-act="lock"><span id="ctxLockTxt">🔒 Lock</span><kbd>L</kbd></div>
+  <div class="cxi" data-act="pin"><span id="ctxPinTxt">📌 Always Show Name</span><kbd>P</kbd></div>
+  <div class="cxi" data-act="edit" id="ctxEdit"><span>✎ Edit / Resize</span><kbd>E</kbd></div>
+  <div class="cxi" data-act="rotate"><span>↻ Rotate 90°</span><kbd>R</kbd></div>
+  <div class="cxi" data-act="dupe"><span>⧉ Duplicate</span><kbd>Ctrl+D</kbd></div>
+  <div class="cxi" data-act="lib" id="ctxLib"><span>📚 Save to My Items</span></div>
+  <div class="cxi sep" data-act="front"><span>▲ Bring to Front</span></div>
+  <div class="cxi" data-act="back"><span>▼ Send to Back</span></div>
+  <div class="cxi sep del" data-act="delete"><span id="ctxDelTxt">✕ Delete</span><kbd>Del</kbd></div>
+</div>
+
+<!-- EDIT DIALOG -->
+<div class="ov" id="dlgOv">
+  <div class="dlg" style="width:440px">
+    <h2>Edit Item</h2>
+    <div class="drow"><label for="dLabel">Label</label><input id="dLabel" class="fi" type="text" maxlength="80"/></div>
+    <div class="dgrid" style="--n:3">
+      <div class="drow"><label for="dW">Width (ft)</label><input id="dW" class="fi" type="number" min="0.1" max="200" step="0.5"/></div>
+      <div class="drow"><label for="dH">Depth (ft)</label><input id="dH" class="fi" type="number" min="0.1" max="200" step="0.5"/></div>
+      <div class="drow"><label for="dRot">Rotation</label><select id="dRot" class="fi"><option value="0">0°</option><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></div>
+    </div>
+    <div class="drow"><label for="dCat">Category / Layer</label><select id="dCat" class="fi catSelect" style="cursor:pointer"></select></div>
+    <div class="dsec">Clearance (ft) <small>— front = bottom edge at 0°, marked with a tick</small></div>
+    <div class="dgrid" style="--n:4">
+      <div class="drow"><label for="cF">Front</label><input id="cF" class="fi" type="number" min="0" max="50" step="0.5" placeholder="0"/></div>
+      <div class="drow"><label for="cB">Back</label><input id="cB" class="fi" type="number" min="0" max="50" step="0.5" placeholder="0"/></div>
+      <div class="drow"><label for="cL">Left</label><input id="cL" class="fi" type="number" min="0" max="50" step="0.5" placeholder="0"/></div>
+      <div class="drow"><label for="cR">Right</label><input id="cR" class="fi" type="number" min="0" max="50" step="0.5" placeholder="0"/></div>
+    </div>
+    <div class="dsec">Door <small>— place it on a wall; it swings / tracks into the room</small></div>
+    <div class="dgrid" style="--n:3">
+      <div class="drow"><label for="dDoor">Type</label><select id="dDoor" class="fi"><option value="">None</option><option value="door">Swing door</option><option value="garage">Overhead door</option></select></div>
+      <div class="drow"><label for="dHinge">Hinge</label><select id="dHinge" class="fi"><option value="L">West / North end</option><option value="R">East / South end</option></select></div>
+      <div class="drow"><label for="dTrack">Track (ft)</label><input id="dTrack" class="fi" type="number" min="0" max="50" step="0.5"/></div>
+    </div>
+    <div class="dchk"><label><input type="checkbox" id="dLocked"/>Locked</label><label><input type="checkbox" id="dPin"/>Always show name</label><label title="Rooms/zones that equipment sits inside (paint booth, bay) — never flagged as overlapping"><input type="checkbox" id="dArea"/>Zone (no overlap check)</label></div>
+    <div id="dErr" class="err"></div>
+    <div class="dacts">
+      <button class="btn" onclick="closeEdit()">Cancel</button>
+      <button class="btn pri" onclick="applyEdit()">Apply</button>
+    </div>
+  </div>
 </div>
 
 <!-- VERSIONS DIALOG -->
-<div class="ov" id="verOv" onclick="if(event.target===this)closeVersionsDlg()">
-  <div class="dlg" style="width:460px;max-height:80vh;display:flex;flex-direction:column;">
+<div class="ov" id="verOv">
+  <div class="dlg" style="width:480px;display:flex;flex-direction:column;">
     <h2>💾 Saved Versions</h2>
-    <div style="display:flex;gap:8px;margin-bottom:14px;">
-      <input id="verName" class="fi" placeholder="Version name (e.g. Option A)" style="flex:1">
-      <button class="btn pri" onclick="saveVersion()" style="white-space:nowrap">Save Current</button>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <input id="verName" class="fi" placeholder="Version name (e.g. Option A)" maxlength="60" style="flex:1"/>
+      <button class="btn pri" onclick="saveVersion()">Save Current</button>
     </div>
-    <div id="verList" style="overflow-y:auto;flex:1;min-height:60px;"></div>
-    <div class="dacts"><button class="btn" onclick="closeVersionsDlg()">Close</button></div>
+    <div id="verList" style="overflow-y:auto;flex:1;min-height:60px;max-height:50vh"></div>
+    <div style="font-size:13px;color:var(--text-dim);margin-top:8px">Versions live in this browser only. Use Share or JSON to move a layout to another device.</div>
+    <div class="dacts"><button class="btn" onclick="closeDialogs()">Close</button></div>
   </div>
 </div>
 
-<div class="ctx" id="ctx">
-  <div class="cxi" id="ctxLockItem" onclick="ctxToggleLock()">🔒 Lock</div>
-  <div class="cxi" id="ctxPinItem" onclick="ctxTogglePin()">📌 Always Show Name</div>
-  <div class="cxi" onclick="ctxEdit()">✎ Edit / Resize</div>
-  <div class="cxi" onclick="ctxRotate()">↻ Rotate 90°</div>
-  <div class="cxi" onclick="ctxDupe()">⧉ Duplicate</div>
-  <div class="cxi sep" onclick="ctxFront()">▲ Bring to Front</div>
-  <div class="cxi" onclick="ctxBack()">▼ Send to Back</div>
-  <div class="cxi sep del" onclick="ctxDelete()">✕ Delete</div>
-</div>
-<div class="ov" id="dlgOv" onclick="closeDlgBg(event)">
-  <div class="dlg">
-    <h2>Edit Item</h2>
-    <div class="drow"><label>Label</label><input id="dlgLabel" class="fi" type="text"/></div>
-    <div class="dgrid">
-      <div class="drow"><label>Width (ft)</label><input id="dlgW" class="fi" type="number" min="0.5" max="40" step="0.5"/></div>
-      <div class="drow"><label>Depth (ft)</label><input id="dlgH" class="fi" type="number" min="0.5" max="60" step="0.5"/></div>
-    </div>
-    <div class="drow"><label>Category</label>
-      <select id="dlgCat" class="fi" style="cursor:pointer">
-        <option value="Metal">Metal</option>
-        <option value="Wood">Wood</option>
-        <option value="Shop">Shop</option>
-        <option value="Electrical">Electrical</option>
-        <option value="Storage">Storage</option>
-        <option value="Structure">Structure</option>
-        <option value="Custom">Custom</option>
-      </select>
-    </div>
-    <div id="dlgErr" style="font-size:15px;color:#ef9a9a;min-height:14px;margin-top:2px;"></div>
-    <div class="dacts">
-      <button class="btn" onclick="closeDlg()">Cancel</button>
-      <button class="btn pri" onclick="applyDlg()">Apply</button>
-    </div>
+<!-- SHARE DIALOG -->
+<div class="ov" id="shareOv">
+  <div class="dlg" style="width:520px">
+    <h2>🔗 Share Layout</h2>
+    <div style="font-size:15px;color:var(--text-dim);margin-bottom:8px">This link contains the whole layout — nothing is uploaded. Opening it offers to load the layout.</div>
+    <input id="shareUrl" class="fi" readonly style="font-family:'Share Tech Mono',monospace;font-size:13px"/>
+    <div class="dacts"><button class="btn" onclick="closeDialogs()">Close</button><button class="btn pri" onclick="copyShare()">Copy Link</button></div>
   </div>
 </div>
+
+<div id="printArea"><img id="printImg" alt="Workshop layout"/></div>
+
 <script>
-const PX=10, FW=700, FH=720, SK='ws_planner_v13';
+'use strict';
+// ═══════════════════════════════════════════════════════════════════
+//  Constants & data
+// ═══════════════════════════════════════════════════════════════════
+const PX = 10;        // floor pixels per foot
+const PAD = 40;       // margin around the shed, floor px
+const WT = 10;        // wall thickness, floor px (1 ft; multiple of the 0.5 ft min snap)
+const ZMIN = 0.25, ZMAX = 4;
+const SK = 'ws_planner_v14', LEGACY_SK = 'ws_planner_v13';
+const SETTINGS_K = 'ws_planner_settings_v1', LIB_K = 'ws_planner_library_v1', VSK = 'ws_planner_versions_v1';
+const MAX_VERSIONS = 25;
 
-
-const CAT_COLORS={
-  'Metal':     {border:'#c62828', bg:'rgba(198,40,40,0.13)',     color:'#ef9a9a'},
-  'Wood':      {border:'#2e7d32', bg:'rgba(46,125,50,0.13)',     color:'#a5d6a7'},
-  'Shop':      {border:'#7b1fa2', bg:'rgba(123,31,162,0.13)',    color:'#e1bee7'},
-  'Electrical':{border:'#cc0000', bg:'rgba(204,0,0,0.13)',       color:'#ff8a80'},
-  'Storage':   {border:'#546e7a', bg:'rgba(84,110,122,0.13)',    color:'#90a4ae'},
-  'Structure': {border:'#555555', bg:'rgba(85,85,85,0.13)',      color:'#aaaaaa'},
-  'Custom':    {border:'#4a9eff', bg:'rgba(74,158,255,0.13)',    color:'#90caf9'},
+// util: true → wall-mounted utility layer (no collisions, can sit on the wall line)
+const CATS = {
+  Metal:      {c:'#c62828', fg:'#ef9a9a'},
+  Wood:       {c:'#2e7d32', fg:'#a5d6a7'},
+  Shop:       {c:'#7b1fa2', fg:'#e1bee7'},
+  Electrical: {c:'#ef6c00', fg:'#ffcc80'},
+  Storage:    {c:'#546e7a', fg:'#90a4ae'},
+  Structure:  {c:'#555555', fg:'#aaaaaa'},
+  Custom:     {c:'#4a9eff', fg:'#90caf9'},
+  Power:      {c:'#f9a825', fg:'#ffe082', util:true},
+  Air:        {c:'#00acc1', fg:'#80deea', util:true},
+  Dust:       {c:'#8d6e63', fg:'#d7ccc8', util:true},
+  Lighting:   {c:'#9e9e9e', fg:'#f5f5f5', util:true},
+  HVAC:       {c:'#26a69a', fg:'#80cbc4', util:true},
 };
-function catColors(cat){return CAT_COLORS[cat]||CAT_COLORS['Custom'];}
+const GLYPHS = {Power:'⚡', Air:'A', Dust:'D', Lighting:'✦', HVAC:'❄'};
+function hexA(hex, a){const n=parseInt(hex.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;}
+function darken(hex, f){const n=parseInt(hex.slice(1),16);const m=v=>Math.round(v*(1-f));return `rgb(${m(n>>16&255)},${m(n>>8&255)},${m(n&255)})`;}
 
-const DEFS={
-  north_wall:  {label:'NORTH WALL',   cat:'Structure', w:400,h:10},
-  south_wall:  {label:'SOUTH WALL',   cat:'Structure', w:400,h:10},
-  west_wall:   {label:'WEST WALL',    cat:'Structure', w:10, h:600},
-  east_wall:   {label:'EAST WALL',    cat:'Structure', w:10, h:600},
-  entry_door:  {label:'ENTRY',        cat:'Structure', w:30, h:10},
-  garage_s:    {label:'GARAGE DOOR',  cat:'Structure', w:160,h:10},
-  garage_e:    {label:'GARAGE DOOR',  cat:'Structure', w:10, h:100},
-  paint_booth: {label:'PAINT BOOTH',  cat:'Structure', w:280,h:140},
-  lift_zone:   {label:'BENDPAK 12APX',cat:'Shop',      w:188,h:260},
-  cabinets:    {label:'CABINETS',     cat:'Storage',   w:208,h:20},
-  pc_oven:     {label:'PC OVEN',      cat:'Shop',      w:40, h:40},
-  elec_panel:  {label:'200A PANEL',   cat:'Electrical',w:30, h:16},
-  e_shelves:   {label:'SHELVES',      cat:'Storage',   w:13, h:160},
-  chest1:      {label:'CRAFTSMAN',    cat:'Storage',   w:17, h:43},
-  chest2:      {label:'CRAFTSMAN',    cat:'Storage',   w:17, h:43},
-  chest_mid:   {label:'CABINET',      cat:'Storage',   w:15, h:22},
-  plasma_table:{label:'PLASMA TABLE', cat:'Metal',     w:90, h:80},
-  welder:      {label:'MIG WELDER',   cat:'Metal',     w:30, h:16},
-  shop_press:  {label:'SHOP PRESS',   cat:'Metal',     w:23, h:17},
-  mtbl46:      {label:'METAL TABLE',  cat:'Metal',     w:60, h:40},
-  mtbl24:      {label:'METAL TABLE',  cat:'Metal',     w:40, h:20},
-  table_saw:   {label:'TABLE SAW',    cat:'Wood',      w:40, h:30},
-  bandsaw:     {label:'BANDSAW',      cat:'Wood',      w:22, h:22},
-  miter_saw:   {label:'MITER SAW',    cat:'Wood',      w:25, h:25},
-  wood_table:  {label:'WOOD TABLE',   cat:'Wood',      w:80, h:40},
-  central_vac: {label:'CENTRAL VAC',  cat:'Shop',      w:20, h:20},
-  air_comp:    {label:'AIR COMP',     cat:'Shop',      w:25, h:25},
-  wall_h:      {label:'WALL',         cat:'Structure', w:100,h:10},
-  wall_v:      {label:'WALL',         cat:'Structure', w:10, h:100},
-  door_s:      {label:'DOOR',         cat:'Structure', w:30, h:10},
-  garage_door: {label:'GARAGE DOOR',  cat:'Structure', w:160,h:10},
-};
+// Default layout (40×60 shed). Units: w/h/x/y in floor px (10 px = 1 ft), clr/track in ft.
+const DEFAULT_LAYOUT = {shedW:40, shedH:60, items:[
+  {label:'NORTH WALL', cat:'Structure', wall:'N'},
+  {label:'SOUTH WALL', cat:'Structure', wall:'S'},
+  {label:'WEST WALL',  cat:'Structure', wall:'W'},
+  {label:'EAST WALL',  cat:'Structure', wall:'E'},
+  {label:'Door', cat:'Structure', w:30, h:10, x:75, y:630, locked:true, pin:true, door:{type:'door', hinge:'L'}},
+  {label:'South Garage Door', cat:'Structure', w:160, h:10, x:230, y:630, locked:true, pin:true, door:{type:'garage', track:11}},
+  {label:'East Garage Door',  cat:'Structure', w:10, h:100, x:430, y:90, locked:true, pin:true, door:{type:'garage', track:11}},
+  {label:'PAINT BOOTH', cat:'Structure', w:280, h:140, x:50, y:50, pin:true, area:true},
+  {label:'Lift Area', cat:'Shop', w:188, h:260, x:242, y:190, locked:true, pin:true, z:1},
+  {label:'CABINETS', cat:'Storage', w:100, h:25, x:50, y:190, locked:true, pin:true},
+  {label:'Oven', cat:'Shop', w:40, h:40, x:390, y:50, locked:true, pin:true},
+  {label:'200A PANEL', cat:'Electrical', w:30, h:20, x:50, y:560, rot:270, clr:{f:3}},
+  {label:'SHELVES', cat:'Storage', w:13, h:160, x:50, y:290, pin:true},
+  {label:'CRAFTSMAN', cat:'Storage', w:17, h:43, x:413, y:495},
+  {label:'CRAFTSMAN', cat:'Storage', w:17, h:43, x:413, y:452},
+  {label:'CABINET', cat:'Storage', w:15, h:22, x:415, y:538},
+  {label:'Plasma', cat:'Metal', w:50, h:40, x:150, y:535, rot:90, pin:true},
+  {label:'MIG', cat:'Metal', w:30, h:16, x:190, y:480, rot:90, z:100},
+  {label:'Press', cat:'Metal', w:23, h:20, x:50, y:607, rot:90},
+  {label:'METAL TABLE', cat:'Metal', w:60, h:40, x:130, y:470, pin:true},
+  {label:'METAL TABLE', cat:'Metal', w:40, h:20, x:95, y:470, rot:90},
+  {label:'Table Saw', cat:'Wood', w:40, h:30, x:100, y:295, clr:{f:3}},
+  {label:'BANDSAW', cat:'Wood', w:22, h:22, x:50, y:258},
+  {label:'WOOD TABLE', cat:'Wood', w:50, h:30, x:110, y:245, rot:90},
+  {label:'CENTRAL VAC', cat:'Shop', w:20, h:20, x:50, y:235},
+  {label:'Air', cat:'Shop', w:25, h:25, x:195, y:605, locked:true, pin:true},
+  {label:'MITER TABLE', cat:'Wood', w:100, h:25, x:150.75, y:190.75, locked:true, pin:true},
+  {label:'CABINETS', cat:'Storage', w:100, h:25, x:50, y:450, rot:90, pin:true},
+  {label:'WOOD TABLE', cat:'Wood', w:50, h:30, x:170, y:245, rot:90},
+  {label:'BENDPAK 12APX', cat:'Structure', w:130, h:20, x:270, y:280, locked:true, pin:true, area:true},
+]};
 
-const DEFAULT_ITEMS=[
-  ['north_wall', 40, 40, 0],
-  ['south_wall', 40, 630, 0],
-  ['west_wall', 40, 40, 0],
-  ['east_wall', 430, 40, 0],
-  ['entry_door', 75, 610, 0],
-  ['garage_s', 230, 630, 0],
-  ['garage_e', 430, 90, 0],
-  ['paint_booth', 50.25, 50.5, 0],
-  ['lift_zone', 242.4405854208, 190.047072896, 0],
-  ['cabinets', 50.5, 190.75, 0],
-  ['pc_oven', 390, 50, 0],
-  ['elec_panel', 50, 560, 90],
-  ['e_shelves', 50, 290, 0],
-  ['chest1', 413, 495, 0],
-  ['chest2', 413, 452, 0],
-  ['chest_mid', 415, 538, 0],
-  ['plasma_table', 150, 535, 90],
-  ['welder', 190, 480, 90],
-  ['shop_press', 50, 607, 90],
-  ['mtbl46', 130, 470, 0],
-  ['mtbl24', 95, 470, 90],
-  ['table_saw', 100, 295, 0],
-  ['bandsaw', 50, 258, 0],
-  ['wood_table', 110, 245, 90],
-  ['central_vac', 50, 235, 0],
-  ['air_comp', 195, 605, 0],
-  ['cust_1771863606274', 150.75, 190.75, 0],
-  ['cabinets', 50, 450, 90],
-  ['wood_table', 170, 245, 90],
-  ['cabinets', 270, 280, 0]
+// Library presets. Units: ft. Sizes are typical placeholders, not manufacturer specs.
+const PRESETS = [
+  {group:'Metal', items:[
+    {label:'Plasma Table', cat:'Metal', w:5, d:4, clr:{f:3}},
+    {label:'Welding Table', cat:'Metal', w:5, d:3},
+    {label:'MIG Welder', cat:'Metal', w:1.6, d:3},
+    {label:'TIG Welder', cat:'Metal', w:2, d:3},
+    {label:'Shop Press', cat:'Metal', w:2.3, d:2},
+    {label:'Metal Bandsaw', cat:'Metal', w:5, d:2, clr:{l:4, r:4}},
+    {label:'Drill Press', cat:'Metal', w:1.5, d:2, clr:{f:2}},
+    {label:'Bench Grinder', cat:'Metal', w:1.5, d:1, clr:{f:2}},
+    {label:'Blast Cabinet', cat:'Metal', w:4, d:3, clr:{f:3}},
+  ]},
+  {group:'Wood', items:[
+    {label:'Table Saw', cat:'Wood', w:4, d:3, clr:{f:3}},
+    {label:'Bandsaw', cat:'Wood', w:2.2, d:2.2, clr:{f:3}},
+    {label:'Miter Station', cat:'Wood', w:10, d:2.5, clr:{f:3}},
+    {label:'Jointer', cat:'Wood', w:6, d:1.5, clr:{l:4, r:4}},
+    {label:'Planer', cat:'Wood', w:2, d:2, clr:{f:4, b:4}},
+    {label:'Router Table', cat:'Wood', w:3, d:2, clr:{f:3}},
+    {label:'Workbench', cat:'Wood', w:8, d:3, clr:{f:3}},
+  ]},
+  {group:'Shop', items:[
+    {label:'Air Compressor', cat:'Shop', w:2.5, d:2.5},
+    {label:'Powder Coat Oven', cat:'Shop', w:4, d:4, clr:{f:4}},
+    {label:'Dust Collector', cat:'Shop', w:2.5, d:2.5},
+    {label:'Central Vac', cat:'Shop', w:2, d:2},
+    {label:'Parts Washer', cat:'Shop', w:3, d:2, clr:{f:3}},
+    {label:'Lift Bay', cat:'Shop', w:12, d:24},
+    {label:'Vehicle', cat:'Shop', w:6.5, d:16},
+  ]},
+  {group:'Storage', items:[
+    {label:'Tool Chest', cat:'Storage', w:4.5, d:2, clr:{f:3}},
+    {label:'Cabinet Run', cat:'Storage', w:10, d:2.5, clr:{f:3}},
+    {label:'Shelving', cat:'Storage', w:4, d:1.5},
+    {label:'Pallet Rack', cat:'Storage', w:8, d:3.5, clr:{f:4}},
+  ]},
+  {group:'Electrical', items:[
+    {label:'200A Panel', cat:'Electrical', w:3, d:2, clr:{f:3}},
+    {label:'Subpanel', cat:'Electrical', w:2, d:1, clr:{f:3}},
+  ]},
+  {group:'Utilities', items:[
+    {label:'120V Outlet', cat:'Power', w:1, d:1, glyph:'120'},
+    {label:'240V Drop', cat:'Power', w:1, d:1, glyph:'240'},
+    {label:'Air Drop', cat:'Air', w:1, d:1},
+    {label:'Dust Port', cat:'Dust', w:1, d:1},
+    {label:'Shop Light', cat:'Lighting', w:4, d:1},
+    {label:'Mini-split Head', cat:'HVAC', w:3, d:1},
+    {label:'Condenser', cat:'HVAC', w:3, d:1.5, glyph:'CU'},
+  ]},
+  {group:'Structure', items:[
+    {label:'Interior Wall', cat:'Structure', w:10, d:1},
+    {label:'Column', cat:'Structure', w:1, d:1},
+    {label:'Entry Door', cat:'Structure', w:3, d:1, door:{type:'door', hinge:'L'}},
+    {label:'Garage Door 10ft', cat:'Structure', w:10, d:1, door:{type:'garage', track:11}},
+    {label:'Garage Door 16ft', cat:'Structure', w:16, d:1, door:{type:'garage', track:11}},
+  ]},
 ];
 
-const DEFAULT_FLAGS={
-  0:  {_locked:true, ov:{"w":400,"h":10,"label":"NORTH WALL"}},
-  1:  {_locked:true, _z:1, ov:{"w":400,"h":10,"label":"SOUTH WALL"}},
-  2:  {_locked:true, ov:{"w":10,"h":600,"label":"WEST WALL"}},
-  3:  {_locked:true, ov:{"w":10,"h":600,"label":"EAST WALL"}},
-  4:  {_locked:true, _pin:true, ov:{"label":"Door","cat":"Structure","w":30,"h":30}},
-  5:  {_locked:true, _pin:true, ov:{"label":"South Garage Door","cat":"Structure","w":160,"h":50}},
-  6:  {_locked:true, _pin:true, ov:{"label":"East Garage Door","cat":"Structure","w":50,"h":100}},
-  7:  {_pin:true},
-  8:  {_locked:true, _z:1, _pin:true, ov:{"label":"Lift Area","cat":"Shop","w":188,"h":260}},
-  9:  {_locked:true, _pin:true, ov:{"label":"CABINETS","cat":"Storage","w":100,"h":25}},
-  10: {_locked:true, _pin:true, ov:{"label":"Oven","cat":"Shop","w":40,"h":40}},
-  11: {ov:{"label":"200A PANEL","cat":"Electrical","w":30,"h":20}},
-  12: {_pin:true, ov:{"label":"SHELVES","cat":"Storage","w":13,"h":160}},
-  16: {_pin:true, ov:{"label":"Plasma","cat":"Metal","w":50,"h":40}},
-  17: {_z:100, ov:{"label":"MIG","cat":"Metal","w":30,"h":16}},
-  18: {ov:{"label":"Press","cat":"Metal","w":23,"h":20}},
-  19: {_pin:true},
-  21: {ov:{"label":"Table Saw","cat":"Wood","w":40,"h":30}},
-  23: {ov:{"label":"WOOD TABLE","cat":"Wood","w":50,"h":30}},
-  25: {_locked:true, _pin:true, ov:{"label":"Air","cat":"Shop","w":25,"h":25}},
-  26: {_locked:true, _pin:true, ov:{"label":"MITER TABLE","cat":"Wood","w":100,"h":25}},
-  27: {_pin:true, ov:{"label":"CABINETS","cat":"Storage","w":100,"h":25}},
-  28: {ov:{"label":"WOOD TABLE","cat":"Wood","w":50,"h":30}},
-  29: {_locked:true, _pin:true, ov:{"label":"BENDPAK 12APX","cat":"Structure","w":130,"h":20}}
-};
-const DEFAULT_CUSTOM_DEFS={
-  'cust_1771863606274': {"label": "MITER TABLE", "cat": "Wood", "w": 100, "h": 300}
+// Pre-v14 item definitions, needed only to migrate older saved layouts / JSON files.
+const LEGACY_DEFS = {
+  north_wall:['NORTH WALL','Structure',400,10], south_wall:['SOUTH WALL','Structure',400,10],
+  west_wall:['WEST WALL','Structure',10,600], east_wall:['EAST WALL','Structure',10,600],
+  entry_door:['ENTRY','Structure',30,10], garage_s:['GARAGE DOOR','Structure',160,10], garage_e:['GARAGE DOOR','Structure',10,100],
+  paint_booth:['PAINT BOOTH','Structure',280,140], lift_zone:['BENDPAK 12APX','Shop',188,260], cabinets:['CABINETS','Storage',208,20],
+  pc_oven:['PC OVEN','Shop',40,40], elec_panel:['200A PANEL','Electrical',30,16], e_shelves:['SHELVES','Storage',13,160],
+  chest1:['CRAFTSMAN','Storage',17,43], chest2:['CRAFTSMAN','Storage',17,43], chest_mid:['CABINET','Storage',15,22],
+  plasma_table:['PLASMA TABLE','Metal',90,80], welder:['MIG WELDER','Metal',30,16], shop_press:['SHOP PRESS','Metal',23,17],
+  mtbl46:['METAL TABLE','Metal',60,40], mtbl24:['METAL TABLE','Metal',40,20], table_saw:['TABLE SAW','Wood',40,30],
+  bandsaw:['BANDSAW','Wood',22,22], miter_saw:['MITER SAW','Wood',25,25], wood_table:['WOOD TABLE','Wood',80,40],
+  central_vac:['CENTRAL VAC','Shop',20,20], air_comp:['AIR COMP','Shop',25,25], wall_h:['WALL','Structure',100,10],
+  wall_v:['WALL','Structure',10,100], door_s:['DOOR','Structure',30,10], garage_door:['GARAGE DOOR','Structure',160,10],
 };
 
+// ═══════════════════════════════════════════════════════════════════
+//  State
+// ═══════════════════════════════════════════════════════════════════
+let items = {}, shedW = 40, shedH = 60, nextId = 1;
+let settings = {snap:10, hidden:[], showClr:true, showDoors:true, showDims:true};
+let sel = new Set();
+let zoom = 1;
+let hist = [], redoSt = [];
+let mode = 'select';           // 'select' | 'measure'
+let measure = null;            // {a:{x,y}, b:{x,y}}
+let ptr = null;                // active pointer interaction
+let issues = {body:new Set(), clr:new Set(), pairs:[], clrCount:0, zones:[], swingHits:0};
+let labelFit = {};             // uid → {fs, lines} | null
+let dlgUid = null;
+let lastNudge = 0, lastNudgeKey = '';
 
-let items={}, customDefs={}, snapSize=10, selUid=null, ctxUid=null, dlgUid=null, drag=null, uid_c=0;
-let shedW=40, shedH=60;
-let zoomLevel=1.0;
-let _undoStack=[], _redoStack=[], _pauseSnapshot=false;
-function _snapshot(){
-  if(_pauseSnapshot)return;
-  _undoStack.push(JSON.stringify({items,customDefs,shedW,shedH,snapSize,uid_c}));
-  _redoStack=[];
-  _syncUndoUI();
+const $ = id => document.getElementById(id);
+const wrap = $('canvasWrap'), stage = $('stage'), floor = $('floor');
+
+// ═══════════════════════════════════════════════════════════════════
+//  Geometry helpers
+// ═══════════════════════════════════════════════════════════════════
+const floorW = () => shedW*PX + PAD*2;
+const floorH = () => shedH*PX + PAD*2;
+const outer = () => ({l:PAD, t:PAD, r:PAD+shedW*PX, b:PAD+shedH*PX});
+const inner = () => ({l:PAD+WT, t:PAD+WT, r:PAD+shedW*PX-WT, b:PAD+shedH*PX-WT});
+const hasCat = c => typeof c === 'string' && Object.prototype.hasOwnProperty.call(CATS, c);
+const catOf = it => hasCat(it.cat) ? CATS[it.cat] : CATS.Custom;
+const isUtil = it => !!catOf(it).util;
+const visible = it => !settings.hidden.includes(it.cat);
+const dims = it => (it.rot % 180) ? {w:it.h, h:it.w} : {w:it.w, h:it.h};
+const rectOf = it => {const d = dims(it); return {x:it.x, y:it.y, w:d.w, h:d.h};};
+// 'area' items (rooms/zones such as a paint booth) hold equipment, so they never collide
+const collides = it => visible(it) && !it.wall && !it.door && !it.area && !isUtil(it);
+const zOf = it => it.z != null ? it.z : it.wall ? 2 : it.cat === 'Structure' ? 5 : isUtil(it) ? 1000 : 10;
+const ft = px => (px/PX).toFixed(1);
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+function overlaps(a, b, eps = 0.5){
+  return a.x < b.x+b.w-eps && b.x < a.x+a.w-eps && a.y < b.y+b.h-eps && b.y < a.y+a.h-eps;
 }
-function _syncUndoUI(){
-  const u=document.getElementById('btnUndo');
-  const r=document.getElementById('btnRedo');
-  if(u)u.disabled=_undoStack.length===0;
-  if(r)r.disabled=_redoStack.length===0;
-}
-function undo(){
-  if(!_undoStack.length)return;
-  _redoStack.push(JSON.stringify({items,customDefs,shedW,shedH,snapSize,uid_c}));
-  _applyHistoryState(JSON.parse(_undoStack.pop()));
-  _syncUndoUI();
-}
-function redo(){
-  if(!_redoStack.length)return;
-  _undoStack.push(JSON.stringify({items,customDefs,shedW,shedH,snapSize,uid_c}));
-  _applyHistoryState(JSON.parse(_redoStack.pop()));
-  _syncUndoUI();
-}
-function _applyHistoryState(s){
-  _pauseSnapshot=true;
-  items=s.items||{};customDefs=s.customDefs||{};
-  shedW=s.shedW||40;shedH=s.shedH||60;
-  snapSize=s.snapSize||10;uid_c=s.uid_c||0;
-  document.getElementById('shedW').value=shedW;
-  document.getElementById('shedH').value=shedH;
-  document.getElementById('snapSelect').value=snapSize;
-  applyFloorSize();renderAll();save();
-  _pauseSnapshot=false;
-  if(selUid&&items[selUid])showDimLines(selUid);
-  else hideDimLines();
+function fmtFtIn(px){
+  const totalIn = Math.round(px/PX*12);
+  const f = Math.floor(totalIn/12), i = totalIn % 12;
+  return `${f}' ${i}"`;
 }
 
-function getDef(item){
-  const base=DEFS[item.defId]||customDefs[item.defId]||{};
-  const merged=Object.assign({},base,item.ov||{});
-  // Apply category colors (ov can override cat, colors always derived from cat)
-  const cc=catColors(merged.cat||'Custom');
-  merged.bg=cc.bg; merged.border=cc.border; merged.color=cc.color;
-  return merged;
+// Allowed top-left range for an item
+function bounds(it){
+  const d = dims(it);
+  if (isUtil(it) || it.door){ const o = outer(); return {x0:o.l, x1:o.r-d.w, y0:o.t, y1:o.b-d.h}; }
+  if (it.cat === 'Structure') return {x0:0, x1:floorW()-d.w, y0:0, y1:floorH()-d.h};
+  const i = inner(); return {x0:i.l, x1:i.r-d.w, y0:i.t, y1:i.b-d.h};
 }
-function getDims(item){
-  const d=getDef(item);
-  const sw=(item.rot%180!==0);
-  return{w:sw?d.h:d.w, h:sw?d.w:d.h};
+function clampItem(it){
+  const b = bounds(it);
+  it.x = Math.max(b.x0, Math.min(b.x1, it.x));
+  it.y = Math.max(b.y0, Math.min(b.y1, it.y));
 }
-// Shared offscreen canvas for text measurement (lazy init)
-let _mCtx=null;
-function _measureWord(word,fs){
-  if(!_mCtx)_mCtx=document.createElement('canvas').getContext('2d');
-  _mCtx.font=`700 ${fs}px "Barlow Condensed",sans-serif`;
-  return _mCtx.measureText(word).width;
+
+// Snap to a grid anchored at the inside wall faces; picks whichever edge snaps closer
+function snRel(v, ref){ const s = settings.snap; return s > 0 ? ref + Math.round((v-ref)/s)*s : v; }
+function snX(x, w){
+  if (settings.snap <= 0) return x;
+  const i = inner(), a = snRel(x, i.l), b = snRel(x+w, i.r) - w;
+  return Math.abs(a-x) <= Math.abs(b-x) ? a : b;
 }
-function calcFs(w,h,label){
-  const pad=4;
-  const maxW=w-pad*2;
-  const minFs=7.5, maxFs=16.5;
-  if(!label||maxW<=0)return{fs:minFs,fsSub:minFs};
-  // Find the longest word — it must fit without mid-word breaking
-  const words=label.split(/\s+/);
-  const longestWord=words.reduce((a,b)=>b.length>a.length?b:a,'');
-  // Binary search: largest fs where longestWord fits within maxW
-  let lo=minFs, hi=maxFs, best=minFs;
-  while(lo<=hi){
-    const mid=+(((lo+hi)/2).toFixed(1));
-    if(_measureWord(longestWord,mid)<=maxW){best=mid;lo=+(mid+0.1).toFixed(1);}
-    else{hi=+(mid-0.1).toFixed(1);}
+function snY(y, h){
+  if (settings.snap <= 0) return y;
+  const i = inner(), a = snRel(y, i.t), b = snRel(y+h, i.b) - h;
+  return Math.abs(a-y) <= Math.abs(b-y) ? a : b;
+}
+
+// Clearance: local sides f/l/b/r map to screen sides S/W/N/E at 0°, rotating clockwise
+const SIDES = ['S','W','N','E'], SIDE_IDX = {f:0, l:1, b:2, r:3};
+const frontSide = it => SIDES[(it.rot/90) % 4];
+function clrZones(it){
+  if (!it.clr) return [];
+  const r = rectOf(it), out = [];
+  for (const k of Object.keys(it.clr)){
+    const d = it.clr[k]*PX; if (!(d > 0)) continue;
+    const side = SIDES[(SIDE_IDX[k] + it.rot/90) % 4];
+    if (side === 'S') out.push({x:r.x, y:r.y+r.h, w:r.w, h:d});
+    if (side === 'N') out.push({x:r.x, y:r.y-d, w:r.w, h:d});
+    if (side === 'W') out.push({x:r.x-d, y:r.y, w:d, h:r.h});
+    if (side === 'E') out.push({x:r.x+r.w, y:r.y, w:d, h:r.h});
   }
-  return{fs:best,fsSub:Math.max(6.75,best-2.25)};
+  return out;
 }
-function sn(v){return snapSize>0?Math.round(v/snapSize)*snapSize:v;}
-// Snap v to a grid anchored at ref
-function snRel(v,ref){
-  if(snapSize<=0)return v;
-  return ref+Math.round((v-ref)/snapSize)*snapSize;
-}
-// Snap an item's position by snapping each relevant edge to its wall anchor,
-// then picking the candidate closest to the raw value
-function snX(rawNx, w){
-  if(snapSize<=0)return rawNx;
-  const pad=40, wt=WALL_T;
-  const innerL=pad+wt;
-  const innerR=pad+shedW*PX-wt;
-  // Candidate 1: snap left edge relative to west wall
-  const cL=snRel(rawNx, innerL);
-  // Candidate 2: snap right edge relative to east wall, convert back to left pos
-  const cR=snRel(rawNx+w, innerR)-w;
-  return Math.abs(cL-rawNx)<=Math.abs(cR-rawNx)?cL:cR;
-}
-function snY(rawNy, h){
-  if(snapSize<=0)return rawNy;
-  const pad=40, wt=WALL_T;
-  const innerT=pad+wt;
-  const innerB=pad+shedH*PX-wt;
-  const cT=snRel(rawNy, innerT);
-  const cB=snRel(rawNy+h, innerB)-h;
-  return Math.abs(cT-rawNy)<=Math.abs(cB-rawNy)?cT:cB;
-}
-function pxFt(px){return(px/PX).toFixed(1);}
-function ftPx(ft){return Math.round(parseFloat(ft)*PX);}
 
-// ── Label tooltip overlay ──────────────────────────────────────────────────
-let _tipUid=null;  // hover/select tip
-// Pinned tips: each pinned item gets its own fixed div
-const _pinEls={};
-function _getPinEl(uid){
-  if(!_pinEls[uid]){
-    const d=document.createElement('div');
-    d.className='lbl-tip';
-    d.id='pin_'+uid;
-    document.body.appendChild(d);
-    _pinEls[uid]=d;
+// Door geometry: which wall it's on, which way the room is, swing / track footprint
+function doorGeom(it){
+  const r = rectOf(it), o = outer();
+  const cx = r.x + r.w/2, cy = r.y + r.h/2;
+  const ds = {N:Math.abs(cy-o.t), S:Math.abs(cy-o.b), W:Math.abs(cx-o.l), E:Math.abs(cx-o.r)};
+  const side = Object.keys(ds).reduce((a, b) => ds[b] < ds[a] ? b : a);
+  const horiz = side === 'N' || side === 'S';
+  const L = horiz ? r.w : r.h;
+  const n = {N:[0,1], S:[0,-1], W:[1,0], E:[-1,0]}[side];
+  let A, B;
+  if (horiz){ const fy = side === 'N' ? r.y+r.h : r.y; A = [r.x, fy]; B = [r.x+r.w, fy]; }
+  else      { const fx = side === 'W' ? r.x+r.w : r.x; A = [fx, r.y]; B = [fx, r.y+r.h]; }
+  const hinge = it.door.hinge === 'R' ? B : A, jamb = it.door.hinge === 'R' ? A : B;
+  const box = depth => horiz
+    ? {x:r.x, y:n[1] > 0 ? A[1] : A[1]-depth, w:L, h:depth}
+    : {x:n[0] > 0 ? A[0] : A[0]-depth, y:r.y, w:depth, h:L};
+  return {side, L, n, hinge, jamb, swing:box(L), track:box((it.door.track || 0)*PX)};
+}
+// Does rect r intrude into the door's quarter-circle swing?
+function swingHit(g, r){
+  const s = g.swing;
+  const ix0 = Math.max(r.x, s.x), iy0 = Math.max(r.y, s.y), ix1 = Math.min(r.x+r.w, s.x+s.w), iy1 = Math.min(r.y+r.h, s.y+s.h);
+  if (ix1 - ix0 <= 0.5 || iy1 - iy0 <= 0.5) return false;
+  const px = clamp(g.hinge[0], ix0, ix1), py = clamp(g.hinge[1], iy0, iy1);
+  return Math.hypot(px-g.hinge[0], py-g.hinge[1]) < g.L - 0.5;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Layout data: cleaning, migration, (de)serialisation
+// ═══════════════════════════════════════════════════════════════════
+function num(v, dflt = 0){ v = +v; return Number.isFinite(v) ? v : dflt; }
+function cleanItem(o){
+  const it = {
+    label: String(o.label ?? 'ITEM').slice(0, 80),
+    cat: hasCat(o.cat) ? o.cat : 'Custom',
+    w: Math.max(1, num(o.w, 10)), h: Math.max(1, num(o.h, 10)),
+    x: num(o.x), y: num(o.y),
+    rot: [0, 90, 180, 270].includes(+o.rot) ? +o.rot : 0,
+  };
+  if (o.locked) it.locked = true;
+  if (o.pin) it.pin = true;
+  if (o.z != null && Number.isFinite(+o.z)) it.z = +o.z;
+  if (['N','S','E','W'].includes(o.wall)) it.wall = o.wall;
+  if (o.door && ['door','garage'].includes(o.door.type)){
+    it.door = {type:o.door.type, hinge:o.door.hinge === 'R' ? 'R' : 'L',
+               track: clamp(num(o.door.track, o.door.type === 'garage' ? 11 : 0), 0, 50)};
   }
-  return _pinEls[uid];
+  if (o.clr && typeof o.clr === 'object'){
+    const c = {};
+    for (const k of ['f','b','l','r']){ const v = num(o.clr[k]); if (v > 0) c[k] = Math.min(50, v); }
+    if (Object.keys(c).length) it.clr = c;
+  }
+  if (o.glyph) it.glyph = String(o.glyph).slice(0, 4);
+  if (o.area) it.area = true;
+  return it;
 }
-function _removePinEl(uid){
-  if(_pinEls[uid]){_pinEls[uid].remove();delete _pinEls[uid];}
+
+// Old (v13 and earlier) items: {defId, x, y, rot, ov, _locked, _pin, _z} + customDefs
+function migrateLegacy(list, cdefs, sw, sh){
+  const out = [];
+  for (const it of list){
+    if (!it || typeof it !== 'object') continue;
+    const L = LEGACY_DEFS[it.defId];
+    const base = L ? {label:L[0], cat:L[1], w:L[2], h:L[3]} : (cdefs[it.defId] || {});
+    const d = Object.assign({}, base, it.ov || {});
+    const did = String(it.defId || '');
+    const o = {label:d.label, cat:d.cat, w:d.w, h:d.h, x:it.x, y:it.y, rot:it.rot,
+               locked:it._locked, pin:it._pin, z:it._z};
+    const wall = {north_wall:'N', south_wall:'S', east_wall:'E', west_wall:'W'}[did];
+    if (wall){ o.wall = wall; o.locked = true; }
+    else if (o.cat === 'Structure' && !/door|garage|entry/.test(did)) o.area = true;   // old Structure items never collided
+    else if (/garage/.test(did)) o.door = {type:'garage', track:11};
+    else if (/entry_door|door_s/.test(did)) o.door = {type:'door', hinge:'L'};
+    const n = cleanItem(o);
+    if (n.door) snapDoorToWall(n, sw, sh);
+    out.push(n);
+  }
+  return out;
 }
-function _movePinEl(uid){
-  const el=document.getElementById('i_'+uid);
-  const d=_pinEls[uid];
-  if(!el||!d)return;
-  const r=el.getBoundingClientRect();
-  const hdr=document.querySelector('header');
-  const headerBottom=hdr?hdr.getBoundingClientRect().bottom:0;
-  const cx=r.left+r.width/2;
-  const cy=r.top+r.height/2;
-  d.style.left=cx+'px';
-  // Hide pin label if item center is behind the header
-  if(cy < headerBottom){
-    d.style.display='none';
-  } else {
-    d.style.display='block';
-    d.style.top=cy+'px';
+// Put a door flush in the band of its nearest outer wall, wall-thick
+function snapDoorToWall(it, sw, sh){
+  const d = dims(it), cx = it.x + d.w/2, cy = it.y + d.h/2;
+  const o = {l:PAD, t:PAD, r:PAD+sw*PX, b:PAD+sh*PX};
+  const ds = {N:Math.abs(cy-o.t), S:Math.abs(cy-o.b), W:Math.abs(cx-o.l), E:Math.abs(cx-o.r)};
+  const side = Object.keys(ds).reduce((a, b) => ds[b] < ds[a] ? b : a);
+  it.rot = 0;
+  if (side === 'N' || side === 'S'){ it.w = d.w; it.h = WT; it.y = side === 'N' ? o.t : o.b - WT; }
+  else { it.h = d.h; it.w = WT; it.x = side === 'W' ? o.l : o.r - WT; }
+}
+
+// Accepts current files, legacy files, version snapshots, share payloads, and bare legacy item maps
+function parseLayout(data){
+  if (!data || typeof data !== 'object') throw new Error('Not a layout file');
+  let src = data;
+  if (typeof data.state === 'string') src = JSON.parse(data.state);
+  let its = src.items;
+  if (!its && Object.values(src).some(v => v && typeof v === 'object' && v.defId)) its = src; // bare legacy map
+  if (!its || typeof its !== 'object') throw new Error('No items found');
+  const list = Array.isArray(its) ? its : Object.values(its);
+  const sw = Math.round(clamp(num(src.shedW, 40), 10, 200)), sh = Math.round(clamp(num(src.shedH, 60), 10, 200));
+  const legacy = list.some(i => i && i.defId);
+  return {shedW:sw, shedH:sh, items: legacy ? migrateLegacy(list, src.customDefs || {}, sw, sh) : list.filter(i => i && typeof i === 'object').map(cleanItem),
+          snapSize: legacy && src.snapSize !== undefined ? num(src.snapSize, 10) : undefined};
+}
+function setLayoutData(L){
+  shedW = L.shedW; shedH = L.shedH;
+  items = {}; nextId = 1;
+  for (const it of L.items) items['i' + (nextId++)] = it;
+  positionWalls();
+  for (const it of Object.values(items)) if (!it.wall) clampItem(it);
+  sel.clear(); measure = null;
+}
+function newId(){ return 'i' + (nextId++); }
+// z for a new item: above everything that has an explicit order (utilities keep their high default)
+function topZ(it){
+  if (isUtil(it)) return undefined;
+  const zs = Object.values(items).filter(o => o.z != null && !isUtil(o)).map(o => o.z);
+  return zs.length ? Math.max(...zs) + 1 : undefined;
+}
+function syncNextId(){
+  nextId = 1;
+  for (const u of Object.keys(items)){ const n = parseInt(u.slice(1)); if (n >= nextId) nextId = n + 1; }
+}
+function positionWalls(){
+  const wPx = shedW*PX, hPx = shedH*PX;
+  for (const it of Object.values(items)){
+    if (!it.wall) continue;
+    it.rot = 0;
+    if (it.wall === 'N'){ it.x = PAD; it.y = PAD; it.w = wPx; it.h = WT; }
+    if (it.wall === 'S'){ it.x = PAD; it.y = PAD+hPx-WT; it.w = wPx; it.h = WT; }
+    if (it.wall === 'W'){ it.x = PAD; it.y = PAD; it.w = WT; it.h = hPx; }
+    if (it.wall === 'E'){ it.x = PAD+wPx-WT; it.y = PAD; it.w = WT; it.h = hPx; }
   }
 }
-function refreshPins(){
-  Object.keys(_pinEls).forEach(uid=>_movePinEl(uid));
+const serial = () => JSON.stringify({shedW, shedH, items});
+const payload = () => ({app:'workshop-planner', version:3, shedW, shedH, items:Object.values(items)});
+
+// ═══════════════════════════════════════════════════════════════════
+//  Persistence & history
+// ═══════════════════════════════════════════════════════════════════
+function save(){
+  try { localStorage.setItem(SK, JSON.stringify({version:3, shedW, shedH, items})); }
+  catch (e){ toast('Could not save to browser storage'); }
 }
-function showTip(uid){
-  _tipUid=uid;
-  // Don't show hover tip if already pinned
-  if(items[uid]&&items[uid]._pin)return;
-  const def=getDef(items[uid]);
-  const tip=document.getElementById('lblTip');
-  tip.textContent=def.label||'';
-  tip.style.display='block';
-  moveTip(uid);
+function saveSettings(){ try { localStorage.setItem(SETTINGS_K, JSON.stringify(settings)); } catch (e){} }
+function loadSettings(){
+  try { const s = JSON.parse(localStorage.getItem(SETTINGS_K)); if (s) Object.assign(settings, s); } catch (e){}
+  if (!Array.isArray(settings.hidden)) settings.hidden = [];
+  return !!localStorage.getItem(SETTINGS_K);
 }
-function moveTip(uid){
-  const el=document.getElementById('i_'+uid);
-  const tip=document.getElementById('lblTip');
-  if(!el||!tip)return;
-  const r=el.getBoundingClientRect();
-  tip.style.left=(r.left+r.width/2)+'px';
-  tip.style.top =(r.top +r.height/2)+'px';
+function pushHistory(prev){
+  lastNudge = 0;
+  hist.push(prev); if (hist.length > 200) hist.shift();
+  redoSt = []; syncUndo();
 }
-function hideTip(){
-  _tipUid=null;
-  document.getElementById('lblTip').style.display='none';
+// Run a change; records undo only if something actually changed
+function mutate(fn){
+  const prev = serial();
+  fn();
+  if (serial() !== prev) pushHistory(prev);
+  save(); render();
 }
-function applyPin(uid){
-  const item=items[uid];
-  if(!item)return;
-  if(item._pin){
-    const d=_getPinEl(uid);
-    const def=getDef(item);
-    d.textContent=def.label||'';
-    d.style.display='block';
-    _movePinEl(uid);
-  } else {
-    _removePinEl(uid);
+function restore(str){
+  const s = JSON.parse(str), resized = s.shedW !== shedW || s.shedH !== shedH;
+  shedW = s.shedW; shedH = s.shedH; items = s.items;
+  syncNextId();
+  for (const u of [...sel]) if (!items[u]) sel.delete(u);
+  save(); render();
+  if (resized) zoomFit();
+}
+function undo(){ lastNudge = 0; if (!hist.length) return; redoSt.push(serial()); restore(hist.pop()); syncUndo(); }
+function redo(){ lastNudge = 0; if (!redoSt.length) return; hist.push(serial()); restore(redoSt.pop()); syncUndo(); }
+function syncUndo(){ $('btnUndo').disabled = !hist.length; $('btnRedo').disabled = !redoSt.length; }
+
+// ═══════════════════════════════════════════════════════════════════
+//  Labels
+// ═══════════════════════════════════════════════════════════════════
+const mctx = document.createElement('canvas').getContext('2d');
+function textW(t, fs){ mctx.font = `700 ${fs}px "Barlow Condensed","Arial Narrow",sans-serif`; return mctx.measureText(t).width; }
+// Largest font (7–16 px) at which the label fits inside w×h, wrapping on spaces only
+function fitLabel(label, w, h){
+  label = (label || '').toUpperCase().trim();
+  const maxW = w - 6, maxH = h - 4;
+  if (!label || maxW < 6 || maxH < 6) return null;
+  const words = label.split(/\s+/);
+  for (let fs = 16; fs >= 7; fs -= 0.5){
+    if (words.some(x => textW(x, fs) > maxW)) continue;
+    const lines = []; let cur = '';
+    for (const wd of words){
+      const t = cur ? cur + ' ' + wd : wd;
+      if (textW(t, fs) <= maxW) cur = t; else { lines.push(cur); cur = wd; }
+    }
+    lines.push(cur);
+    if (lines.length * fs * 1.1 <= maxH) return {fs, lines};
+  }
+  return null;
+}
+const glyphOf = it => it.glyph || GLYPHS[it.cat] || '';
+
+// ═══════════════════════════════════════════════════════════════════
+//  Issues: overlaps, clearance, door swings
+// ═══════════════════════════════════════════════════════════════════
+function computeIssues(){
+  const vis = Object.entries(items).filter(([, it]) => visible(it));
+  const bodies = vis.filter(([, it]) => collides(it)).map(([u, it]) => [u, rectOf(it)]);
+  const body = new Set(), clr = new Set(), pairs = [], zones = [];
+  let clrCount = 0, swingHits = 0;
+  for (let i = 0; i < bodies.length; i++)
+    for (let j = i + 1; j < bodies.length; j++)
+      if (overlaps(bodies[i][1], bodies[j][1])){ pairs.push([bodies[i][0], bodies[j][0]]); body.add(bodies[i][0]); body.add(bodies[j][0]); }
+  const I = inner();
+  const doors = vis.filter(([, it]) => it.door).map(([u, it]) => [u, it, doorGeom(it)]);
+  for (const [u, it] of vis){
+    if (!it.clr || it.wall || it.door) continue;
+    for (const z of clrZones(it)){
+      const out = z.x < I.l-0.5 || z.y < I.t-0.5 || z.x+z.w > I.r+0.5 || z.y+z.h > I.b+0.5;
+      const hit = out || bodies.some(([v, r]) => v !== u && overlaps(z, r)) || doors.some(([, , g]) => overlaps(z, g.swing));
+      zones.push({u, z, hit});
+      if (hit){ clr.add(u); clrCount++; }
+    }
+  }
+  for (const [, it, g] of doors){
+    if (it.door.type !== 'door') continue;
+    for (const [v, r] of bodies) if (swingHit(g, r)){ body.add(v); swingHits++; }
+  }
+  return {body, clr, pairs, clrCount: clrCount + swingHits, zones, swingHits};
+}
+function selectIssues(){
+  if (!issues.body.size && !issues.clr.size) return;
+  sel = new Set([...issues.body, ...issues.clr]);
+  afterSelChange();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Rendering
+// ═══════════════════════════════════════════════════════════════════
+function applyFloorSize(){
+  const fw = floorW(), fh = floorH();
+  floor.style.width = fw + 'px'; floor.style.height = fh + 'px';
+  for (const id of ['gridSvg', 'underlay', 'hitLayer', 'overlay']){ $(id).setAttribute('width', fw); $(id).setAttribute('height', fh); }
+  $('gridFill').setAttribute('width', fw); $('gridFill').setAttribute('height', fh);
+  $('headerSub').textContent = `${shedW} × ${shedH} ft  |  1 sq = 1 ft`;
+  $('shedW').value = shedW; $('shedH').value = shedH;
+  layoutStage();
+}
+function render(){
+  applyFloorSize();
+  issues = computeIssues();
+  renderItems(); renderUnderlay(); renderPins(); renderOverlay(); renderInfo(); renderLayers();
+  syncUndo(); hideTip();
+}
+// Lightweight refresh while dragging
+function refreshDynamic(){
+  issues = computeIssues();
+  for (const el of floor.querySelectorAll('.item')) el.classList.toggle('hit', issues.body.has(el.dataset.uid));
+  renderUnderlay(); renderPins(); renderOverlay(); renderInfo();
+}
+function renderItems(){
+  floor.querySelectorAll('.item').forEach(e => e.remove());
+  labelFit = {};
+  const frag = document.createDocumentFragment();
+  for (const [u, it] of Object.entries(items)){
+    if (!visible(it)) continue;
+    const c = catOf(it), d = dims(it), el = document.createElement('div');
+    el.className = 'item';
+    el.dataset.uid = u; el.id = 'i_' + u;
+    if (isUtil(it)) el.classList.add('util', Math.abs(d.w - d.h) > 0.5 ? 'rect' : 'round');
+    if (it.locked) el.classList.add('locked');
+    if (sel.has(u)) el.classList.add('selected');
+    if (issues.body.has(u)) el.classList.add('hit');
+    if (it.clr) el.dataset.front = frontSide(it);
+    el.style.cssText = `left:${it.x}px;top:${it.y}px;width:${d.w}px;height:${d.h}px;z-index:${zOf(it)};`
+      + `--c:${c.c};--bg:${hexA(c.c, .13)};--fg:${c.fg}`;
+    const span = document.createElement('span'); span.className = 'ilabel';
+    if (isUtil(it)){
+      span.textContent = glyphOf(it);
+      span.style.fontSize = Math.max(4, Math.min(d.w, d.h) * (glyphOf(it).length > 1 ? .42 : .7)) + 'px';
+      labelFit[u] = null;
+    } else {
+      const f = fitLabel(it.label, d.w, d.h);
+      labelFit[u] = f;
+      if (f){ span.textContent = f.lines.join('\n'); span.style.fontSize = f.fs + 'px'; }
+    }
+    el.appendChild(span);
+    frag.appendChild(el);
+  }
+  floor.insertBefore(frag, $('pinLayer'));
+}
+function renderUnderlay(){
+  let s = '';
+  const ns = 'vector-effect="non-scaling-stroke"';
+  if (settings.showDoors){
+    for (const it of Object.values(items)){
+      if (!it.door || !visible(it)) continue;
+      const g = doorGeom(it);
+      if (it.door.type === 'garage' && it.door.track > 0){
+        const t = g.track;
+        s += `<rect x="${t.x}" y="${t.y}" width="${t.w}" height="${t.h}" fill="rgba(120,120,120,.06)" stroke="#5a5a5a" stroke-width="1" stroke-dasharray="6 4" ${ns}/>`;
+        const vert = g.side === 'E' || g.side === 'W';
+        s += `<text x="${t.x+t.w/2}" y="${t.y+t.h/2}" fill="#4a4a4a" font-size="9" font-family="Share Tech Mono,monospace" text-anchor="middle" dominant-baseline="middle"`
+          + (vert ? ` transform="rotate(-90 ${t.x+t.w/2} ${t.y+t.h/2})"` : '') + `>OVERHEAD TRACK ${it.door.track} FT</text>`;
+      }
+      if (it.door.type === 'door'){
+        const [hx, hy] = g.hinge, tx = hx + g.n[0]*g.L, ty = hy + g.n[1]*g.L, [jx, jy] = g.jamb;
+        const cross = (tx-hx)*(jy-hy) - (ty-hy)*(jx-hx);
+        s += `<path d="M${hx} ${hy}L${tx} ${ty}A${g.L} ${g.L} 0 0 ${cross > 0 ? 1 : 0} ${jx} ${jy}" fill="rgba(150,150,150,.07)" stroke="#888" stroke-width="1" ${ns}/>`;
+      }
+    }
+  }
+  if (settings.showClr){
+    for (const {z, hit} of issues.zones){
+      s += `<rect x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" fill="${hit ? 'rgba(255,82,82,.16)' : 'rgba(232,160,32,.08)'}" `
+        + `stroke="${hit ? '#ff5252' : '#a07020'}" stroke-width="1" stroke-dasharray="3 3" ${ns}/>`;
+    }
+  }
+  $('underlay').innerHTML = s;
+  let h = '';
+  for (const [a, b] of issues.pairs){
+    const r = interRect(rectOf(items[a]), rectOf(items[b]));
+    h += `<rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" fill="url(#hatch)" stroke="#ff5252" stroke-width="1.5" vector-effect="non-scaling-stroke"/>`;
+  }
+  $('hitG').innerHTML = h;
+}
+function interRect(a, b){
+  const x = Math.max(a.x, b.x), y = Math.max(a.y, b.y);
+  return {x, y, w:Math.min(a.x+a.w, b.x+b.w) - x, h:Math.min(a.y+a.h, b.y+b.h) - y};
+}
+// Name chips for pinned/selected items whose label doesn't fit inside
+function renderPins(){
+  const layer = $('pinLayer'); layer.textContent = '';
+  for (const [u, it] of Object.entries(items)){
+    if (!visible(it) || !(it.pin || sel.has(u)) || labelFit[u]) continue;
+    const r = rectOf(it), chip = document.createElement('div');
+    chip.className = 'chip' + (sel.has(u) ? ' sel' : '');
+    chip.textContent = it.label;
+    chip.style.left = (r.x + r.w/2) + 'px'; chip.style.top = (r.y + r.h/2) + 'px';
+    layer.appendChild(chip);
   }
 }
-
-function _syncZoomUI(){
-  const pct=Math.round(zoomLevel*100);
-  document.getElementById('zoomPct').textContent=pct+'%';
-  const sl=document.getElementById('zoomSlider');
-  if(sl)sl.value=Math.min(400,Math.max(100,pct));
-}
-function _applyZoom(newZoom, wrap){
-  const zw=document.getElementById('zoomWrap');
-  const floor=document.getElementById('floor');
-  const HPAD=267, VPAD=100;
-  const fw=floor.offsetWidth;
-  const fh=floor.offsetHeight;
-
-  // zoomWrap's current position in scroll space
-  const zwLeft=zw.offsetLeft;
-  const zwTop =zw.offsetTop;
-
-  // Content coords at viewport center before zoom
-  const contentX=(wrap.scrollLeft+wrap.clientWidth/2 -zwLeft)/zoomLevel;
-  const contentY=(wrap.scrollTop +wrap.clientHeight/2-zwTop )/zoomLevel;
-
-  zoomLevel=newZoom;
-  zw.style.transform=`scale(${zoomLevel})`;
-
-  const scaledFw=fw*zoomLevel;
-  const scaledFh=fh*zoomLevel;
-
-  // Update zoomPad size
-  const zp=document.getElementById('zoomPad');
-  if(zp){
-    zp.style.width =Math.max(scaledFw+HPAD*2, wrap.clientWidth) +'px';
-    zp.style.height=Math.max(scaledFh+VPAD*2, wrap.clientHeight)+'px';
+function renderOverlay(){
+  const iz = 1/zoom, ns = 'vector-effect="non-scaling-stroke"';
+  let s = '';
+  const prim = ptr && ptr.type === 'drag' && ptr.moved ? ptr.uid : (sel.size === 1 ? [...sel][0] : null);
+  if (prim && items[prim] && settings.showDims && visible(items[prim]) && !items[prim].wall){
+    const r = rectOf(items[prim]), I = inner();
+    const segs = [
+      ['h', 'W', r.x - I.l, I.l, r.y+r.h/2, r.x, r.y+r.h/2],
+      ['h', 'E', I.r - (r.x+r.w), r.x+r.w, r.y+r.h/2, I.r, r.y+r.h/2],
+      ['v', 'N', r.y - I.t, r.x+r.w/2, I.t, r.x+r.w/2, r.y],
+      ['v', 'S', I.b - (r.y+r.h), r.x+r.w/2, r.y+r.h, r.x+r.w/2, I.b],
+    ].filter(sg => sg[2] > 0.5);
+    for (const [ax, wall, dist, x1, y1, x2, y2] of segs){
+      s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#e8a020" stroke-width="1.5" stroke-dasharray="5 3" ${ns}/>`;
+      for (const [cx, cy] of [[x1, y1], [x2, y2]]){
+        s += ax === 'h' ? `<line x1="${cx}" y1="${cy-7*iz}" x2="${cx}" y2="${cy+7*iz}" stroke="#e8a020" stroke-width="1.5" ${ns}/>`
+                        : `<line x1="${cx-7*iz}" y1="${cy}" x2="${cx+7*iz}" y2="${cy}" stroke="#e8a020" stroke-width="1.5" ${ns}/>`;
+      }
+      const tx = ax === 'h' ? (x1+x2)/2 : (wall === 'N' ? x1 + 9*iz : x1 - 9*iz);
+      const ty = ax === 'h' ? (wall === 'W' ? y1 - 9*iz : y1 + 19*iz) : (y1+y2)/2 + 5*iz;
+      const anchor = ax === 'h' ? 'middle' : (wall === 'N' ? 'start' : 'end');
+      s += txt(tx, ty, anchor, `${ft(dist)} ft`, 13*iz, '#e8a020');
+    }
   }
-
-  // Per-axis: center with CSS if scaled floor fits, else use PAD+scroll
-  let newLeft, newTop;
-  if(scaledFw<=wrap.clientWidth){
-    newLeft=Math.round(wrap.clientWidth/2-scaledFw/2);
-    wrap.scrollLeft=0;
-  } else {
-    newLeft=HPAD;
-    wrap.scrollLeft=HPAD+contentX*zoomLevel-wrap.clientWidth/2;
+  if (measure){
+    const {a, b} = measure, d = Math.hypot(b.x-a.x, b.y-a.y);
+    s += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#4fc3f7" stroke-width="2" ${ns}/>`;
+    s += `<circle cx="${a.x}" cy="${a.y}" r="${4*iz}" fill="#4fc3f7"/><circle cx="${b.x}" cy="${b.y}" r="${4*iz}" fill="#4fc3f7"/>`;
+    if (d > 0.5) s += txt((a.x+b.x)/2, (a.y+b.y)/2 - 10*iz, 'middle', `${(d/PX).toFixed(2)} ft  (${fmtFtIn(d)})`, 15*iz, '#4fc3f7');
   }
-  if(scaledFh<=wrap.clientHeight){
-    newTop=Math.round(wrap.clientHeight/2-scaledFh/2);
-    wrap.scrollTop=0;
-  } else {
-    newTop=VPAD;
-    wrap.scrollTop=VPAD+contentY*zoomLevel-wrap.clientHeight/2;
+  if (ptr && ptr.type === 'marquee'){
+    const r = normRect(ptr.a, ptr.b);
+    s += `<rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" fill="rgba(232,160,32,.08)" stroke="#e8a020" stroke-width="1" stroke-dasharray="4 3" ${ns}/>`;
   }
-  zw.style.left=newLeft+'px';
-  zw.style.top =newTop+'px';
+  $('overlay').innerHTML = s;
+}
+function txt(x, y, anchor, str, fs, fill){
+  return `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="${fs}" font-weight="700" font-family="Share Tech Mono,monospace" `
+    + `fill="${fill}" stroke="#0f0f0f" stroke-width="${fs/4}" paint-order="stroke">${str}</text>`;
+}
+const normRect = (a, b) => ({x:Math.min(a.x, b.x), y:Math.min(a.y, b.y), w:Math.abs(b.x-a.x), h:Math.abs(b.y-a.y)});
 
-  _syncZoomUI();
-  if(_tipUid)moveTip(_tipUid);
-  refreshPins();
+function renderInfo(){
+  const ids = [...sel].filter(u => items[u]);
+  if (!ids.length){ $('iSel').textContent = 'none'; $('iSize').textContent = '—'; }
+  else if (ids.length === 1){ const it = items[ids[0]], d = dims(it); $('iSel').textContent = it.label; $('iSize').textContent = `${ft(d.w)} × ${ft(d.h)} ft`; }
+  else { $('iSel').textContent = `${ids.length} items`; $('iSize').textContent = '—'; }
+  const el = $('iIssues'), np = issues.pairs.length, nc = issues.clrCount;
+  if (!np && !nc){ el.textContent = '✓ none'; el.className = 'ok'; el.title = ''; }
+  else {
+    el.textContent = `⚠ ${np} overlap${np === 1 ? '' : 's'} · ${nc} clearance`;
+    el.className = 'bad'; el.title = 'Click to select the items involved';
+  }
 }
-function setZoomFromSlider(val){
-  const wrap=document.getElementById('canvasWrap');
-  _applyZoom(val/100, wrap);
+function renderLayers(){
+  const box = $('layers'); box.textContent = '';
+  const counts = {};
+  for (const it of Object.values(items)) counts[it.cat] = (counts[it.cat] || 0) + 1;
+  for (const [name, c] of Object.entries(CATS)){
+    const row = document.createElement('label'); row.className = 'layer-row';
+    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !settings.hidden.includes(name);
+    cb.onchange = () => {
+      settings.hidden = cb.checked ? settings.hidden.filter(h => h !== name) : [...settings.hidden, name];
+      for (const u of [...sel]) if (items[u] && !visible(items[u])) sel.delete(u);
+      saveSettings(); render();
+    };
+    const sw = document.createElement('span'); sw.className = 'sw'; sw.style.setProperty('--c', c.c); sw.style.setProperty('--bgc', hexA(c.c, .2));
+    if (c.util) sw.style.borderRadius = '50%';
+    const nm = document.createElement('span'); nm.textContent = name;
+    const cnt = document.createElement('span'); cnt.className = 'cnt'; cnt.textContent = counts[name] || 0;
+    row.append(cb, sw, nm, cnt); box.appendChild(row);
+  }
+  const extra = [['showClr', 'Clearance zones'], ['showDoors', 'Door swings & tracks'], ['showDims', 'Dimensions on select']];
+  const hr = document.createElement('div'); hr.style.cssText = 'border-top:1px solid var(--border);margin:5px 0'; box.appendChild(hr);
+  for (const [key, name] of extra){
+    const row = document.createElement('label'); row.className = 'layer-row';
+    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!settings[key];
+    cb.onchange = () => { settings[key] = cb.checked; saveSettings(); render(); };
+    const nm = document.createElement('span'); nm.textContent = name;
+    row.append(cb, nm); box.appendChild(row);
+  }
+}
+function afterSelChange(){
+  for (const el of floor.querySelectorAll('.item')) el.classList.toggle('selected', sel.has(el.dataset.uid));
+  renderPins(); renderOverlay(); renderInfo();
 }
 
-// ============ SAVED VERSIONS ============
-const VSK='ws_planner_versions_v1';
-function _loadVersions(){
-  try{return JSON.parse(localStorage.getItem(VSK))||[];}catch(e){return[];}
+// ═══════════════════════════════════════════════════════════════════
+//  Zoom & view
+// ═══════════════════════════════════════════════════════════════════
+const M = 20;  // screen-px margin around the floor inside the scroll area
+function layoutStage(){
+  const sw = floorW()*zoom, sh = floorH()*zoom;
+  const W = Math.max(sw + 2*M, wrap.clientWidth), H = Math.max(sh + 2*M, wrap.clientHeight);
+  stage.style.width = W + 'px'; stage.style.height = H + 'px';
+  floor.style.left = ((W - sw)/2) + 'px'; floor.style.top = ((H - sh)/2) + 'px';
+  floor.style.transform = `scale(${zoom})`;
+  floor.style.setProperty('--iz', 1/zoom);
 }
-function _saveVersions(vs){
-  try{localStorage.setItem(VSK,JSON.stringify(vs));}catch(e){}
+function fp(e){ const r = floor.getBoundingClientRect(); return {x:(e.clientX - r.left)/zoom, y:(e.clientY - r.top)/zoom}; }
+function setZoom(z, cx, cy){
+  z = clamp(z, ZMIN, ZMAX);
+  const wr = wrap.getBoundingClientRect();
+  if (cx == null){ cx = wr.left + wrap.clientWidth/2; cy = wr.top + wrap.clientHeight/2; }
+  const p = fp({clientX:cx, clientY:cy});
+  zoom = z; layoutStage();
+  wrap.scrollLeft = parseFloat(floor.style.left) + p.x*zoom - (cx - wr.left);
+  wrap.scrollTop  = parseFloat(floor.style.top)  + p.y*zoom - (cy - wr.top);
+  afterZoom();
 }
-function openVersionsDlg(){
-  _renderVersionsList();
-  document.getElementById('verOv').classList.add('show');
+function zoomStep(dir){ setZoom(zoom * (dir > 0 ? 1.25 : 0.8)); }
+function zoomFit(){
+  // measure without scrollbars: shrink stage first
+  stage.style.width = '0px'; stage.style.height = '0px';
+  zoom = clamp(Math.min((wrap.clientWidth - 2*M)/floorW(), (wrap.clientHeight - 2*M)/floorH()), ZMIN, ZMAX);
+  layoutStage();
+  wrap.scrollLeft = (stage.offsetWidth - wrap.clientWidth)/2;
+  wrap.scrollTop = (stage.offsetHeight - wrap.clientHeight)/2;
+  afterZoom();
 }
-function closeVersionsDlg(){
-  document.getElementById('verOv').classList.remove('show');
+const sliderToZoom = v => ZMIN * Math.pow(ZMAX/ZMIN, v/1000);
+const zoomToSlider = z => Math.round(1000 * Math.log(z/ZMIN) / Math.log(ZMAX/ZMIN));
+function afterZoom(){
+  $('zoomPct').textContent = Math.round(zoom*100) + '%';
+  $('zoomSlider').value = zoomToSlider(zoom);
+  const opts = [1, 2, 5, 10, 20, 50, 100];
+  const f = opts.find(o => o*PX*zoom >= 60) || 100;
+  $('scaleBar').style.width = (f*PX*zoom) + 'px';
+  $('scaleLbl').textContent = f + ' ft';
+  renderOverlay(); hideTip();
 }
-function _renderVersionsList(){
-  const vs=_loadVersions();
-  const list=document.getElementById('verList');
-  list.innerHTML='';
-  if(vs.length===0){
-    list.innerHTML='<div style="color:var(--text-dim);font-size:15px;padding:8px 0">No saved versions yet.</div>';
+function viewCenter(){ const r = wrap.getBoundingClientRect(); return fp({clientX:r.left + wrap.clientWidth/2, clientY:r.top + wrap.clientHeight/2}); }
+
+// ═══════════════════════════════════════════════════════════════════
+//  Pointer interaction (mouse, pen, touch)
+// ═══════════════════════════════════════════════════════════════════
+const touches = new Map();
+let pinch = null, spaceDown = false, lpTimer = null;
+
+function measurePt(p, e, anchor){
+  let {x, y} = p;
+  if (!e.altKey && settings.snap > 0){ const i = inner(); x = snRel(x, i.l); y = snRel(y, i.t); }
+  if (anchor && e.shiftKey){ if (Math.abs(x - anchor.x) > Math.abs(y - anchor.y)) y = anchor.y; else x = anchor.x; }
+  return {x, y};
+}
+wrap.addEventListener('pointerdown', e => {
+  hideTip(); hideCtx();
+  if (e.pointerType === 'touch'){
+    touches.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    if (touches.size === 2){ startPinch(); return; }
+    if (touches.size > 2) return;
+  }
+  if (e.button === 2) return;
+  const el = e.target.closest('.item'), uid = el ? el.dataset.uid : null;
+  const p = fp(e);
+  if (e.button === 1 || spaceDown || (e.pointerType === 'touch' && !uid && mode !== 'measure')){
+    e.preventDefault();
+    ptr = {type:'pan', id:e.pointerId, sx:e.clientX, sy:e.clientY, sl:wrap.scrollLeft, st:wrap.scrollTop, touch:e.pointerType === 'touch' && !uid};
+    wrap.classList.add('panning'); return;
+  }
+  if (mode === 'measure'){
+    const a = measurePt(p, e); measure = {a, b:{...a}};
+    ptr = {type:'measure', id:e.pointerId}; renderOverlay(); return;
+  }
+  if (uid){
+    e.preventDefault();
+    if (e.shiftKey || e.ctrlKey || e.metaKey){
+      sel.has(uid) ? sel.delete(uid) : sel.add(uid);
+      afterSelChange(); return;
+    }
+    if (!sel.has(uid)){ sel = new Set([uid]); afterSelChange(); }
+    const movers = [...sel].filter(u => items[u] && !items[u].locked && !items[u].wall);
+    ptr = {type:'drag', id:e.pointerId, uid, sx:e.clientX, sy:e.clientY, p0:p, movers, moved:false, prev:serial(),
+           start:Object.fromEntries(movers.map(u => [u, {x:items[u].x, y:items[u].y}]))};
+    if (e.pointerType === 'touch'){
+      clearTimeout(lpTimer);
+      lpTimer = setTimeout(() => { if (ptr && ptr.type === 'drag' && !ptr.moved){ ptr = null; showCtxAt(e.clientX, e.clientY); } }, 550);
+    }
     return;
   }
-  vs.forEach((v,i)=>{
-    const row=document.createElement('div');
-    row.style.cssText='display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);';
-    row.innerHTML=`<div style="flex:1"><div style="font-weight:700;font-size:16px;color:var(--text)">${v.name}</div>
-      <div style="font-size:12px;color:var(--text-dim)">${v.date} &nbsp;·&nbsp; ${v.itemCount} items</div></div>
-      <button class="btn" style="font-size:13px;padding:4px 10px" onclick="loadVersion(${i})">Load</button>
-      <button class="btn" style="font-size:13px;padding:4px 10px;color:#ef9a9a;border-color:#ef9a9a" onclick="deleteVersion(${i})">✕</button>`;
-    list.appendChild(row);
+  // empty floor → box select
+  if (!(e.shiftKey || e.ctrlKey || e.metaKey)){ sel.clear(); afterSelChange(); }
+  if (measure){ measure = null; renderOverlay(); }
+  ptr = {type:'marquee', id:e.pointerId, a:p, b:p, base:new Set(sel)};
+});
+
+window.addEventListener('pointermove', e => {
+  if (touches.has(e.pointerId)){
+    touches.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    if (pinch){ doPinch(); return; }
+  }
+  if (!ptr){
+    if (wrap.contains(e.target)){
+      const p = fp(e), i = inner();
+      $('iPos').textContent = `${ft(p.x - i.l)}, ${ft(p.y - i.t)} ft`;
+    }
+    return;
+  }
+  if (e.pointerId !== ptr.id) return;
+  if (ptr.type === 'pan'){
+    wrap.scrollLeft = ptr.sl - (e.clientX - ptr.sx);
+    wrap.scrollTop = ptr.st - (e.clientY - ptr.sy);
+    return;
+  }
+  if (ptr.type === 'measure'){ measure.b = measurePt(fp(e), e, measure.a); renderOverlay(); return; }
+  if (ptr.type === 'marquee'){
+    ptr.b = fp(e);
+    const r = normRect(ptr.a, ptr.b);
+    sel = new Set(ptr.base);
+    if (r.w > 2 || r.h > 2){
+      for (const [u, it] of Object.entries(items))
+        if (visible(it) && !it.locked && !it.wall && overlaps(r, rectOf(it), 0)) sel.add(u);
+    }
+    afterSelChange(); return;
+  }
+  if (ptr.type === 'drag') onDrag(e);
+});
+function onDrag(e){
+  if (!ptr.moved && Math.hypot(e.clientX - ptr.sx, e.clientY - ptr.sy) < 4) return;
+  if (!ptr.movers.length) return;
+  if (!ptr.moved){
+    ptr.moved = true; clearTimeout(lpTimer);
+    for (const u of ptr.movers) $('i_' + u)?.classList.add('dragging');
+  }
+  const p = fp(e);
+  const prim = ptr.movers.includes(ptr.uid) ? ptr.uid : ptr.movers[0];
+  const s0 = ptr.start[prim], d0 = dims(items[prim]);
+  let dx = snX(s0.x + p.x - ptr.p0.x, d0.w) - s0.x;
+  let dy = snY(s0.y + p.y - ptr.p0.y, d0.h) - s0.y;
+  // keep every moving item inside its own bounds
+  let lx, hx, ly, hy;
+  ({lx, hx, ly, hy} = groupLimits(ptr.movers, ptr.start));
+  dx = Math.max(lx, Math.min(hx, dx)); dy = Math.max(ly, Math.min(hy, dy));
+  for (const u of ptr.movers){
+    const it = items[u], st = ptr.start[u];
+    it.x = st.x + dx; it.y = st.y + dy;
+    const el = $('i_' + u); if (el){ el.style.left = it.x + 'px'; el.style.top = it.y + 'px'; }
+  }
+  refreshDynamic();
+  const r = rectOf(items[prim]), I = inner();
+  $('iPos').textContent = `${ft(r.x - I.l)}, ${ft(r.y - I.t)} ft`;
+  const walls = [['W', r.x - I.l], ['E', I.r - r.x - r.w], ['N', r.y - I.t], ['S', I.b - r.y - r.h]]
+    .map(([n, v]) => [n, Math.max(0, v/PX)]).sort((a, b) => a[1] - b[1]).slice(0, 2);
+  $('iDist').textContent = walls.map(([n, v]) => `${n}: ${v.toFixed(1)} ft`).join('  |  ');
+}
+function endPointer(e){
+  if (touches.has(e.pointerId)){
+    touches.delete(e.pointerId);
+    if (pinch){ if (touches.size < 2) pinch = null; return; }
+  }
+  if (!ptr || e.pointerId !== ptr.id) return;
+  clearTimeout(lpTimer);
+  const p = ptr; ptr = null;
+  wrap.classList.remove('panning');
+  if (p.type === 'pan' && p.touch && Math.hypot(e.clientX - p.sx, e.clientY - p.sy) < 6 && sel.size){ sel.clear(); afterSelChange(); }
+  if (p.type === 'drag'){
+    if (p.moved){ if (serial() !== p.prev) pushHistory(p.prev); save(); render(); }
+    $('iDist').textContent = '—';
+  } else if (p.type === 'measure'){
+    if (Math.hypot(measure.b.x - measure.a.x, measure.b.y - measure.a.y) < 1) measure = null;
+    renderOverlay();
+  } else if (p.type === 'marquee'){ renderOverlay(); }
+}
+window.addEventListener('pointerup', endPointer);
+window.addEventListener('pointercancel', endPointer);
+
+function cancelDrag(){
+  for (const u of ptr.movers){ items[u].x = ptr.start[u].x; items[u].y = ptr.start[u].y; }
+  ptr = null; $('iDist').textContent = '—'; render();
+}
+function startPinch(){
+  clearTimeout(lpTimer);
+  if (ptr && ptr.type === 'drag' && ptr.moved){   // abandon an in-progress drag
+    for (const u of ptr.movers){ items[u].x = ptr.start[u].x; items[u].y = ptr.start[u].y; }
+    render();
+  }
+  ptr = null;
+  const [a, b] = [...touches.values()];
+  pinch = {d0:Math.hypot(a.x - b.x, a.y - b.y) || 1, z0:zoom};
+}
+function doPinch(){
+  const [a, b] = [...touches.values()];
+  const d = Math.hypot(a.x - b.x, a.y - b.y);
+  setZoom(pinch.z0 * d/pinch.d0, (a.x + b.x)/2, (a.y + b.y)/2);
+}
+wrap.addEventListener('wheel', e => {
+  e.preventDefault();
+  setZoom(zoom * Math.exp(-e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0015)), e.clientX, e.clientY);
+}, {passive:false});
+wrap.addEventListener('scroll', hideTip);
+wrap.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  const el = e.target.closest('.item'); if (!el) return;
+  const u = el.dataset.uid;
+  if (!sel.has(u)){ sel = new Set([u]); afterSelChange(); }
+  showCtxAt(e.clientX, e.clientY);
+});
+floor.addEventListener('dblclick', e => {
+  const el = e.target.closest('.item'); if (!el || mode === 'measure') return;
+  sel = new Set([el.dataset.uid]); afterSelChange(); openEdit(el.dataset.uid);
+});
+// Hover tooltip
+floor.addEventListener('pointerover', e => {
+  const el = e.target.closest('.item'); if (!el || ptr || e.pointerType === 'touch') return;
+  const it = items[el.dataset.uid]; if (!it) return;
+  const r = el.getBoundingClientRect(), d = dims(it), tip = $('tip');
+  tip.textContent = it.label;
+  const sm = document.createElement('small'); sm.textContent = `${ft(d.w)} × ${ft(d.h)} ft`; tip.appendChild(sm);
+  tip.style.left = (r.left + r.width/2) + 'px'; tip.style.top = (r.top - 6) + 'px';
+  tip.style.display = 'block';
+});
+floor.addEventListener('pointerout', e => { if (e.target.closest('.item')) hideTip(); });
+function hideTip(){ $('tip').style.display = 'none'; }
+
+// Palette drag-and-drop
+wrap.addEventListener('dragover', e => { if (e.dataTransfer.types.includes('text/x-wsp')){ e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; } });
+wrap.addEventListener('drop', e => {
+  const key = e.dataTransfer.getData('text/x-wsp'); if (!key) return;
+  e.preventDefault();
+  const pr = presetByKey(key); if (pr) addPreset(pr, fp(e));
+});
+
+// ═══════════════════════════════════════════════════════════════════
+//  Item operations
+// ═══════════════════════════════════════════════════════════════════
+const selIds = () => [...sel].filter(u => items[u]);
+const movable = () => selIds().filter(u => !items[u].locked && !items[u].wall);
+
+// How far a group may move so every member stays in bounds. An item too big to fit on an
+// axis (range inverted) is left out of that axis so it can't freeze the whole group.
+function groupLimits(ids, start){
+  let lx = -Infinity, hx = Infinity, ly = -Infinity, hy = Infinity;
+  for (const u of ids){
+    const b = bounds(items[u]), st = start[u];
+    if (b.x1 >= b.x0){ lx = Math.max(lx, b.x0 - st.x); hx = Math.min(hx, b.x1 - st.x); }
+    if (b.y1 >= b.y0){ ly = Math.max(ly, b.y0 - st.y); hy = Math.min(hy, b.y1 - st.y); }
+  }
+  if (lx > hx) lx = hx = 0;
+  if (ly > hy) ly = hy = 0;
+  return {lx, hx, ly, hy};
+}
+function rotateSel(dir = 1){
+  const ids = movable(); if (!ids.length) return;
+  mutate(() => {
+    for (const u of ids){
+      const it = items[u], d0 = dims(it), cx = it.x + d0.w/2, cy = it.y + d0.h/2;
+      it.rot = (it.rot + 90*dir + 360) % 360;
+      const d = dims(it);
+      it.x = snX(cx - d.w/2, d.w); it.y = snY(cy - d.h/2, d.h);
+      clampItem(it);
+    }
+  });
+}
+function nudge(dx, dy){
+  const ids = movable(); if (!ids.length) return;
+  const prev = serial();
+  const {lx, hx, ly, hy} = groupLimits(ids, Object.fromEntries(ids.map(u => [u, items[u]])));
+  dx = Math.max(lx, Math.min(hx, dx)); dy = Math.max(ly, Math.min(hy, dy));
+  for (const u of ids){ items[u].x += dx; items[u].y += dy; }
+  if (serial() === prev) return;
+  const now = Date.now();
+  const key = ids.join(',');
+  if (now - lastNudge > 700 || key !== lastNudgeKey) pushHistory(prev); else redoSt = [];   // merge rapid nudges into one undo step
+  lastNudge = now; lastNudgeKey = key;
+  save(); render();
+}
+function duplicateSel(){
+  const ids = selIds().filter(u => !items[u].wall); if (!ids.length) return;
+  mutate(() => {
+    const fresh = new Set();
+    for (const u of ids){
+      const c = JSON.parse(JSON.stringify(items[u]));
+      delete c.locked; delete c.z;
+      c.x += 20; c.y += 20; clampItem(c);
+      const z = topZ(c); if (z != null) c.z = z;
+      const id = newId(); items[id] = c; fresh.add(id);
+    }
+    sel = fresh;
+  });
+}
+function deleteSel(){
+  let ids = selIds().filter(u => !items[u].wall);
+  if (!ids.length){ if (sel.size) toast('Outer walls can’t be deleted — change the shed size instead'); return; }
+  const locked = ids.filter(u => items[u].locked);
+  if (locked.length && !confirm(`${locked.length} of the selected item${ids.length === 1 ? ' is' : 's are'} locked. Delete anyway?`)) return;
+  mutate(() => { for (const u of ids) delete items[u]; sel.clear(); });
+  toast(`Deleted ${ids.length} item${ids.length === 1 ? '' : 's'} — Ctrl+Z to undo`);
+}
+function toggleLock(){
+  const ids = selIds(); if (!ids.length) return;
+  const lock = !ids.every(u => items[u].locked);
+  mutate(() => { for (const u of ids){ if (lock) items[u].locked = true; else delete items[u].locked; } });
+}
+function togglePin(){
+  const ids = selIds(); if (!ids.length) return;
+  const pin = !ids.every(u => items[u].pin);
+  mutate(() => { for (const u of ids){ if (pin) items[u].pin = true; else delete items[u].pin; } });
+}
+function reorder(toFront){
+  const ids = new Set(selIds()); if (!ids.size) return;
+  mutate(() => {
+    const list = Object.keys(items).filter(u => !items[u].wall).sort((a, b) => zOf(items[a]) - zOf(items[b]));
+    const s = list.filter(u => ids.has(u)), rest = list.filter(u => !ids.has(u));
+    (toFront ? [...rest, ...s] : [...s, ...rest]).forEach((u, i) => { items[u].z = 10 + i; });
+  });
+}
+function selectAll(){
+  sel = new Set(Object.keys(items).filter(u => visible(items[u]) && !items[u].locked && !items[u].wall));
+  afterSelChange();
+}
+function addPreset(pr, at){
+  at = at || viewCenter();
+  mutate(() => {
+    const it = cleanItem({label:pr.label, cat:pr.cat, w:pr.w*PX, h:pr.d*PX, clr:pr.clr, door:pr.door, glyph:pr.glyph});
+    it.x = snX(at.x - it.w/2, it.w); it.y = snY(at.y - it.h/2, it.h);
+    clampItem(it);
+    const z = topZ(it); if (z != null) it.z = z;
+    const id = newId(); items[id] = it; sel = new Set([id]);
+  });
+}
+// Equipment must fit inside the walls; returns false (and sets a message) if not
+function tooBigMsg(wFt, dFt, rot, err){
+  const iw = shedW - 2*WT/PX, ih = shedH - 2*WT/PX;
+  const [a, b] = rot % 180 ? [dFt, wFt] : [wFt, dFt];
+  if (a > iw || b > ih){ err.textContent = `Too big for the ${iw} × ${ih} ft interior.`; return false; }
+  return true;
+}
+function addCustom(){
+  const name = $('cName').value.trim(), cat = $('cCat').value || 'Custom';
+  const w = parseFloat($('cW').value), d = parseFloat($('cH').value), err = $('cErr');
+  err.textContent = '';
+  if (!name){ err.textContent = 'Name required.'; return; }
+  if (!(w > 0 && w <= 200)){ err.textContent = 'Width must be 0–200 ft.'; return; }
+  if (!(d > 0 && d <= 200)){ err.textContent = 'Depth must be 0–200 ft.'; return; }
+  if (cat !== 'Structure' && !CATS[cat].util && !tooBigMsg(w, d, 0, err)) return;
+  const pr = {label:name.toUpperCase(), cat, w, d};
+  if ($('cLib').checked){ const lib = loadLib(); lib.push(pr); saveLib(lib); renderLibrary(); }
+  addPreset(pr);
+  $('cName').value = ''; $('cW').value = ''; $('cH').value = '';
+}
+function saveSelToLib(){
+  const ids = selIds(); if (ids.length !== 1) return;
+  const it = items[ids[0]];
+  const pr = {label:it.label, cat:it.cat, w:+(it.w/PX).toFixed(2), d:+(it.h/PX).toFixed(2)};
+  if (it.clr) pr.clr = it.clr; if (it.door) pr.door = it.door; if (it.glyph) pr.glyph = it.glyph;
+  const lib = loadLib(); lib.push(pr); saveLib(lib); renderLibrary();
+  toast(`Saved “${it.label}” to My Items`);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Library palette
+// ═══════════════════════════════════════════════════════════════════
+function loadLib(){ try { const l = JSON.parse(localStorage.getItem(LIB_K)); return Array.isArray(l) ? l : []; } catch (e){ return []; } }
+function saveLib(l){ try { localStorage.setItem(LIB_K, JSON.stringify(l)); } catch (e){} }
+function presetByKey(key){
+  const [g, i] = key.split(':');
+  if (g === 'my') return loadLib()[+i];
+  return PRESETS[+g] && PRESETS[+g].items[+i];
+}
+function renderLibrary(){
+  const box = $('library'); box.textContent = '';
+  const groups = PRESETS.map((g, gi) => ({name:g.group, list:g.items.map((p, i) => [gi + ':' + i, p])}));
+  const mine = loadLib();
+  groups.push({name:'My Items', list:mine.map((p, i) => ['my:' + i, p]), mine:true});
+  for (const g of groups){
+    const det = document.createElement('details'); det.className = 'lib-group';
+    const sum = document.createElement('summary'); sum.textContent = `${g.name} (${g.list.length})`;
+    const list = document.createElement('div'); list.className = 'lib-items';
+    if (!g.list.length){ const e = document.createElement('div'); e.style.cssText = 'font-size:13px;color:var(--text-dim)'; e.textContent = 'Right-click an item → Save to My Items.'; list.appendChild(e); }
+    for (const [key, p] of g.list){
+      const b = document.createElement('div'); b.className = 'lib-item'; b.draggable = true;
+      b.style.setProperty('--c', (hasCat(p.cat) ? CATS[p.cat] : CATS.Custom).c);
+      b.title = 'Click to add · drag onto floor';
+      const nm = document.createElement('span'); nm.textContent = p.label;
+      const sz = document.createElement('span'); sz.className = 'sz'; sz.textContent = `${p.w}×${p.d}`;
+      b.append(nm, sz);
+      if (g.mine){
+        const x = document.createElement('span'); x.className = 'x'; x.textContent = '✕'; x.title = 'Remove from My Items';
+        x.onclick = ev => { ev.stopPropagation(); const l = loadLib(); l.splice(+key.split(':')[1], 1); saveLib(l); renderLibrary(); };
+        b.appendChild(x);
+      }
+      b.onclick = () => addPreset(p);
+      b.ondragstart = ev => { ev.dataTransfer.setData('text/x-wsp', key); ev.dataTransfer.effectAllowed = 'copy'; };
+      list.appendChild(b);
+    }
+    det.append(sum, list); box.appendChild(det);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Context menu
+// ═══════════════════════════════════════════════════════════════════
+function showCtxAt(x, y){
+  const ids = selIds(); if (!ids.length) return;
+  const m = $('ctx');
+  $('ctxLockTxt').textContent = ids.every(u => items[u].locked) ? '🔓 Unlock' : '🔒 Lock';
+  $('ctxPinTxt').textContent = ids.every(u => items[u].pin) ? '📌 Hide Name' : '📌 Always Show Name';
+  $('ctxDelTxt').textContent = ids.length > 1 ? `✕ Delete ${ids.length} items` : '✕ Delete';
+  $('ctxEdit').classList.toggle('dis', ids.length !== 1);
+  $('ctxLib').classList.toggle('dis', ids.length !== 1);
+  m.style.left = x + 'px'; m.style.top = y + 'px';
+  m.classList.add('show');
+  const r = m.getBoundingClientRect();
+  if (r.right > innerWidth) m.style.left = Math.max(0, x - r.width) + 'px';
+  if (r.bottom > innerHeight) m.style.top = Math.max(0, y - r.height) + 'px';
+}
+function hideCtx(){ $('ctx').classList.remove('show'); }
+$('ctx').addEventListener('click', e => {
+  const a = e.target.closest('.cxi'); if (!a) return;
+  hideCtx();
+  ({lock:toggleLock, pin:togglePin, edit:() => openEdit(selIds()[0]), rotate:() => rotateSel(1), dupe:duplicateSel,
+    lib:saveSelToLib, front:() => reorder(true), back:() => reorder(false), delete:deleteSel})[a.dataset.act]?.();
+});
+document.addEventListener('pointerdown', e => { if (!$('ctx').contains(e.target)) hideCtx(); });
+
+// ═══════════════════════════════════════════════════════════════════
+//  Edit dialog
+// ═══════════════════════════════════════════════════════════════════
+function openEdit(u){
+  const it = items[u]; if (!it) return;
+  dlgUid = u;
+  $('dLabel').value = it.label;
+  $('dW').value = +(it.w/PX).toFixed(2); $('dH').value = +(it.h/PX).toFixed(2);
+  $('dRot').value = it.rot; $('dCat').value = it.cat;
+  const c = it.clr || {};
+  $('cF').value = c.f || ''; $('cB').value = c.b || ''; $('cL').value = c.l || ''; $('cR').value = c.r || '';
+  $('dDoor').value = it.door ? it.door.type : '';
+  $('dHinge').value = it.door ? it.door.hinge : 'L';
+  $('dTrack').value = it.door ? it.door.track : 11;
+  $('dLocked').checked = !!it.locked; $('dPin').checked = !!it.pin; $('dArea').checked = !!it.area;
+  const wall = !!it.wall;
+  for (const id of ['dW', 'dH', 'dRot']) $(id).disabled = wall;
+  $('dErr').textContent = '';
+  $('dlgOv').classList.add('show');
+  setTimeout(() => $('dLabel').focus(), 30);
+}
+function closeEdit(){ $('dlgOv').classList.remove('show'); dlgUid = null; }
+function applyEdit(){
+  if (!dlgUid || !items[dlgUid]) return closeEdit();
+  const err = $('dErr'); err.textContent = '';
+  const label = $('dLabel').value.trim();
+  const w = parseFloat($('dW').value), h = parseFloat($('dH').value);
+  const cv = id => { const v = $(id).value.trim(); return v === '' ? 0 : parseFloat(v); };
+  const clr = {f:cv('cF'), b:cv('cB'), l:cv('cL'), r:cv('cR')};
+  const track = cv('dTrack');
+  if (!label) return void (err.textContent = 'Label is required.');
+  if (!(w > 0 && w <= 200) || !(h > 0 && h <= 200)) return void (err.textContent = 'Width and depth must be 0–200 ft.');
+  const cur = items[dlgUid], nc = $('dCat').value, rot = +$('dRot').value;
+  if (!cur.wall && nc !== 'Structure' && !CATS[nc]?.util && !$('dDoor').value && !tooBigMsg(w, h, rot, err)) return;
+  if (Object.values(clr).some(v => !(v >= 0 && v <= 50))) return void (err.textContent = 'Clearances must be 0–50 ft.');
+  if (!(track >= 0 && track <= 50)) return void (err.textContent = 'Track depth must be 0–50 ft.');
+  const u = dlgUid;
+  mutate(() => {
+    const it = items[u];
+    it.label = label; it.cat = hasCat($('dCat').value) ? $('dCat').value : 'Custom';
+    if (!it.wall){ it.w = +(w*PX).toFixed(2); it.h = +(h*PX).toFixed(2); it.rot = +$('dRot').value; }
+    const c = {}; for (const k in clr) if (clr[k] > 0) c[k] = clr[k];
+    if (Object.keys(c).length) it.clr = c; else delete it.clr;
+    const dt = $('dDoor').value;
+    if (dt) it.door = {type:dt, hinge:$('dHinge').value === 'R' ? 'R' : 'L', track}; else delete it.door;
+    if ($('dLocked').checked) it.locked = true; else delete it.locked;
+    if ($('dPin').checked) it.pin = true; else delete it.pin;
+    if ($('dArea').checked) it.area = true; else delete it.area;
+    positionWalls(); if (!it.wall) clampItem(it);
+  });
+  closeEdit();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Shed size
+// ═══════════════════════════════════════════════════════════════════
+function applyShedSize(){
+  const w = Math.round(parseFloat($('shedW').value)), h = Math.round(parseFloat($('shedH').value));
+  const err = $('shedErr'); err.textContent = '';
+  if (!(w >= 10 && w <= 200) || !(h >= 10 && h <= 200)){ err.textContent = 'Width and depth must be 10–200 ft.'; return; }
+  if (w === shedW && h === shedH) return;
+  mutate(() => {
+    const I = inner(), dW = (w - shedW)*PX, dH = (h - shedH)*PX;
+    for (const it of Object.values(items)){
+      if (it.wall) continue;
+      const r = rectOf(it);
+      // items touching (or sitting on) the east / south wall travel with it
+      const gR = I.r - (r.x + r.w), gL = r.x - I.l, gB = I.b - (r.y + r.h), gT = r.y - I.t;
+      if (gR <= 0.5 && gR < gL) it.x += dW;
+      if (gB <= 0.5 && gB < gT) it.y += dH;
+    }
+    shedW = w; shedH = h;
+    positionWalls();
+    for (const it of Object.values(items)) if (!it.wall) clampItem(it);
+  });
+  zoomFit();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Measure tool
+// ═══════════════════════════════════════════════════════════════════
+function setMode(m){
+  mode = m;
+  $('btnMeasure').classList.toggle('on', m === 'measure');
+  wrap.classList.toggle('measuring', m === 'measure');
+  if (m !== 'measure'){ measure = null; renderOverlay(); }
+}
+function toggleMeasure(){ setMode(mode === 'measure' ? 'select' : 'measure'); }
+
+// ═══════════════════════════════════════════════════════════════════
+//  Keyboard
+// ═══════════════════════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  const tag = document.activeElement ? document.activeElement.tagName : '';
+  const ae = document.activeElement;
+  const textEntry = tag === 'TEXTAREA' || (tag === 'INPUT' && !['range', 'checkbox', 'file', 'button'].includes(ae.type));
+  const typing = textEntry || tag === 'SELECT' || (tag === 'INPUT' && ae.type === 'range');
+  const openOv = document.querySelector('.ov.show');
+  if (openOv){
+    if (e.key === 'Escape'){ e.preventDefault(); closeDialogs(); }
+    else if (e.key === 'Enter' && tag !== 'SELECT' && tag !== 'BUTTON'){
+      if (openOv.id === 'dlgOv'){ e.preventDefault(); applyEdit(); }
+      if (openOv.id === 'verOv' && document.activeElement.id === 'verName'){ e.preventDefault(); saveVersion(); }
+    }
+    return;
+  }
+  if (textEntry) return;   // text fields keep their native undo/typing
+  const mod = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
+  if (typing && !mod) return;   // select / slider keep their arrow keys; Ctrl shortcuts still work
+  if ((tag === 'BUTTON' || tag === 'LABEL') && (e.key === 'Enter' || e.key === ' ')) return;
+  if (mod){
+    if (k === 'z' && !e.shiftKey){ e.preventDefault(); undo(); }
+    else if (k === 'y' || (k === 'z' && e.shiftKey)){ e.preventDefault(); redo(); }
+    else if (k === 'd'){ e.preventDefault(); duplicateSel(); }
+    else if (k === 'a'){ e.preventDefault(); selectAll(); }
+    return;
+  }
+  const step = e.shiftKey ? 50 : (settings.snap || 5);
+  switch (e.key){
+    case 'Escape': hideCtx();
+      if (ptr && ptr.type === 'drag'){ cancelDrag(); return; } if (mode === 'measure') setMode('select'); else if (measure){ measure = null; renderOverlay(); } else { sel.clear(); afterSelChange(); } return;
+    case 'Delete': case 'Backspace': e.preventDefault(); deleteSel(); return;
+    case 'ArrowLeft':  e.preventDefault(); nudge(-step, 0); return;
+    case 'ArrowRight': e.preventDefault(); nudge(step, 0); return;
+    case 'ArrowUp':    e.preventDefault(); nudge(0, -step); return;
+    case 'ArrowDown':  e.preventDefault(); nudge(0, step); return;
+    case ' ': e.preventDefault(); spaceDown = true; wrap.classList.add('space'); return;
+    case 'Enter': if (sel.size === 1) openEdit(selIds()[0]); return;
+    case '+': case '=': zoomStep(1); return;
+    case '-': case '_': zoomStep(-1); return;
+    case '0': setZoom(1); return;
+  }
+  switch (k){
+    case 'r': rotateSel(e.shiftKey ? -1 : 1); break;
+    case 'e': if (sel.size === 1) openEdit(selIds()[0]); break;
+    case 'm': toggleMeasure(); break;
+    case 'f': zoomFit(); break;
+    case 'l': toggleLock(); break;
+    case 'p': togglePin(); break;
+  }
+});
+document.addEventListener('keyup', e => { if (e.key === ' '){ spaceDown = false; wrap.classList.remove('space'); } });
+window.addEventListener('blur', () => { spaceDown = false; wrap.classList.remove('space'); });
+
+// ═══════════════════════════════════════════════════════════════════
+//  Dialog plumbing, toast
+// ═══════════════════════════════════════════════════════════════════
+function closeDialogs(){ document.querySelectorAll('.ov.show').forEach(o => o.classList.remove('show')); dlgUid = null; }
+document.querySelectorAll('.ov').forEach(o => o.addEventListener('pointerdown', e => { if (e.target === o) closeDialogs(); }));
+let toastT = null;
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Versions
+// ═══════════════════════════════════════════════════════════════════
+function loadVersions(){ try { const v = JSON.parse(localStorage.getItem(VSK)); return Array.isArray(v) ? v : []; } catch (e){ return []; } }
+function saveVersions(vs){ try { localStorage.setItem(VSK, JSON.stringify(vs)); return true; } catch (e){ toast('Browser storage is full'); return false; } }
+function openVersions(){ renderVersions(); $('verOv').classList.add('show'); setTimeout(() => $('verName').focus(), 30); }
+function renderVersions(){
+  const vs = loadVersions(), list = $('verList'); list.textContent = '';
+  if (!vs.length){ const d = document.createElement('div'); d.style.cssText = 'color:var(--text-dim);font-size:15px;padding:8px 0'; d.textContent = 'No saved versions yet.'; list.appendChild(d); return; }
+  vs.forEach((v, i) => {
+    const row = document.createElement('div'); row.className = 'ver-row';
+    const info = document.createElement('div'); info.style.flex = '1';
+    const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = v.name;
+    const meta = document.createElement('div'); meta.className = 'meta'; meta.textContent = `${v.date}  ·  ${v.itemCount} items`;
+    info.append(nm, meta);
+    const ld = document.createElement('button'); ld.className = 'btn sm'; ld.textContent = 'Load'; ld.onclick = () => loadVersion(i);
+    const del = document.createElement('button'); del.className = 'btn sm'; del.textContent = '✕'; del.style.cssText = 'color:#ef9a9a;border-color:#ef9a9a';
+    del.onclick = () => { if (!confirm(`Delete saved version “${v.name}”?`)) return; const a = loadVersions(); a.splice(i, 1); saveVersions(a); renderVersions(); };
+    row.append(info, ld, del); list.appendChild(row);
   });
 }
 function saveVersion(){
-  const vs=_loadVersions();
-  if(vs.length>=10){alert('Maximum 10 saved versions. Please delete one first.');return;}
-  const name=document.getElementById('verName').value.trim();
-  if(!name){alert('Please enter a version name.');return;}
-  const now=new Date();
-  const date=now.toLocaleDateString()+' '+now.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
-  vs.push({name,date,itemCount:Object.keys(items).length,
-    state:JSON.stringify({items,customDefs,shedW,shedH,snapSize,uid_c})});
-  _saveVersions(vs);
-  document.getElementById('verName').value='';
-  _renderVersionsList();
+  const vs = loadVersions();
+  if (vs.length >= MAX_VERSIONS){ toast(`Maximum ${MAX_VERSIONS} versions — delete one first`); return; }
+  const name = $('verName').value.trim();
+  if (!name){ toast('Enter a version name'); $('verName').focus(); return; }
+  const now = new Date();
+  vs.push({name, date:now.toLocaleDateString() + ' ' + now.toLocaleTimeString(undefined, {hour:'2-digit', minute:'2-digit'}),
+           itemCount:Object.keys(items).length, state:JSON.stringify({version:3, shedW, shedH, items})});
+  if (saveVersions(vs)){ $('verName').value = ''; renderVersions(); toast(`Saved version “${name}”`); }
 }
 function loadVersion(i){
-  if(!confirm('Load this version? Current layout will be replaced (but you can undo).'))return;
-  const vs=_loadVersions();
-  if(!vs[i])return;
-  _snapshot();
-  const s=JSON.parse(vs[i].state);
-  _restoreState(s);
-  closeVersionsDlg();
-}
-function deleteVersion(i){
-  if(!confirm('Delete this saved version?'))return;
-  const vs=_loadVersions();
-  vs.splice(i,1);
-  _saveVersions(vs);
-  _renderVersionsList();
+  const v = loadVersions()[i]; if (!v) return;
+  try {
+    const L = parseLayout(JSON.parse(v.state));
+    mutate(() => setLayoutData(L));
+    closeDialogs(); zoomFit();
+    toast(`Loaded “${v.name}” — Ctrl+Z to undo`);
+  } catch (e){ toast('That version could not be loaded: ' + e.message); }
 }
 
-function init(){
-  try{
-    const raw=localStorage.getItem(SK);
-    if(raw){
-      const s=JSON.parse(raw);
-      customDefs=s.customDefs||{};
-      items=s.items||{};
-      shedW=s.shedW||40; shedH=s.shedH||60;
-      if(s.snapSize!==undefined)snapSize=s.snapSize;
-      positionOuterWalls();
-      Object.keys(items).forEach(u=>{
-        const n=parseInt(u.split('_').pop());
-        if(!isNaN(n)&&n>=uid_c)uid_c=n+1;
-      });
-    }else{buildDefault();}
-  }catch(e){buildDefault();}
-  // Sync inputs
-  document.getElementById('shedW').value=shedW;
-  document.getElementById('shedH').value=shedH;
-  applyFloorSize();
-  document.getElementById('snapSelect').value=snapSize;
-  renderAll();
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    const wrap=document.getElementById('canvasWrap');
-    const floor=document.getElementById('floor');
-    const HPAD=267, VPAD=100;
-    const fw=floor.offsetWidth;
-    const fh=floor.offsetHeight;
-    // Size zoomPad correctly on load
-    const zp=document.getElementById('zoomPad');
-    if(zp){zp.style.width=(fw+HPAD*2)+'px';zp.style.height=(fh+VPAD*2)+'px';}
-    // Center each axis independently
-    const zw=document.getElementById("zoomWrap");
-    // Horizontal
-    if(fw<=wrap.clientWidth){
-      zw.style.left=Math.round(wrap.clientWidth/2-fw/2)+"px";
-      wrap.scrollLeft=0;
-    } else {
-      zw.style.left=HPAD+"px";
-      wrap.scrollLeft=HPAD+fw/2-wrap.clientWidth/2;
-    }
-    // Vertical
-    if(fh<=wrap.clientHeight){
-      zw.style.top=Math.round(wrap.clientHeight/2-fh/2)+"px";
-      wrap.scrollTop=0;
-    } else {
-      zw.style.top=VPAD+"px";
-      wrap.scrollTop=VPAD+fh/2-wrap.clientHeight/2;
-    }
-    refreshPins();
-  }));
-  document.getElementById('zoomSlider').addEventListener('input',e=>setZoomFromSlider(+e.target.value));
-  document.getElementById('canvasWrap').addEventListener('scroll',()=>{refreshPins();if(_tipUid)moveTip(_tipUid);if(selUid&&items[selUid])showDimLines(selUid);else hideDimLines();});
-  document.getElementById('floor').addEventListener('mousemove',e=>{
-    if(drag)return;
-    const r=document.getElementById('floor').getBoundingClientRect();
-    document.getElementById('iPos').textContent=`${pxFt(e.clientX-r.left-40)}, ${pxFt(e.clientY-r.top-40)} ft`;
-  });
-  // ZOOM via mouse wheel
-  document.getElementById('canvasWrap').addEventListener('wheel', e=>{
-    e.preventDefault();
-    const wrap=document.getElementById('canvasWrap');
-    const factor=e.deltaY<0?1.12:1/1.12;
-    const newZoom=Math.min(4,Math.max(1,zoomLevel*factor));
-    _applyZoom(newZoom, wrap);
-  },{passive:false});
-}
-
-function buildDefault(){
-  items={};uid_c=0;
-  customDefs=Object.assign({},DEFAULT_CUSTOM_DEFS);
-  DEFAULT_ITEMS.forEach(([defId,x,y,rot],i)=>{
-    const flags=DEFAULT_FLAGS[i]||{};
-    const item={defId,x,y,rot:rot||0,ov:Object.assign({},flags.ov||{})};
-    if(flags._locked)item._locked=true;
-    if(flags._z!=null)item._z=flags._z;
-    if(flags._pin)item._pin=true;
-    items[defId+'_'+(uid_c++)]=item;
-  });
-  positionOuterWalls();
-}
-
-function save(){
-  try{localStorage.setItem(SK,JSON.stringify({items,customDefs,shedW,shedH,snapSize}));}catch(e){}
-}
-
+// ═══════════════════════════════════════════════════════════════════
+//  Reset / JSON / share
+// ═══════════════════════════════════════════════════════════════════
 function resetLayout(){
-  if(!confirm('Reset to default layout?'))return;
-  localStorage.removeItem(SK);
-  shedW=40;shedH=60;
-  document.getElementById('shedW').value=40;
-  document.getElementById('shedH').value=60;
-  buildDefault();
-  applyFloorSize();
-  document.getElementById('snapSelect').value=snapSize;
-  renderAll();
-  selUid=null;
-  document.getElementById('iSel').textContent='none';
-  document.getElementById('iSize').textContent='—';
-  hideTip();
+  if (!confirm('Reset to the default layout? (Undo can bring your current layout back.)')) return;
+  mutate(() => setLayoutData(parseLayout(DEFAULT_LAYOUT)));
+  zoomFit();
 }
-
-function renderAll(){
-  // Clear any existing pin els before re-render
-  Object.keys(_pinEls).forEach(uid=>{_pinEls[uid].remove();delete _pinEls[uid];});
-  document.getElementById('floor').querySelectorAll('.item').forEach(e=>e.remove());
-  Object.keys(items).forEach(u=>makeEl(u));
-  // Reposition all pin labels after DOM is fully painted
-  requestAnimationFrame(()=>refreshPins());
+function download(blob, name){
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
-
-function makeEl(uid){
-  const item=items[uid];
-  if(!item)return;
-  const def=getDef(item);
-  const{w,h}=getDims(item);
-  const{fs,fsSub}=calcFs(w,h,def.label);
-  const el=document.createElement('div');
-  el.className='item'; el.id='i_'+uid; el.dataset.uid=uid;
-  setStyle(el,item,def,w,h,fs);
-  el.innerHTML=`<div class="ilabel" style="font-size:${fs}px">${def.label||''}</div>`
-
-  if(item._z)el.style.zIndex=item._z;
-  if(item._locked){
-    el.classList.add('locked-item');
-    el.style.opacity='0.7';
-    const badge=document.createElement('div');
-    badge.className='lock-badge';
-    badge.textContent='🔒';
-    el.appendChild(badge);
-  }
-  el.addEventListener('mousedown',e=>startDrag(e,uid));
-  el.addEventListener('contextmenu',e=>showCtx(e,uid));
-  el.addEventListener('click',e=>{e.stopPropagation();selectItem(uid);});
-  el.addEventListener('mouseenter',()=>{if(_tipUid!==uid)showTip(uid);});
-  el.addEventListener('mouseleave',()=>{if(uid!==selUid&&!(items[uid]&&items[uid]._pin))hideTip();});
-  document.getElementById('floor').appendChild(el);
-  if(item._pin) applyPin(uid);
-}
-
-function setStyle(el,item,def,w,h,fs){
-  el.style.cssText=`left:${item.x}px;top:${item.y}px;width:${w}px;height:${h}px;`
-    +`background:${def.bg||'#222'};border:2px solid ${def.border||'#555'};color:${def.color||'#ccc'};font-size:${fs}px;`;
-}
-
-function refreshEl(uid){
-  const el=document.getElementById('i_'+uid);
-  if(!el)return;
-  const item=items[uid];
-  const def=getDef(item);
-  const{w,h}=getDims(item);
-  const{fs,fsSub}=calcFs(w,h,def.label);
-  setStyle(el,item,def,w,h,fs);
-  el.innerHTML=`<div class="ilabel" style="font-size:${fs}px">${def.label||''}</div>`
-
-  if(item._z)el.style.zIndex=item._z;
-  if(uid===selUid)el.classList.add('selected');
-  if(_tipUid===uid)showTip(uid);
-  applyPin(uid);
-}
-
-// DRAG
-function startDrag(e,uid){
-  if(e.button!==0)return;
-  if(items[uid]&&items[uid]._locked)return;
-  e.preventDefault();e.stopPropagation();
-  _snapshot();
-  selectItem(uid);
-  const item=items[uid];
-  drag={uid,ox:e.clientX,oy:e.clientY,sx:item.x,sy:item.y};
-  document.getElementById('i_'+uid).classList.add('dragging');
-  document.addEventListener('mousemove',onDrag);
-  document.addEventListener('mouseup',endDrag);
-}
-function onDrag(e){
-  if(!drag)return;
-  const{uid,ox,oy,sx,sy}=drag;
-  const item=items[uid];
-  const{w,h}=getDims(item);
-  const def=getDef(item);
-  const isStruct=['wall','door','garage','booth','lift','entry'].some(k=>item.defId.includes(k));
-  const isCatStruct=(getDef(item).cat||'')==='Structure';
-  // Divide mouse delta by zoomLevel to convert screen px → canvas px
-  const pad=40, wt=WALL_T;
-  const rawNx=sx+(e.clientX-ox)/zoomLevel;
-  const rawNy=sy+(e.clientY-oy)/zoomLevel;
-  let nx=snX(rawNx, w);
-  let ny=snY(rawNy, h);
-  // Structure category items can go anywhere (no clamp)
-  // Wall/door defId items clamp to wall face; equipment clamps to inner wall
-  if(!isCatStruct){
-    const minX=isStruct?pad:pad+wt, maxX=isStruct?pad+shedW*PX-w:pad+shedW*PX-wt-w;
-    const minY=isStruct?pad:pad+wt, maxY=isStruct?pad+shedH*PX-h:pad+shedH*PX-wt-h;
-    nx=Math.max(minX,Math.min(maxX,nx));
-    ny=Math.max(minY,Math.min(maxY,ny));
-  }
-  item.x=nx;item.y=ny;
-  const el=document.getElementById('i_'+uid);
-  if(el){el.style.left=nx+'px';el.style.top=ny+'px';}
-  if(_tipUid===uid)moveTip(uid);
-  refreshPins();
-  showDimLines(uid);
-  // Show position relative to shed interior in feet
-  document.getElementById('iPos').textContent=`${pxFt(nx-pad)}, ${pxFt(ny-pad)} ft`;
-  // Closest two wall distances
-  const innerL=pad+wt, innerT=pad+wt;
-  const innerR=pad+shedW*PX-wt, innerB=pad+shedH*PX-wt;
-  const dLeft  =Math.max(0,(nx-innerL)/PX);
-  const dRight =Math.max(0,(innerR-(nx+w))/PX);
-  const dTop   =Math.max(0,(ny-innerT)/PX);
-  const dBottom=Math.max(0,(innerB-(ny+h))/PX);
-  const walls=[
-    {name:'W',d:dLeft},{name:'E',d:dRight},
-    {name:'N',d:dTop}, {name:'S',d:dBottom}
-  ].sort((a,b)=>a.d-b.d).slice(0,2);
-  document.getElementById('iDist').textContent=
-    walls.map(w2=>`${w2.name}: ${w2.d.toFixed(1)} ft`).join('  |  ');
-}
-function showDimLines(uid){
-  const item=items[uid];if(!item)return;
-  const{w,h}=getDims(item);
-  const pad=40,wt=WALL_T;
-  const nx=item.x,ny=item.y;
-  const iL=pad+wt,iT=pad+wt,iR=pad+shedW*PX-wt,iB=pad+shedH*PX-wt;
-  const show=[
-    {axis:'h',wall:'W',d:nx-iL,      x1:iL,    y1:ny+h/2, x2:nx,     y2:ny+h/2},
-    {axis:'h',wall:'E',d:iR-(nx+w),  x1:nx+w,  y1:ny+h/2, x2:iR,     y2:ny+h/2},
-    {axis:'v',wall:'N',d:ny-iT,      x1:nx+w/2,y1:iT,     x2:nx+w/2, y2:ny},
-    {axis:'v',wall:'S',d:iB-(ny+h),  x1:nx+w/2,y1:ny+h,   x2:nx+w/2, y2:iB},
-  ].filter(s=>s.d>=0);
-  // Use the fixed overlay so it renders above pinned labels (which are also fixed)
-  // Transform floor coords → screen coords using zoomWrap's bounding rect
-  const svg=document.getElementById('dimOverlay');
-  if(!svg)return;
-  const zw=document.getElementById('zoomWrap');
-  const zr=zw.getBoundingClientRect();
-  const sx=fc=>zr.left+fc*zoomLevel;
-  const sy=fc=>zr.top +fc*zoomLevel;
-  const ns='http://www.w3.org/2000/svg';
-  svg.innerHTML='';
-  svg.style.display='block';
-  show.forEach(seg=>{
-    const ft=(seg.d/PX).toFixed(1)+' ft';
-    const x1=sx(seg.x1),y1=sy(seg.y1),x2=sx(seg.x2),y2=sy(seg.y2);
-    const line=document.createElementNS(ns,'line');
-    line.setAttribute('class','dim-line');
-    line.setAttribute('x1',x1);line.setAttribute('y1',y1);
-    line.setAttribute('x2',x2);line.setAttribute('y2',y2);
-    svg.appendChild(line);
-    [[x1,y1],[x2,y2]].forEach(([cx,cy])=>{
-      const cap=document.createElementNS(ns,'line');
-      cap.setAttribute('class','dim-cap');
-      if(seg.axis==='h'){cap.setAttribute('x1',cx);cap.setAttribute('y1',cy-7);cap.setAttribute('x2',cx);cap.setAttribute('y2',cy+7);}
-      else{cap.setAttribute('x1',cx-7);cap.setAttribute('y1',cy);cap.setAttribute('x2',cx+7);cap.setAttribute('y2',cy);}
-      svg.appendChild(cap);
-    });
-    const txt=document.createElementNS(ns,'text');
-    txt.setAttribute('class','dim-label');
-    if(seg.axis==='h'){
-      txt.setAttribute('x',(x1+x2)/2);
-      txt.setAttribute('y',seg.wall==='W'?y1-10:y1+20);
-      txt.setAttribute('text-anchor','middle');
-    } else {
-      txt.setAttribute('x',seg.wall==='N'?x1+10:x1-10);
-      txt.setAttribute('y',(y1+y2)/2+5);
-      txt.setAttribute('text-anchor',seg.wall==='N'?'start':'end');
-    }
-    txt.textContent=ft;
-    svg.appendChild(txt);
-  });
-}
-function hideDimLines(){
-  const svg=document.getElementById('dimOverlay');
-  if(svg){svg.innerHTML='';svg.style.display='none';}
-}
-
-function endDrag(){
-  if(!drag)return;
-  document.getElementById('i_'+drag.uid)?.classList.remove('dragging');
-  document.removeEventListener('mousemove',onDrag);
-  document.removeEventListener('mouseup',endDrag);
-  document.getElementById('iDist').textContent='—';
-  hideDimLines();
-  save();drag=null;
-}
-
-// PALETTE DROP
-
-
-// SELECT
-function selectItem(uid){
-  if(selUid)document.getElementById('i_'+selUid)?.classList.remove('selected');
-  selUid=uid;
-  document.getElementById('i_'+uid)?.classList.add('selected');
-  const item=items[uid];
-  const def=getDef(item);
-  const{w,h}=getDims(item);
-  document.getElementById('iSel').textContent=def.label||uid;
-  document.getElementById('iSize').textContent=`${pxFt(w)} × ${pxFt(h)} ft`;
-  showTip(uid);
-  showDimLines(uid);
-}
-document.getElementById('floor').addEventListener('click',()=>{
-  if(selUid){document.getElementById('i_'+selUid)?.classList.remove('selected');selUid=null;}
-  document.getElementById('iSel').textContent='none';
-  document.getElementById('iSize').textContent='—';
-  hideDimLines();
-  hideCtx();
-});
-
-// ROTATE
-function rotateItem(uid){
-  const item=items[uid];if(!item)return;
-  item.rot=item.rot===0?90:0;
-  _snapshot();refreshEl(uid);save();
-  if(uid===selUid){const{w,h}=getDims(item);document.getElementById('iSize').textContent=`${pxFt(w)} × ${pxFt(h)} ft`;}
-}
-
-// CONTEXT MENU
-function showCtx(e,uid){
-  e.preventDefault();e.stopPropagation();
-  selectItem(uid);ctxUid=uid;
-  const m=document.getElementById('ctx');
-  // Position at cursor, then clamp so it never bleeds off viewport
-  m.style.left=e.clientX+'px';m.style.top=e.clientY+'px';
-  const isLocked=!!(items[uid]&&items[uid]._locked);
-  document.getElementById('ctxLockItem').textContent=isLocked?'🔓 Unlock':'🔒 Lock';
-  const isPinned=!!(items[uid]&&items[uid]._pin);
-  document.getElementById('ctxPinItem').textContent=isPinned?'📌 Hide Name':'📌 Always Show Name';
-  m.classList.add('show');
-  const mr=m.getBoundingClientRect();
-  if(mr.right >window.innerWidth) m.style.left=(e.clientX-mr.width) +'px';
-  if(mr.bottom>window.innerHeight)m.style.top =(e.clientY-mr.height)+'px';
-}
-function hideCtx(){document.getElementById('ctx').classList.remove('show');ctxUid=null;}
-function ctxToggleLock(){
-  if(!ctxUid)return;
-  const item=items[ctxUid];
-  item._locked=!item._locked;
-  const el=document.getElementById('i_'+ctxUid);
-  if(el){
-    item._locked?el.classList.add('locked-item'):el.classList.remove('locked-item');
-    el.style.opacity=item._locked?'0.7':'1';
-    // Show a small lock indicator on the element
-    let badge=el.querySelector('.lock-badge');
-    if(item._locked){
-      if(!badge){badge=document.createElement('div');badge.className='lock-badge';el.appendChild(badge);}
-      badge.textContent='🔒';
-    } else {
-      if(badge)badge.remove();
-    }
-  }
-  _snapshot();save();hideCtx();
-}
-function ctxTogglePin(){
-  if(!ctxUid)return;
-  const item=items[ctxUid];
-  item._pin=!item._pin;
-  applyPin(ctxUid);
-  if(!item._pin&&_tipUid===ctxUid)hideTip();
-  _snapshot();save();hideCtx();
-}
-function ctxEdit(){if(ctxUid)openDlg(ctxUid);hideCtx();}
-function ctxRotate(){if(ctxUid)rotateItem(ctxUid);hideCtx();}
-function ctxDupe(){
-  if(!ctxUid)return;
-  const s=items[ctxUid];
-  const uid=s.defId+'_'+(uid_c++);
-  items[uid]={defId:s.defId,x:s.x+20,y:s.y+20,rot:s.rot,ov:Object.assign({},s.ov)};
-  _snapshot();save();makeEl(uid);selectItem(uid);hideCtx();
-}
-function ctxFront(){
-  if(!ctxUid)return;
-  const el=document.getElementById('i_'+ctxUid);
-  if(el){el.style.zIndex=100;items[ctxUid]._z=100;}
-  _snapshot();save();hideCtx();
-}
-function ctxBack(){
-  if(!ctxUid)return;
-  const el=document.getElementById('i_'+ctxUid);
-  if(el){el.style.zIndex=1;items[ctxUid]._z=1;}
-  _snapshot();save();hideCtx();
-}
-function ctxDelete(){
-  if(!ctxUid)return;
-  if(!confirm('Delete this item?'))return;
-  delete items[ctxUid];
-  document.getElementById('i_'+ctxUid)?.remove();
-  if(selUid===ctxUid){selUid=null;document.getElementById('iSel').textContent='none';document.getElementById('iSize').textContent='—';}
-  _snapshot();save();hideCtx();
-}
-document.addEventListener('click',e=>{if(!document.getElementById('ctx').contains(e.target))hideCtx();});
-
-// EDIT DIALOG
-function openDlg(uid){
-  dlgUid=uid;
-  const item=items[uid];
-  const base=Object.assign({},DEFS[item.defId]||customDefs[item.defId]||{},item.ov||{});
-  document.getElementById('dlgLabel').value=base.label||'';
-  document.getElementById('dlgW').value=(base.w/PX).toFixed(1);
-  document.getElementById('dlgH').value=(base.h/PX).toFixed(1);
-  const dc=document.getElementById('dlgCat');dc.value=base.cat||'Custom';if(!dc.value)dc.value='Custom';
-  document.getElementById('dlgErr').textContent='';
-  document.getElementById('dlgOv').classList.add('show');
-  setTimeout(()=>document.getElementById('dlgLabel').focus(),50);
-}
-function closeDlg(){document.getElementById('dlgOv').classList.remove('show');dlgUid=null;}
-function closeDlgBg(e){if(e.target===document.getElementById('dlgOv'))closeDlg();}
-function applyDlg(){
-  if(!dlgUid)return;
-  const label=document.getElementById('dlgLabel').value.trim();
-  const cat=document.getElementById('dlgCat').value||'Custom';
-  const wFt=parseFloat(document.getElementById('dlgW').value);
-  const hFt=parseFloat(document.getElementById('dlgH').value);
-  const err=document.getElementById('dlgErr');
-  err.textContent='';
-  if(!label){err.textContent='Label is required.';return;}
-  if(!wFt||wFt<=0){err.textContent='Width must be > 0 ft.';return;}
-  if(!hFt||hFt<=0){err.textContent='Depth must be > 0 ft.';return;}
-  const item=items[dlgUid];
-  item.ov=Object.assign(item.ov||{},{label,cat,w:ftPx(wFt),h:ftPx(hFt)});
-  refreshEl(dlgUid);
-  if(dlgUid===selUid){
-    const{w,h}=getDims(item);
-    document.getElementById('iSel').textContent=label;
-    document.getElementById('iSize').textContent=`${pxFt(w)} × ${pxFt(h)} ft`;
-  }
-  _snapshot();save();closeDlg();
-}
-
-// KEYBOARD
-document.addEventListener('keydown',e=>{
-  // Undo/redo always intercept first, even when an input has focus
-  if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!e.shiftKey){e.preventDefault();undo();return;}
-  if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.key==='z'&&e.shiftKey))){e.preventDefault();redo();return;}
-  // Other shortcuts only when not typing in an input
-  const t=document.activeElement.tagName;
-  if(t==='INPUT'||t==='TEXTAREA'||t==='SELECT')return;
-  if(e.key==='Escape'){hideCtx();closeDlg();}
-  if((e.key==='Delete'||e.key==='Backspace')&&selUid){ctxUid=selUid;ctxDelete();}
-  if(e.key==='r'&&selUid)rotateItem(selUid);
-  if(e.key==='e'&&selUid)openDlg(selUid);
-},{capture:true});
-
-// SNAP
-function changeSnap(val){
-  snapSize=parseInt(val);
-  _snapshot();save();
-}
-
-// ADD CUSTOM
-function addCustom(){
-  const name=document.getElementById('cName').value.trim();
-  const cat=document.getElementById('cCat').value||'Custom';
-  const wFt=parseFloat(document.getElementById('cW').value);
-  const hFt=parseFloat(document.getElementById('cH').value);
-  const err=document.getElementById('cErr');
-  err.style.display='none';
-  if(!name){err.textContent='Name required.';err.style.display='block';return;}
-  if(!wFt||wFt<=0){err.textContent='Width must be > 0.';err.style.display='block';return;}
-  if(!hFt||hFt<=0){err.textContent='Depth must be > 0.';err.style.display='block';return;}
-  const defId='cust_'+Date.now();
-  customDefs[defId]={label:name.toUpperCase(),cat,w:ftPx(wFt),h:ftPx(hFt)};
-  const uid=defId+'_'+(uid_c++);
-  items[uid]={defId,x:150,y:300,rot:0,ov:{}};
-  _snapshot();save();makeEl(uid);selectItem(uid);
-  document.getElementById('cName').value='';
-  document.getElementById('cW').value='';
-  document.getElementById('cH').value='';
-}
-
-// EXPORT PNG
-function exportImage(){
-  const ns='http://www.w3.org/2000/svg';
-  const clone=document.getElementById('gridSvg').cloneNode(true);
-  clone.setAttribute('width',FW);clone.setAttribute('height',FH);
-  const sorted=Object.keys(items).sort((a,b)=>{
-    const isStruct=id=>['wall','door','garage','booth','lift'].some(k=>id.includes(k));
-    return(isStruct(a)?0:1)-(isStruct(b)?0:1);
-  });
-  sorted.forEach(uid=>{
-    const item=items[uid];
-    const def=getDef(item);
-    const{w,h}=getDims(item);
-    if(w<2||h<2)return;
-    const cx=item.x+w/2,cy=item.y+h/2;
-    const g=document.createElementNS(ns,'g');
-    const rect=document.createElementNS(ns,'rect');
-    rect.setAttribute('x',item.x);rect.setAttribute('y',item.y);
-    rect.setAttribute('width',w);rect.setAttribute('height',h);
-    rect.setAttribute('fill',def.bg||'#222');
-    rect.setAttribute('stroke',def.border||'#555');
-    rect.setAttribute('stroke-width','2');rect.setAttribute('rx','2');
-    g.appendChild(rect);
-    if(def.label&&w>10&&h>8&&item._pin){
-      const{fs,fsSub}=calcFs(w,h,def.label);
-      const hasCat=false;
-      const t=document.createElementNS(ns,'text');
-      t.setAttribute('x',cx);t.setAttribute('y',cy-(hasCat?fsSub/2+1:0));
-      t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
-      t.setAttribute('font-family','Barlow Condensed,sans-serif');
-      t.setAttribute('font-weight','700');t.setAttribute('font-size',fs);
-      t.setAttribute('fill',def.color||'#ccc');t.textContent=def.label;
-      g.appendChild(t);
-      if(hasCat){
-        const s=document.createElementNS(ns,'text');
-        s.setAttribute('x',cx);s.setAttribute('y',cy+fs/2+1);
-        s.setAttribute('text-anchor','middle');s.setAttribute('dominant-baseline','middle');
-        s.setAttribute('font-family','Barlow Condensed,sans-serif');
-        s.setAttribute('font-size',fsSub);s.setAttribute('fill',def.color||'#ccc');
-        s.setAttribute('opacity','0.75');s.textContent='';
-        g.appendChild(s);
-      }
-    }
-    clone.appendChild(g);
-  });
-  const xml=new XMLSerializer().serializeToString(clone);
-  const url=URL.createObjectURL(new Blob([xml],{type:'image/svg+xml'}));
-  const img=new Image();
-  img.onload=()=>{
-    const c=document.createElement('canvas');
-    c.width=FW*2;c.height=FH*2;
-    const ctx=c.getContext('2d');
-    ctx.scale(2,2);ctx.fillStyle='#1a1a1a';ctx.fillRect(0,0,FW,FH);ctx.drawImage(img,0,0);
-    URL.revokeObjectURL(url);
-    c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='workshop_layout.png';a.click();},'image/png');
-  };
-  img.src=url;
-}
-
-// SHED SIZE
-const WALL_T=10; // wall thickness px (1ft — must stay a multiple of min snap 5px)
-
-function applyFloorSize(){
-  const wPx=shedW*PX, hPx=shedH*PX;
-  const floor=document.getElementById('floor');
-  const pad=40; // margin around shed
-  const fw=wPx+pad*2, fh=hPx+pad*2;
-  floor.style.width=fw+'px';
-  floor.style.height=fh+'px';
-  // Resize zoomPad to floor + PAD on each side
-  const HPAD=267, VPAD=100;
-  const zp=document.getElementById('zoomPad');
-  const zw2=document.getElementById('zoomWrap');
-  if(zp){zp.style.width=(fw+HPAD*2)+'px';zp.style.height=(fh+VPAD*2)+'px';}
-  if(zw2){zw2.style.left=HPAD+'px';zw2.style.top=VPAD+'px';}
-  // Resize SVG grid
-  const svg=document.getElementById('gridSvg');
-  svg.setAttribute('width',wPx+pad*2);
-  svg.setAttribute('height',hPx+pad*2);
-  // Update grid fill rect
-  const gridRect=document.getElementById('gridFill');
-  if(gridRect){gridRect.setAttribute('width',wPx+pad*2);gridRect.setAttribute('height',hPx+pad*2);}
-  // Update header subtitle
-  const sub=document.getElementById('headerSub');
-  if(sub) sub.innerHTML=`${shedW} × ${shedH} ft &nbsp;|&nbsp; 1 sq = 1 ft &nbsp;|&nbsp; drag to move · right-click to edit/resize`;
-}
-
-function positionOuterWalls(){
-  const wPx=shedW*PX, hPx=shedH*PX;
-  const pad=40;
-  // Find the 4 outer wall items by defId
-  const wallMap={};
-  Object.keys(items).forEach(uid=>{
-    const did=items[uid].defId;
-    if(['north_wall','south_wall','east_wall','west_wall'].includes(did)) wallMap[did]=uid;
-  });
-  // North: top edge, full width
-  if(wallMap.north_wall){
-    const it=items[wallMap.north_wall];
-    it.x=pad; it.y=pad;
-    it.ov=Object.assign(it.ov||{},{w:wPx,h:WALL_T,label:'NORTH WALL'});
-  }
-  // South: bottom edge
-  if(wallMap.south_wall){
-    const it=items[wallMap.south_wall];
-    it.x=pad; it.y=pad+hPx-WALL_T;
-    it.ov=Object.assign(it.ov||{},{w:wPx,h:WALL_T,label:'SOUTH WALL'});
-  }
-  // West: left edge, full height
-  if(wallMap.west_wall){
-    const it=items[wallMap.west_wall];
-    it.x=pad; it.y=pad;
-    it.ov=Object.assign(it.ov||{},{w:WALL_T,h:hPx,label:'WEST WALL'});
-  }
-  // East: right edge
-  if(wallMap.east_wall){
-    const it=items[wallMap.east_wall];
-    it.x=pad+wPx-WALL_T; it.y=pad;
-    it.ov=Object.assign(it.ov||{},{w:WALL_T,h:hPx,label:'EAST WALL'});
-  }
-}
-
-function applyShedSize(){
-  const wIn=parseFloat(document.getElementById('shedW').value);
-  const hIn=parseFloat(document.getElementById('shedH').value);
-  if(!wIn||wIn<5||wIn>500){alert('Width must be 5–500 ft.');return;}
-  if(!hIn||hIn<5||hIn>500){alert('Depth must be 5–500 ft.');return;}
-  shedW=Math.round(wIn); shedH=Math.round(hIn);
-  applyFloorSize();
-  positionOuterWalls();
-  _snapshot();save();
-  renderAll();
-}
-
-// JSON EXPORT
-function exportJSON(){
-  const payload={version:2,items,customDefs,shedW,shedH};
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='workshop_layout.json';
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-
-// JSON IMPORT
+function exportJSON(){ download(new Blob([JSON.stringify(payload(), null, 2)], {type:'application/json'}), 'workshop_layout.json'); }
 function importJSON(e){
-  const file=e.target.files[0];
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    try{
-      const data=JSON.parse(ev.target.result);
-      // Accept either raw {items,customDefs} or versioned wrapper
-      const imported=data.items?data:{items:data,customDefs:{}};
-      if(!imported.items||typeof imported.items!=='object') throw new Error('No items found');
-      customDefs=imported.customDefs||{};
-      items=imported.items;
-      shedW=imported.shedW||40;shedH=imported.shedH||60;
-      document.getElementById('shedW').value=shedW;
-      document.getElementById('shedH').value=shedH;
-      applyFloorSize();
-      // Restore uid counter
-      uid_c=0;
-      Object.keys(items).forEach(u=>{
-        const n=parseInt(u.split('_').pop());
-        if(!isNaN(n)&&n>=uid_c)uid_c=n+1;
-      });
-      _snapshot();save();
-      renderAll();
-      selUid=null;
-      document.getElementById('iSel').textContent='none';
-      document.getElementById('iSize').textContent='—';
-    }catch(err){
-      alert('Import failed: '+err.message+'\n\nMake sure this is a Workshop Planner JSON file.');
-    }
-    // Reset the file input so the same file can be re-imported
-    e.target.value='';
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const L = parseLayout(JSON.parse(ev.target.result));
+      mutate(() => setLayoutData(L));
+      zoomFit(); toast(`Imported ${L.items.length} items — Ctrl+Z to undo`);
+    } catch (err){ alert('Import failed: ' + err.message + '\n\nMake sure this is a Workshop Planner JSON file.'); }
+    e.target.value = '';
   };
   reader.readAsText(file);
 }
+function b64u(bytes){
+  let s = ''; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function unb64u(str){
+  str = str.replace(/-/g, '+').replace(/_/g, '/'); while (str.length % 4) str += '=';
+  const bin = atob(str), b = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) b[i] = bin.charCodeAt(i);
+  return b;
+}
+async function encodeShare(){
+  const round = v => Math.round(v*100)/100;
+  const its = Object.values(items).map(it => Object.assign({}, it, {x:round(it.x), y:round(it.y)}));
+  const bytes = new TextEncoder().encode(JSON.stringify({shedW, shedH, items:its}));
+  if (typeof CompressionStream === 'function'){
+    const buf = await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer();
+    return 'z' + b64u(new Uint8Array(buf));
+  }
+  return 'j' + b64u(bytes);
+}
+async function decodeShare(code){
+  const bytes = unb64u(code.slice(1));
+  let text;
+  if (code[0] === 'z') text = await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
+  else text = new TextDecoder().decode(bytes);
+  return JSON.parse(text);
+}
+async function openShare(){
+  try {
+    const code = await encodeShare();
+    $('shareUrl').value = location.href.split('#')[0] + '#l=' + code;
+    $('shareOv').classList.add('show');
+    setTimeout(() => $('shareUrl').select(), 30);
+  } catch (e){ toast('Could not build share link'); }
+}
+async function copyShare(){
+  const inp = $('shareUrl');
+  try { await navigator.clipboard.writeText(inp.value); toast('Link copied'); }
+  catch (e){ inp.select(); try { document.execCommand('copy'); toast('Link copied'); } catch (e2){ toast('Select the link and copy it'); } }
+}
+async function checkShareHash(){
+  const m = location.hash.match(/^#l=([zj][A-Za-z0-9_-]+)$/);
+  if (!m) return;
+  history.replaceState(null, '', location.pathname + location.search);
+  try {
+    const L = parseLayout(await decodeShare(m[1]));
+    if (!confirm(`Load the shared layout (${L.shedW} × ${L.shedH} ft, ${L.items.length} items)?\nYour current layout is replaced — Undo brings it back.`)) return;
+    mutate(() => setLayoutData(L));
+    zoomFit(); toast('Shared layout loaded');
+  } catch (e){ toast('That share link is invalid or damaged'); }
+}
 
+// ═══════════════════════════════════════════════════════════════════
+//  PNG export & print (drawn directly on a canvas so web fonts work)
+// ═══════════════════════════════════════════════════════════════════
+function renderCanvas(theme = 'dark', scale = 2){
+  const light = theme === 'light';
+  const T = light ? {bg:'#ffffff', minor:'#eeeeee', major:'#d6d6d6', title:'#9a5b00', dim:'#555', chipBg:'rgba(255,255,255,.92)', chipFg:'#111', chipBd:'#999', door:'#777', track:'#999'}
+                  : {bg:'#1a1a1a', minor:'#252525', major:'#2e2e2e', title:'#e8a020', dim:'#888', chipBg:'rgba(10,10,10,.88)', chipFg:'#eee', chipBd:'#3a3a3a', door:'#888', track:'#5a5a5a'};
+  const HDR = 56, fw = floorW(), fh = floorH(), W = Math.max(fw, 440), H = fh + HDR;
+  const c = document.createElement('canvas'); c.width = W*scale; c.height = H*scale;
+  const g = c.getContext('2d'); g.scale(scale, scale);
+  g.fillStyle = T.bg; g.fillRect(0, 0, W, H);
+  // header: title, size/date, scale bar, compass
+  g.textBaseline = 'middle'; g.textAlign = 'left';
+  g.fillStyle = T.title; g.font = '900 22px "Barlow Condensed",sans-serif'; g.fillText('WORKSHOP PLANNER', 12, 20);
+  g.fillStyle = T.dim; g.font = '13px "Share Tech Mono",monospace'; g.fillText(`${shedW} × ${shedH} ft  ·  ${new Date().toLocaleDateString()}`, 12, 42);
+  const cx = W - 28, cy = 28;
+  g.strokeStyle = T.dim; g.lineWidth = 1.5; g.beginPath(); g.arc(cx, cy, 20, 0, Math.PI*2); g.stroke();
+  g.fillStyle = T.title; g.beginPath(); g.moveTo(cx, cy - 16); g.lineTo(cx + 4, cy - 3); g.lineTo(cx - 4, cy - 3); g.fill();
+  g.fillStyle = T.dim; g.beginPath(); g.moveTo(cx, cy + 16); g.lineTo(cx + 4, cy + 3); g.lineTo(cx - 4, cy + 3); g.fill();
+  g.fillStyle = T.title; g.font = '700 11px "Barlow Condensed",sans-serif'; g.textAlign = 'center'; g.fillText('N', cx + 9, cy - 11);
+  const sbx = cx - 40 - 100, sby = 30;
+  g.strokeStyle = T.dim; g.lineWidth = 2; g.beginPath(); g.moveTo(sbx, sby - 5); g.lineTo(sbx, sby); g.lineTo(sbx + 100, sby); g.lineTo(sbx + 100, sby - 5); g.moveTo(sbx + 50, sby - 3); g.lineTo(sbx + 50, sby); g.stroke();
+  g.fillStyle = T.dim; g.font = '11px "Share Tech Mono",monospace'; g.fillText('0', sbx, sby + 10); g.fillText('5', sbx + 50, sby + 10); g.fillText('10 ft', sbx + 100, sby + 10);
+
+  g.save(); g.translate(0, HDR);
+  g.beginPath(); g.rect(0, 0, fw, fh); g.clip();
+  // grid
+  for (const [step, col, lw] of [[10, T.minor, 0.5], [50, T.major, 1]]){
+    g.strokeStyle = col; g.lineWidth = lw; g.beginPath();
+    for (let x = 0; x <= fw; x += step){ g.moveTo(x + .5*lw, 0); g.lineTo(x + .5*lw, fh); }
+    for (let y = 0; y <= fh; y += step){ g.moveTo(0, y + .5*lw); g.lineTo(fw, y + .5*lw); }
+    g.stroke();
+  }
+  // door swings, tracks, clearance
+  if (settings.showDoors){
+    for (const it of Object.values(items)){
+      if (!it.door || !visible(it)) continue;
+      const d = doorGeom(it);
+      if (it.door.type === 'garage' && it.door.track > 0){
+        g.setLineDash([6, 4]); g.strokeStyle = T.track; g.lineWidth = 1; g.strokeRect(d.track.x, d.track.y, d.track.w, d.track.h); g.setLineDash([]);
+      }
+      if (it.door.type === 'door'){
+        const [hx, hy] = d.hinge, [jx, jy] = d.jamb, tx = hx + d.n[0]*d.L, ty = hy + d.n[1]*d.L;
+        const a0 = Math.atan2(ty - hy, tx - hx), a1 = Math.atan2(jy - hy, jx - hx);
+        const cross = (tx - hx)*(jy - hy) - (ty - hy)*(jx - hx);
+        g.strokeStyle = T.door; g.lineWidth = 1; g.beginPath(); g.moveTo(hx, hy); g.lineTo(tx, ty); g.arc(hx, hy, d.L, a0, a1, cross < 0); g.stroke();
+      }
+    }
+  }
+  if (settings.showClr){
+    g.setLineDash([3, 3]); g.lineWidth = 1;
+    for (const {z, hit} of issues.zones){
+      g.fillStyle = hit ? 'rgba(255,82,82,.16)' : 'rgba(232,160,32,.10)'; g.fillRect(z.x, z.y, z.w, z.h);
+      g.strokeStyle = hit ? '#ff5252' : '#b07a20'; g.strokeRect(z.x, z.y, z.w, z.h);
+    }
+    g.setLineDash([]);
+  }
+  // items
+  const order = Object.entries(items).filter(([, it]) => visible(it)).sort((a, b) => zOf(a[1]) - zOf(b[1]));
+  const chips = [];
+  for (const [u, it] of order){
+    const cc = catOf(it), r = rectOf(it), util = isUtil(it);
+    g.fillStyle = hexA(cc.c, light ? .16 : .13); g.strokeStyle = cc.c; g.lineWidth = 1.5;
+    g.beginPath();
+    if (util && Math.abs(r.w - r.h) <= 0.5) g.arc(r.x + r.w/2, r.y + r.h/2, r.w/2 - .75, 0, Math.PI*2);
+    else g.rect(r.x + .75, r.y + .75, r.w - 1.5, r.h - 1.5);
+    g.fill(); g.stroke();
+    if (issues.body.has(u)){ g.setLineDash([4, 3]); g.strokeStyle = '#ff5252'; g.lineWidth = 2; g.strokeRect(r.x - 1, r.y - 1, r.w + 2, r.h + 2); g.setLineDash([]); }
+    const fg = light ? darken(cc.c, .35) : cc.fg;
+    g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle';
+    if (util){
+      const gl = glyphOf(it), fs = Math.max(4, Math.min(r.w, r.h)*(gl.length > 1 ? .42 : .7));
+      g.font = `700 ${fs}px "Barlow Condensed",sans-serif`; g.fillText(gl, r.x + r.w/2, r.y + r.h/2 + fs*.05);
+      if (it.pin) chips.push([it.label, r]);
+      continue;
+    }
+    const f = fitLabel(it.label, r.w, r.h);
+    if (f){
+      g.font = `700 ${f.fs}px "Barlow Condensed",sans-serif`;
+      const lh = f.fs*1.1, y0 = r.y + r.h/2 - (f.lines.length - 1)*lh/2;
+      f.lines.forEach((ln, i) => g.fillText(ln, r.x + r.w/2, y0 + i*lh + f.fs*.05));
+    } else if (it.pin) chips.push([it.label, r]);
+  }
+  for (const [a, b] of issues.pairs){
+    const r = interRect(rectOf(items[a]), rectOf(items[b]));
+    g.fillStyle = 'rgba(255,82,82,.35)'; g.fillRect(r.x, r.y, r.w, r.h);
+    g.strokeStyle = '#ff5252'; g.lineWidth = 1.5; g.strokeRect(r.x, r.y, r.w, r.h);
+  }
+  for (const [label, r] of chips){
+    g.font = '700 13px "Barlow Condensed",sans-serif';
+    const t = label.toUpperCase(), tw = g.measureText(t).width + 12, th = 18, x = r.x + r.w/2 - tw/2, y = r.y + r.h/2 - th/2;
+    g.fillStyle = T.chipBg; g.strokeStyle = T.chipBd; g.lineWidth = 1;
+    g.beginPath(); g.roundRect ? g.roundRect(x, y, tw, th, 3) : g.rect(x, y, tw, th); g.fill(); g.stroke();
+    g.fillStyle = T.chipFg; g.textAlign = 'center'; g.fillText(t, r.x + r.w/2, r.y + r.h/2 + 1);
+  }
+  g.restore();
+  return c;
+}
+async function exportPNG(){
+  await document.fonts.ready;
+  renderCanvas('dark').toBlob(b => download(b, 'workshop_layout.png'), 'image/png');
+}
+async function printLayout(){
+  await document.fonts.ready;
+  const img = $('printImg');
+  img.onload = () => { img.onload = null; setTimeout(() => window.print(), 50); };
+  img.src = renderCanvas('light', 3).toDataURL('image/png');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Init
+// ═══════════════════════════════════════════════════════════════════
+function init(){
+  const hadSettings = loadSettings();
+  for (const s of document.querySelectorAll('.catSelect'))
+    for (const name of Object.keys(CATS)){ const o = document.createElement('option'); o.value = o.textContent = name; s.appendChild(o); }
+  $('cCat').value = 'Custom';
+  let loaded = false;
+  try { const raw = localStorage.getItem(SK); if (raw){ setLayoutData(parseLayout(JSON.parse(raw))); loaded = true; } } catch (e){}
+  if (!loaded){
+    try {
+      const raw = localStorage.getItem(LEGACY_SK);
+      if (raw){
+        const L = parseLayout(JSON.parse(raw));
+        setLayoutData(L); loaded = true;
+        if (!hadSettings && L.snapSize !== undefined) settings.snap = L.snapSize;
+        save(); setTimeout(() => toast('Your saved layout was upgraded to the new format'), 300);
+      }
+    } catch (e){}
+  }
+  if (!loaded) setLayoutData(parseLayout(DEFAULT_LAYOUT));
+  if (![0, 5, 10, 15, 20, 25, 30, 35, 40].includes(+settings.snap)) settings.snap = 10;
+  $('snapSelect').value = settings.snap;
+  $('snapSelect').onchange = e => { settings.snap = +e.target.value; saveSettings(); e.target.blur(); };
+  for (const id of ['shedW', 'shedH']) $(id).addEventListener('keydown', e => { if (e.key === 'Enter'){ e.target.blur(); applyShedSize(); } });
+  $('cName').addEventListener('keydown', e => { if (e.key === 'Enter') addCustom(); });
+  $('zoomSlider').addEventListener('input', e => setZoom(sliderToZoom(+e.target.value)));
+  renderLibrary();
+  render();
+  zoomFit();
+  if (document.fonts) document.fonts.ready.then(() => render());
+  window.addEventListener('resize', () => { layoutStage(); renderOverlay(); });
+  checkShareHash();
+}
 init();
 </script>
 </body>
