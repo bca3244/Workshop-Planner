@@ -51,7 +51,7 @@ async def main():
     ok('custom too big rejected', 'Too big' in await pg.evaluate("()=>cErr.textContent"))
     # 6 column on saw flagged
     n=await pg.evaluate(f"()=>{{const s=items['{saw}'];items.col=cleanItem({{label:'COL',cat:'Structure',w:10,h:10,x:s.x+5,y:s.y+5}});render();return issues.pairs.length}}")
-    ok('Structure column overlapping saw flagged', n>=2, str(n))
+    ok('Structure column overlapping saw flagged', await pg.evaluate("()=>issues.pairs.some(p=>p.includes('col'))"), str(n))
     ok('paint booth still not flagged', await pg.evaluate("()=>!issues.body.has(Object.keys(items).find(u=>items[u].label==='PAINT BOOTH'))"))
     await pg.evaluate("()=>{delete items.col;render()}")
     # 7 delete wall blocked, locked confirm
@@ -70,9 +70,10 @@ async def main():
     await pg.evaluate("()=>{settings.snap=10}")
     # 10 Enter on button
     await pg.evaluate(f"()=>{{sel=new Set(['{saw}']);afterSelChange()}}"); await pg.focus('#btnMeasure'); await pg.keyboard.press('Enter')
-    ok('Enter on button does not open edit', not await pg.is_visible('#dlgOv'))
+    ok('Enter on button does not jump to edit', await pg.evaluate("()=>document.activeElement.id")!='pName')
     await pg.evaluate("()=>setMode('select')")
     # 12 png width
+    await pg.evaluate('()=>{sel.clear();afterSelChange()}')
     await pg.fill('#shedW','20'); await pg.keyboard.press('Enter')
     ok('Enter applies shed size + png min width', await pg.evaluate("()=>[shedW,renderCanvas('dark',1).width]")==[20,440])
     await pg.keyboard.press('Control+z')

@@ -9,63 +9,86 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;600;700;900&display=swap"/>
 <style>
 :root{
-  --bg:#1a1a1a; --panel:#242424; --border:#3a3a3a;
-  --accent:#e8a020; --text:#e0e0e0; --text-dim:#888; --bad:#ff5252; --good:#81c784;
+  --bg:#1a1a1a; --panel:#232323; --panel2:#1c1c1c; --border:#363636;
+  --accent:#e8a020; --text:#e4e4e4; --text-dim:#9a9a9a; --text-faint:#6e6e6e;
+  --bad:#ff5252; --warn:#ffb74d; --over:#ce93d8; --good:#81c784;
+  --row:30px;
 }
+@media (pointer:coarse){ :root{ --row:40px; } }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:16px;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
 button,select,input{font-family:inherit;}
+.mono{font-family:'Share Tech Mono',monospace;}
 
 /* ── Header / toolbar ─────────────────────────────────────────── */
-header{background:var(--panel);border-bottom:2px solid var(--accent);padding:6px 16px;display:flex;align-items:center;gap:16px;flex-shrink:0;flex-wrap:wrap;}
-header h1{font-size:28px;font-weight:900;letter-spacing:2px;color:var(--accent);text-transform:uppercase;line-height:1.1;}
-header .sub{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--text-dim);}
-.toolbar{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
-.tsep{width:1px;height:26px;background:var(--border);margin:0 2px;}
-.btn{font-weight:700;font-size:15px;letter-spacing:.5px;text-transform:uppercase;padding:0 9px;height:32px;border:1.5px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;border-radius:3px;transition:all .12s;line-height:1;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;}
+header{background:var(--panel);border-bottom:2px solid var(--accent);padding:6px 14px;display:flex;align-items:center;gap:14px;flex-shrink:0;}
+header h1{font-size:24px;font-weight:900;letter-spacing:2px;color:var(--accent);text-transform:uppercase;line-height:1.05;white-space:nowrap;}
+header .sub{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--text-dim);white-space:nowrap;}
+.toolbar{margin-left:auto;display:flex;gap:6px;align-items:center;}
+.tsep{width:1px;height:24px;background:var(--border);margin:0 4px;}
+.btn{font-weight:600;font-size:16px;padding:0 11px;height:32px;border:1px solid var(--border);background:var(--panel2);color:var(--text);cursor:pointer;border-radius:4px;transition:border-color .12s,color .12s,background .12s;line-height:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;}
 .btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
-.btn:disabled{opacity:.4;cursor:default;}
+.btn:disabled{opacity:.35;cursor:default;}
 .btn.pri{background:var(--accent);color:#111;border-color:var(--accent);}
 .btn.pri:hover:not(:disabled){background:#ffc040;color:#111;}
 .btn.on{border-color:var(--accent);color:#111;background:var(--accent);}
-.btn.sm{height:26px;font-size:13px;padding:0 8px;}
-.snap-badge{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--text-dim);padding:4px 8px;border:1px solid var(--border);border-radius:3px;}
-.sel{font-weight:700;font-size:16px;letter-spacing:1px;text-transform:uppercase;padding:4px 6px;height:32px;border:1.5px solid var(--border);background:var(--panel);color:var(--text);border-radius:3px;cursor:pointer;outline:none;}
+.btn.sm{height:26px;font-size:14px;padding:0 8px;}
+.btn.icon{width:34px;padding:0;font-size:17px;}
+.btn.danger:hover:not(:disabled){border-color:var(--bad);color:var(--bad);}
+.sel{font-weight:600;font-size:16px;padding:0 6px;height:32px;border:1px solid var(--border);background:var(--panel2);color:var(--text);border-radius:4px;cursor:pointer;outline:none;}
+.tlabel{font-size:14px;color:var(--text-dim);}
+#issuesBadge{min-width:86px;}
+#issuesBadge.ok{color:var(--good);}
+#issuesBadge.bad{color:#111;background:var(--bad);border-color:var(--bad);}
+#issuesBadge.bad:hover{background:#ff7070;color:#111;}
+.menu{position:fixed;background:var(--panel);border:1px solid var(--border);border-radius:5px;z-index:5000;display:none;min-width:210px;box-shadow:0 6px 24px rgba(0,0,0,.7);padding:4px 0;}
+.menu.show{display:block;}
+.mi{padding:0 14px;min-height:var(--row);font-size:17px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;justify-content:space-between;}
+.mi:hover{background:var(--border);color:var(--accent);}
+.mi kbd{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);}
+.mi.sep{border-top:1px solid var(--border);margin-top:4px;padding-top:4px;}
+.mi.del{color:#ef9a9a;}
+.mi.del:hover{background:#c62828;color:#fff;}
+.mi.dis{opacity:.35;pointer-events:none;}
+@media (max-width:1100px){ header .sub{display:none;} .btn .bt{display:none;} }
 
-@media (max-width:1400px){ .toolbar .bt{display:none;} .toolbar .btn{padding:0 8px;font-size:17px;} }
-@media (max-width:900px){ header .sub,.snap-badge{display:none;} header h1{font-size:22px;} }
 /* ── Layout ───────────────────────────────────────────────────── */
 .main{display:flex;flex:1;overflow:hidden;min-height:0;}
-.sidebar{width:230px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
-.sb-sec{padding:9px;border-bottom:1px solid var(--border);}
-.sb-sec h3,.sb-sec>summary{font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:7px;cursor:default;}
-.sb-sec>summary{cursor:pointer;list-style:none;margin-bottom:0;}
-.sb-sec>summary::before{content:'▸ ';}
-.sb-sec[open]>summary::before{content:'▾ ';}
-.sb-sec[open]>summary{margin-bottom:7px;}
-.fi{background:#141414;border:1px solid var(--border);color:var(--text);padding:5px 7px;font-size:17px;border-radius:3px;width:100%;outline:none;transition:border-color .12s;}
+.sidebar{width:220px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
+.sb-sec{padding:10px;border-bottom:1px solid var(--border);}
+.sec-h,.sb-sec>summary{font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
+.sb-sec>summary{cursor:pointer;list-style:none;}
+.sb-sec>summary::-webkit-details-marker,.grp>summary::-webkit-details-marker{display:none;}
+.sb-sec>summary::before,.grp>summary::before{content:'▸';display:inline-block;width:14px;color:var(--text-faint);}
+.sb-sec[open]>summary::before,.grp[open]>summary::before{content:'▾';}
+.sb-sec[open]>summary{margin-bottom:8px;}
+.fi{background:#141414;border:1px solid var(--border);color:var(--text);padding:0 7px;height:var(--row);font-size:16px;border-radius:4px;width:100%;outline:none;transition:border-color .12s;}
 .fi:focus{border-color:var(--accent);}
-.flabel{font-size:13px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;}
-.err{font-size:14px;color:#ef9a9a;min-height:0;}
+.fi.invalid{border-color:var(--bad);}
+.fi:disabled{opacity:.45;}
+.hint{font-size:14px;color:var(--text-dim);line-height:1.35;}
+.err{font-size:14px;color:#ef9a9a;}
 
 /* library */
-.lib-group{margin-bottom:4px;}
-.lib-group>summary{font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);cursor:pointer;padding:3px 0;list-style:none;}
-.lib-group>summary::before{content:'▸ ';color:var(--text-dim);}
-.lib-group[open]>summary::before{content:'▾ ';}
-.lib-items{display:flex;flex-direction:column;gap:3px;padding:3px 0 6px 10px;}
-.lib-item{display:flex;align-items:center;gap:6px;padding:3px 6px;border:1px solid var(--border);border-left:4px solid var(--c);border-radius:3px;background:#1c1c1c;cursor:grab;font-size:15px;font-weight:600;user-select:none;}
+.lib-group>summary{font-size:15px;font-weight:600;color:var(--text);cursor:pointer;min-height:var(--row);display:flex;align-items:center;list-style:none;}
+.lib-group>summary::-webkit-details-marker{display:none;}
+.lib-group>summary::before{content:'▸';width:14px;color:var(--text-faint);}
+.lib-group[open]>summary::before{content:'▾';}
+.lib-group>summary .n{margin-left:auto;font-size:12px;color:var(--text-faint);font-family:'Share Tech Mono',monospace;}
+.lib-items{display:flex;flex-direction:column;gap:3px;padding:2px 0 8px 12px;}
+.lib-item{display:flex;align-items:center;gap:6px;padding:0 8px;min-height:var(--row);border:1px solid var(--border);border-left:4px solid var(--c);border-radius:4px;background:var(--panel2);cursor:grab;font-size:15px;user-select:none;}
 .lib-item:hover{border-color:var(--accent);border-left-color:var(--c);}
-.lib-item .sz{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);}
-.lib-item .x{color:#ef9a9a;cursor:pointer;padding:0 2px;}
+.lib-item .sz{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-faint);}
+.lib-item .x{color:#ef9a9a;cursor:pointer;padding:0 4px;}
 
 /* layers */
-.layer-row{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:600;padding:2px 0;cursor:pointer;}
-.layer-row input{accent-color:var(--accent);width:15px;height:15px;cursor:pointer;}
+.layer-row{display:flex;align-items:center;gap:8px;font-size:15px;min-height:calc(var(--row) - 4px);cursor:pointer;}
+.layer-row input{accent-color:var(--accent);width:16px;height:16px;cursor:pointer;}
 .layer-row .sw{width:12px;height:12px;border:2px solid var(--c);background:var(--bgc);border-radius:2px;}
-.layer-row .cnt{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);}
+.layer-row .cnt{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-faint);}
+.linkish{background:none;border:none;color:var(--text-dim);font-size:14px;cursor:pointer;padding:4px 0;text-decoration:underline dotted;}
 .help{font-size:14px;color:var(--text-dim);line-height:1.65;}
-.help b{color:var(--text);}
+.help b{color:var(--text);font-weight:600;}
 
 /* ── Canvas ───────────────────────────────────────────────────── */
 .canvas-area{flex:1;position:relative;display:flex;min-width:0;}
@@ -89,83 +112,111 @@ header .sub{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--t
 .item.util.rect{border-radius:3px;}
 .item.dragging{opacity:.85;cursor:grabbing;}
 .item.selected{box-shadow:0 0 0 calc(2px * var(--iz)) var(--accent),0 0 0 calc(5px * var(--iz)) rgba(232,160,32,.25);}
-.item.hit{outline:calc(2px * var(--iz)) dashed var(--bad);outline-offset:calc(1px * var(--iz));}
-.item.locked{opacity:.7;cursor:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='25'%20height='25'%20viewBox='0%200%2025%2025'%3E%3Crect%20x='5'%20y='11'%20width='15'%20height='11'%20rx='2'%20fill='%23000'%20opacity='0.4'%20transform='translate(1,1)'/%3E%3Crect%20x='5'%20y='11'%20width='15'%20height='11'%20rx='2'%20fill='%23FFD700'%20stroke='%23333'%20stroke-width='2'/%3E%3Cpath%20d='M8%2011V7.5a4.5%204.5%200%200%201%209%200V11'%20fill='none'%20stroke='%23333'%20stroke-width='3'%20stroke-linecap='round'/%3E%3Cpath%20d='M8%2011V7.5a4.5%204.5%200%200%201%209%200V11'%20fill='none'%20stroke='%23FFD700'%20stroke-width='1.5'%20stroke-linecap='round'/%3E%3Ccircle%20cx='12.5'%20cy='16'%20r='2'%20fill='%23333'/%3E%3Crect%20x='11.5'%20y='16'%20width='2'%20height='3'%20rx='0.5'%20fill='%23333'/%3E%3C/svg%3E") 12 12, not-allowed;}
+.item.hit-overlap{outline:calc(2px * var(--iz)) dashed var(--bad);outline-offset:calc(1px * var(--iz));}
+.item.hit-clr{outline:calc(2px * var(--iz)) dashed var(--warn);outline-offset:calc(1px * var(--iz));}
+.item.locked{opacity:.75;cursor:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='25'%20height='25'%20viewBox='0%200%2025%2025'%3E%3Crect%20x='5'%20y='11'%20width='15'%20height='11'%20rx='2'%20fill='%23000'%20opacity='0.4'%20transform='translate(1,1)'/%3E%3Crect%20x='5'%20y='11'%20width='15'%20height='11'%20rx='2'%20fill='%23FFD700'%20stroke='%23333'%20stroke-width='2'/%3E%3Cpath%20d='M8%2011V7.5a4.5%204.5%200%200%201%209%200V11'%20fill='none'%20stroke='%23333'%20stroke-width='3'%20stroke-linecap='round'/%3E%3Cpath%20d='M8%2011V7.5a4.5%204.5%200%200%201%209%200V11'%20fill='none'%20stroke='%23FFD700'%20stroke-width='1.5'%20stroke-linecap='round'/%3E%3Ccircle%20cx='12.5'%20cy='16'%20r='2'%20fill='%23333'/%3E%3Crect%20x='11.5'%20y='16'%20width='2'%20height='3'%20rx='0.5'%20fill='%23333'/%3E%3C/svg%3E") 12 12, not-allowed;}
 .ilabel{pointer-events:none;white-space:pre-line;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.9);}
+.obadge{position:absolute;top:0;right:0;font-size:calc(12px * var(--iz));line-height:1;padding:calc(1px * var(--iz)) calc(3px * var(--iz));background:var(--over);color:#111;border-bottom-left-radius:calc(3px * var(--iz));pointer-events:none;font-weight:900;}
 .item[data-front]::after{content:'';position:absolute;background:var(--c);}
 .item[data-front=S]::after{left:30%;right:30%;bottom:0;height:calc(3px * var(--iz));}
 .item[data-front=N]::after{left:30%;right:30%;top:0;height:calc(3px * var(--iz));}
 .item[data-front=W]::after{top:30%;bottom:30%;left:0;width:calc(3px * var(--iz));}
 .item[data-front=E]::after{top:30%;bottom:30%;right:0;width:calc(3px * var(--iz));}
-.chip{position:absolute;transform:translate(-50%,-50%);font-size:calc(14px * var(--iz));font-weight:700;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;
-  padding:calc(1px * var(--iz)) calc(6px * var(--iz));background:rgba(10,10,10,.88);color:#eee;border:calc(1px * var(--iz)) solid var(--border);
+.chip{position:absolute;transform:translate(-50%,-50%);font-size:calc(13px * var(--iz));font-weight:700;letter-spacing:.3px;text-transform:uppercase;white-space:nowrap;
+  padding:calc(1px * var(--iz)) calc(6px * var(--iz));background:rgba(12,12,12,.9);color:#eee;border:calc(1px * var(--iz)) solid var(--border);
   border-radius:calc(3px * var(--iz));box-shadow:0 calc(2px * var(--iz)) calc(6px * var(--iz)) rgba(0,0,0,.6);}
 .chip.sel{border-color:var(--accent);color:var(--accent);}
 
-/* HUD (compass + scale bar) */
-.hud{position:absolute;top:10px;right:84px;display:flex;align-items:center;gap:14px;pointer-events:none;z-index:5;
-  background:rgba(20,20,20,.75);border:1px solid var(--border);border-radius:4px;padding:4px 10px;}
+/* HUD (scale bar + compass) and floating zoom */
+.hud{position:absolute;top:10px;right:10px;display:flex;align-items:center;gap:12px;pointer-events:none;z-index:5;
+  background:rgba(20,20,20,.8);border:1px solid var(--border);border-radius:5px;padding:4px 10px;}
 .scalebar{display:flex;flex-direction:column;align-items:flex-start;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);}
-.scalebar .bar{height:6px;border:2px solid #666;border-top:none;}
+.scalebar .bar{height:6px;border:2px solid #777;border-top:none;}
+.zoomctl{position:absolute;right:10px;bottom:10px;z-index:5;display:flex;align-items:center;gap:2px;background:rgba(20,20,20,.88);border:1px solid var(--border);border-radius:6px;padding:3px;}
+.zoomctl button{height:var(--row);min-width:var(--row);border:none;background:none;color:var(--text);font-size:19px;font-weight:700;cursor:pointer;border-radius:4px;padding:0 6px;}
+.zoomctl button:hover{background:var(--border);color:var(--accent);}
+.zoomctl .pct{font-family:'Share Tech Mono',monospace;font-size:14px;min-width:54px;}
+.firsthint{position:absolute;left:12px;bottom:12px;z-index:6;background:rgba(20,20,20,.95);border:1px solid var(--accent);border-radius:6px;
+  padding:7px 10px 7px 14px;font-size:16px;display:flex;gap:12px;align-items:center;box-shadow:0 4px 18px rgba(0,0,0,.6);max-width:calc(100% - 260px);}
+.firsthint b{color:var(--accent);font-weight:600;}
 
-/* side elevation of the selected item */
-.elev{position:absolute;left:10px;bottom:10px;z-index:5;pointer-events:none;background:rgba(20,20,20,.85);border:1px solid var(--border);border-radius:4px;display:none;}
-.elev.show{display:block;}
-/* zoom rail */
-.zoom-rail{width:72px;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:8px;flex-shrink:0;user-select:none;}
-.zoom-rail label{font-size:13.5px;font-weight:700;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;}
-#zoomPct{font-size:14px;font-weight:700;color:var(--accent);letter-spacing:.5px;}
-.zb{width:48px;height:36px;font-size:22px;font-weight:900;border:1.5px solid var(--border);background:#1c1c1c;color:var(--text);border-radius:4px;cursor:pointer;}
-.zb.txt{font-size:14px;letter-spacing:1px;}
-.zb:hover{border-color:var(--accent);color:var(--accent);}
-#zoomSlider{-webkit-appearance:none;appearance:none;width:200px;height:36px;cursor:pointer;transform:rotate(-90deg);background:transparent;}
-#zoomSlider::-webkit-slider-runnable-track{height:36px;background:var(--border);border-radius:4px;}
-#zoomSlider::-moz-range-track{height:36px;background:var(--border);border-radius:4px;}
-#zoomSlider::-webkit-slider-thumb{-webkit-appearance:none;width:36px;height:36px;border-radius:4px;background:var(--accent);cursor:pointer;border:2px solid #333;}
-#zoomSlider::-moz-range-thumb{width:36px;height:36px;border-radius:4px;background:var(--accent);cursor:pointer;border:2px solid #333;}
+/* ── Inspector (right panel) ──────────────────────────────────── */
+.inspector{width:300px;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;min-height:0;}
+.insp-head{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px;}
+.insp-title{font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);display:flex;align-items:center;gap:8px;}
+.insp-title .sw{width:10px;height:10px;border-radius:2px;background:var(--c);}
+.insp-body{flex:1;overflow-y:auto;padding:0 12px 16px;}
+.name-in{font-size:20px;font-weight:700;height:calc(var(--row) + 4px);}
+.actions{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.actions .btn{padding:0;height:var(--row);font-size:16px;}
+.grp{border-bottom:1px solid var(--border);padding:8px 0;}
+.grp>summary{font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);cursor:pointer;list-style:none;min-height:24px;display:flex;align-items:center;}
+.grp>summary .aside{margin-left:auto;letter-spacing:0;text-transform:none;font-weight:400;font-size:13px;color:var(--text-faint);}
+.grp[open]>summary{margin-bottom:8px;}
+.fgrid{display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:8px 8px;}
+.field{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.field>label{font-size:13px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.unit{position:relative;}
+.unit .fi{padding-right:24px;}
+.unit::after{content:attr(data-u);position:absolute;right:7px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text-faint);pointer-events:none;}
+.chk{display:flex;align-items:center;gap:8px;font-size:15px;min-height:var(--row);cursor:pointer;}
+.chk input{accent-color:var(--accent);width:16px;height:16px;}
+.ferr{font-size:13px;color:#ef9a9a;min-height:0;margin-top:4px;}
+.clr-cross{display:grid;grid-template-columns:1fr 1.1fr 1fr;grid-template-rows:auto auto auto;gap:6px;align-items:center;justify-items:center;}
+.clr-cross .box{width:100%;height:44px;border:2px solid var(--c,#666);border-radius:3px;background:rgba(255,255,255,.03);display:flex;align-items:flex-end;justify-content:center;font-size:12px;color:var(--text-dim);position:relative;}
+.clr-cross .box::after{content:'';position:absolute;left:30%;right:30%;bottom:-2px;height:4px;background:var(--c,#666);}
+.clr-cross .field{width:100%;}
+.door-info{font-family:'Share Tech Mono',monospace;font-size:13px;line-height:1.5;margin-top:8px;display:grid;grid-template-columns:auto auto auto;gap:2px 10px;}
+.door-info .k{color:var(--text-dim);}
+.door-info .bad{color:var(--bad);}
+.door-info .ok{color:var(--good);}
+#elevBox svg{width:100%;height:auto;display:block;background:#171717;border:1px solid var(--border);border-radius:4px;}
+.issue{display:flex;gap:8px;align-items:flex-start;padding:7px 8px;border:1px solid var(--border);border-left:4px solid var(--k);border-radius:4px;background:var(--panel2);margin-bottom:5px;cursor:pointer;font-size:15px;line-height:1.3;}
+.issue:hover{border-color:var(--accent);border-left-color:var(--k);}
+.issue .ic{color:var(--k);font-weight:900;width:14px;flex-shrink:0;}
+.issue small{display:block;color:var(--text-dim);font-size:12px;letter-spacing:1px;text-transform:uppercase;}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:13px;color:var(--text-dim);margin:6px 0 2px;}
+.legend span::before{content:'';display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:-1px;border:2px dashed var(--k);}
+.empty-ok{color:var(--good);font-size:16px;padding:6px 0;}
+.align-row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;}
+.align-row .btn{padding:0;font-size:14px;height:var(--row);}
 
 /* ── Info bar ─────────────────────────────────────────────────── */
-.info-bar{background:var(--panel);border-top:1px solid var(--border);padding:4px 16px;font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--text-dim);display:flex;gap:20px;flex-shrink:0;flex-wrap:wrap;}
+.info-bar{background:var(--panel);border-top:1px solid var(--border);padding:3px 14px;font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--text-dim);display:flex;gap:20px;flex-shrink:0;white-space:nowrap;overflow:hidden;}
 .info-bar span{color:var(--text);}
-#iIssues.ok{color:var(--good);}
-#iIssues.bad{color:var(--bad);cursor:pointer;text-decoration:underline dotted;}
 
-/* ── Menus, dialogs, toast, tooltip ───────────────────────────── */
-.tip{position:fixed;pointer-events:none;z-index:4000;background:rgba(10,10,10,.92);border:1px solid var(--border);border-radius:3px;padding:3px 8px;
-  font-weight:700;font-size:16px;color:#eee;white-space:nowrap;display:none;transform:translate(-50%,-100%);letter-spacing:.5px;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,0,0,.7);}
-.tip small{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);text-transform:none;margin-left:6px;}
-.ctx{position:fixed;background:var(--panel);border:1px solid var(--border);border-radius:4px;z-index:5000;display:none;min-width:190px;box-shadow:0 4px 20px rgba(0,0,0,.7);}
-.ctx.show{display:block;}
-.cxi{padding:7px 14px;font-size:18px;font-weight:600;cursor:pointer;transition:background .1s;display:flex;justify-content:space-between;gap:14px;}
-.cxi kbd{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);align-self:center;}
-.cxi:hover{background:var(--border);color:var(--accent);}
-.cxi.sep{border-top:1px solid var(--border);}
-.cxi.del{color:#ef9a9a;}
-.cxi.del:hover{background:#c62828;color:#fff;}
-.cxi.dis{opacity:.35;pointer-events:none;}
+/* ── Tooltip, dialogs, toast ──────────────────────────────────── */
+.tip{position:fixed;pointer-events:none;z-index:4000;background:rgba(10,10,10,.94);border:1px solid var(--border);border-radius:4px;padding:4px 9px;
+  font-weight:700;font-size:16px;color:#eee;white-space:nowrap;display:none;transform:translate(-50%,-100%);box-shadow:0 2px 8px rgba(0,0,0,.7);}
+.tip small{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);margin-left:6px;font-weight:400;}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:6000;display:none;align-items:center;justify-content:center;}
 .ov.show{display:flex;}
 .dlg{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:20px;min-width:300px;max-width:94vw;max-height:90vh;overflow:auto;box-shadow:0 8px 40px rgba(0,0,0,.8);}
-.dlg h2{font-size:22px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
-.drow{display:flex;flex-direction:column;gap:3px;margin-bottom:10px;}
-.drow label,.dsec{font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);}
-.dsec{margin:6px 0 6px;border-top:1px solid var(--border);padding-top:10px;}
-.dsec small{text-transform:none;letter-spacing:0;font-weight:400;}
-.dgrid{display:grid;grid-template-columns:repeat(var(--n,2),1fr);gap:8px;}
-.dchk{display:flex;gap:18px;font-size:16px;font-weight:600;margin:4px 0;}
-.dchk input{accent-color:var(--accent);margin-right:5px;}
+.dlg h2{font-size:20px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
 .dacts{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;}
 .ver-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);}
 .ver-row .nm{font-weight:700;font-size:16px;}
 .ver-row .meta{font-size:12px;color:var(--text-dim);}
-#toast{position:fixed;left:50%;bottom:44px;transform:translateX(-50%);background:#111;border:1px solid var(--accent);color:var(--text);padding:8px 16px;border-radius:4px;
+#toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:#111;border:1px solid var(--accent);color:var(--text);padding:8px 16px;border-radius:5px;
   font-size:17px;font-weight:600;z-index:7000;opacity:0;transition:opacity .2s;pointer-events:none;}
 #toast.show{opacity:1;}
-::-webkit-scrollbar{width:36px;height:36px;}
+::-webkit-scrollbar{width:12px;height:12px;}
 ::-webkit-scrollbar-track{background:#111;}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
-.sidebar::-webkit-scrollbar{width:10px;}
-.dlg ::-webkit-scrollbar,.dlg::-webkit-scrollbar{width:10px;}
+::-webkit-scrollbar-thumb{background:#3a3a3a;border-radius:6px;border:2px solid #111;}
+.canvas-wrap::-webkit-scrollbar{width:16px;height:16px;}
+@media (pointer:coarse){ .canvas-wrap::-webkit-scrollbar{width:28px;height:28px;} }
+
+/* Narrow / portrait: inspector becomes a bottom sheet */
+@media (max-width:1100px) and (orientation:portrait){
+  .main{flex-direction:column;}
+  .sidebar{display:none;}
+  body.show-side .sidebar{display:flex;position:absolute;z-index:4500;top:52px;bottom:0;left:0;box-shadow:4px 0 20px rgba(0,0,0,.6);}
+  .inspector{width:auto;height:42vh;border-left:none;border-top:2px solid var(--border);}
+  .inspector.min{height:auto;}
+  .inspector.min .insp-body{display:none;}
+  #btnSide{display:inline-flex!important;}
+}
+#btnSide{display:none;}
 
 #printArea{display:none;}
 @media print{
@@ -179,79 +230,64 @@ header .sub{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--t
 </head>
 <body>
 <header>
+  <button class="btn icon" id="btnSide" onclick="document.body.classList.toggle('show-side')" title="Library & layers">☰</button>
   <div>
     <h1>Workshop Planner</h1>
     <div class="sub" id="headerSub"></div>
   </div>
   <div class="toolbar">
-    <span class="snap-badge" title="Snap grid">SNAP</span>
+    <button class="btn icon" id="btnUndo" onclick="undo()" disabled title="Undo (Ctrl+Z)">↩</button>
+    <button class="btn icon" id="btnRedo" onclick="redo()" disabled title="Redo (Ctrl+Y)">↪</button>
+    <span class="tsep"></span>
+    <span class="tlabel">Snap</span>
     <select id="snapSelect" class="sel" title="Snap grid (anchored to the inside wall faces)">
-      <option value="0">OFF</option><option value="5">0.5 ft</option><option value="10">1 ft</option><option value="15">1.5 ft</option>
+      <option value="0">Off</option><option value="5">0.5 ft</option><option value="10">1 ft</option><option value="15">1.5 ft</option>
       <option value="20">2 ft</option><option value="25">2.5 ft</option><option value="30">3 ft</option><option value="35">3.5 ft</option><option value="40">4 ft</option>
     </select>
-    <button class="btn" id="btnUndo" onclick="undo()" disabled title="Undo (Ctrl+Z)">↩</button>
-    <button class="btn" id="btnRedo" onclick="redo()" disabled title="Redo (Ctrl+Y)">↪</button>
-    <button class="btn" id="btnMeasure" onclick="toggleMeasure()" title="Measure tool (M)">📏<span class="bt"> Measure</span></button>
+    <button class="btn" id="btnMeasure" onclick="toggleMeasure()" title="Measure distance (M)">📏<span class="bt">Measure</span></button>
     <span class="tsep"></span>
-    <button class="btn" onclick="openVersions()" title="Named snapshots saved in this browser">💾<span class="bt"> Versions</span></button>
-    <button class="btn" onclick="openShare()" title="Copy a link that contains this layout">🔗<span class="bt"> Share</span></button>
-    <button class="btn" onclick="exportJSON()" title="Download layout as JSON">⬇<span class="bt"> JSON</span></button>
-    <label class="btn" title="Load a layout JSON file">⬆<span class="bt"> JSON</span><input id="jsonImport" type="file" accept=".json,application/json" style="display:none" onchange="importJSON(event)"/></label>
-    <button class="btn" onclick="printLayout()" title="Print or save as PDF">🖨<span class="bt"> Print</span></button>
-    <button class="btn pri" onclick="exportPNG()" title="Download PNG image">📷<span class="bt"> PNG</span></button>
-    <span class="tsep"></span>
-    <button class="btn" onclick="resetLayout()" title="Reset to default layout">⟲<span class="bt"> Reset</span></button>
+    <button class="btn" id="issuesBadge" onclick="showIssues()" title="Layout problems">✓ No issues</button>
+    <button class="btn" id="btnFile" onclick="toggleFileMenu(event)">File ▾</button>
   </div>
 </header>
 
 <div class="main">
   <div class="sidebar">
-    <div class="sb-sec" style="background:#1e1e1e;">
-      <h3 style="color:var(--accent)">🏠 Shed Size <span style="color:var(--text-dim);letter-spacing:1px">(ft)</span></h3>
-      <div class="dgrid" style="margin-bottom:6px;gap:5px;--n:3">
-        <div style="display:flex;flex-direction:column;gap:3px;"><label class="flabel" for="shedW">Width</label><input id="shedW" class="fi" type="number" min="10" max="200" step="1"/></div>
-        <div style="display:flex;flex-direction:column;gap:3px;"><label class="flabel" for="shedH">Depth</label><input id="shedH" class="fi" type="number" min="10" max="200" step="1"/></div>
-        <div style="display:flex;flex-direction:column;gap:3px;"><label class="flabel" for="shedC">Ceiling</label><input id="shedC" class="fi" type="number" min="6" max="60" step="0.25" title="Clear ceiling height (ft) — lowest point, e.g. bottom of trusses"/></div>
-      </div>
-      <button class="btn pri" style="width:100%" onclick="applyShedSize()">Apply</button>
-      <div id="shedErr" class="err"></div>
-    </div>
-
     <details class="sb-sec" open>
-      <summary>📚 Library</summary>
-      <div style="font-size:13px;color:var(--text-dim);margin-bottom:5px">Click to add at view center, or drag onto the floor. Sizes are typical — edit after placing.</div>
+      <summary>Library</summary>
+      <div class="hint" style="margin-bottom:6px">Click to add, or drag onto the floor. Sizes and heights are typical — adjust after placing.</div>
       <div id="library"></div>
     </details>
 
     <details class="sb-sec">
-      <summary>➕ Custom Item</summary>
+      <summary>Custom item</summary>
       <div style="display:flex;flex-direction:column;gap:6px;">
         <input id="cName" class="fi" type="text" placeholder="Name"/>
-        <div class="dgrid" style="gap:5px">
-          <input id="cW" class="fi" type="number" placeholder="W (ft)" min="0.5" max="200" step="0.5"/>
-          <input id="cH" class="fi" type="number" placeholder="D (ft)" min="0.5" max="200" step="0.5"/>
+        <div class="fgrid" style="gap:5px">
+          <input id="cW" class="fi" type="number" placeholder="Width ft" min="0.5" max="200" step="0.5"/>
+          <input id="cH" class="fi" type="number" placeholder="Depth ft" min="0.5" max="200" step="0.5"/>
         </div>
         <select id="cCat" class="fi catSelect" style="cursor:pointer"></select>
-        <label class="layer-row" style="font-size:14px"><input type="checkbox" id="cLib"/> Also save to My Items</label>
-        <button class="btn pri" style="width:100%" onclick="addCustom()">Add to Floor</button>
+        <label class="chk"><input type="checkbox" id="cLib"/> Also save to My Items</label>
+        <button class="btn pri" style="width:100%" onclick="addCustom()">Add to floor</button>
         <div id="cErr" class="err"></div>
       </div>
     </details>
 
     <details class="sb-sec" open>
-      <summary>🗂 Layers</summary>
+      <summary>Layers</summary>
       <div id="layers"></div>
     </details>
 
     <details class="sb-sec">
-      <summary>⌨ Shortcuts</summary>
+      <summary>Shortcuts</summary>
       <div class="help">
         <b>Drag</b> move · <b>Shift-click</b> add to selection<br>
         <b>Drag empty floor</b> box-select<br>
         <b>Space+drag</b> / middle-drag pan · <b>Wheel</b> zoom<br>
-        <b>Right-click</b> / long-press menu · <b>Dbl-click</b> edit<br>
+        <b>Right-click</b> / long-press menu<br>
         <b>Arrows</b> nudge (Shift = 5 ft)<br>
-        <b>R</b> rotate (Shift+R back) · <b>E</b> edit<br>
+        <b>R</b> rotate (Shift+R back) · <b>E</b> rename<br>
         <b>L</b> lock · <b>P</b> always show name<br>
         <b>Ctrl+D</b> duplicate · <b>Ctrl+A</b> select all<br>
         <b>Del</b> delete · <b>Ctrl+Z / Y</b> undo / redo<br>
@@ -267,8 +303,8 @@ header .sub{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--t
         <div id="floor">
           <svg id="gridSvg" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <pattern id="g1" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0L0 0 0 10" fill="none" stroke="#252525" stroke-width="0.5"/></pattern>
-              <pattern id="g5" width="50" height="50" patternUnits="userSpaceOnUse"><rect width="50" height="50" fill="url(#g1)"/><path d="M50 0L0 0 0 50" fill="none" stroke="#2e2e2e" stroke-width="1"/></pattern>
+              <pattern id="g1" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0L0 0 0 10" fill="none" stroke="#242424" stroke-width="0.5"/></pattern>
+              <pattern id="g5" width="50" height="50" patternUnits="userSpaceOnUse"><rect width="50" height="50" fill="url(#g1)"/><path d="M50 0L0 0 0 50" fill="none" stroke="#2f2f2f" stroke-width="1"/></pattern>
             </defs>
             <rect id="gridFill" x="0" y="0" fill="url(#g5)"/>
           </svg>
@@ -279,108 +315,76 @@ header .sub{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--t
         </div>
       </div>
     </div>
-    <div class="elev" id="elevPanel"><svg id="elevSvg" width="230" height="200"></svg></div>
+    <div class="firsthint" id="firstHint" style="display:none">
+      <span><b>Drag</b> items from the Library · <b>click</b> an item to edit it on the right · <b>right-click</b> for more</span>
+      <button class="btn sm" onclick="dismissHint()">Got it</button>
+    </div>
     <div class="hud">
       <div class="scalebar"><div class="bar" id="scaleBar"></div><div id="scaleLbl">10 ft</div></div>
-      <svg width="46" height="46" viewBox="-23 -23 46 46">
-        <circle r="21" fill="#1e1e1e" stroke="#444" stroke-width="1.5"/>
-        <polygon points="0,-16 3,-5 -3,-5" fill="#e8a020"/><polygon points="0,16 3,5 -3,5" fill="#444"/>
-        <polygon points="-16,0 -5,-3 -5,3" fill="#444"/><polygon points="16,0 5,-3 5,3" fill="#444"/>
+      <svg width="40" height="40" viewBox="-23 -23 46 46">
+        <circle r="21" fill="#1e1e1e" stroke="#555" stroke-width="1.5"/>
+        <polygon points="0,-16 3,-5 -3,-5" fill="#e8a020"/><polygon points="0,16 3,5 -3,5" fill="#555"/>
+        <polygon points="-16,0 -5,-3 -5,3" fill="#555"/><polygon points="16,0 5,-3 5,3" fill="#555"/>
         <text y="-9" x="7" font-size="10" font-weight="700" fill="#e8a020" font-family="Barlow Condensed,sans-serif">N</text>
       </svg>
     </div>
-    <div class="zoom-rail">
-      <label>zoom</label>
-      <button class="zb" onclick="zoomStep(1)" title="Zoom in (+)">+</button>
-      <span id="zoomPct">100%</span>
-      <div style="height:200px;display:flex;align-items:center;justify-content:center;overflow:visible;">
-        <input type="range" id="zoomSlider" min="0" max="1000" step="1" value="500" aria-label="Zoom"/>
-      </div>
-      <button class="zb" onclick="zoomStep(-1)" title="Zoom out (−)">−</button>
-      <button class="zb txt" onclick="zoomFit()" title="Fit to window (F)">FIT</button>
-      <button class="zb txt" onclick="setZoom(1)" title="100% (0)">1:1</button>
+    <div class="zoomctl">
+      <button onclick="zoomStep(-1)" title="Zoom out (−)">−</button>
+      <button class="pct" id="zoomPct" onclick="setZoom(1)" title="Reset to 100% (0)">100%</button>
+      <button onclick="zoomStep(1)" title="Zoom in (+)">+</button>
+      <button onclick="zoomFit()" title="Fit to window (F)" style="font-size:15px">Fit</button>
     </div>
   </div>
+
+  <aside class="inspector" id="inspector">
+    <div class="insp-head" id="inspHead"></div>
+    <div class="insp-body" id="inspBody"></div>
+  </aside>
 </div>
 
 <div class="info-bar">
-  <div>POS: <span id="iPos">—</span></div>
-  <div>SELECTED: <span id="iSel">none</span></div>
-  <div>SIZE: <span id="iSize">—</span></div>
-  <div>DIST: <span id="iDist">—</span></div>
-  <div>ISSUES: <span id="iIssues" onclick="selectIssues()">—</span></div>
-  <div style="margin-left:auto;color:#555">auto-saves to browser</div>
+  <div>Pos <span id="iPos">—</span></div>
+  <div>Dist <span id="iDist">—</span></div>
+  <div style="margin-left:auto;color:#555">auto-saves to this browser</div>
 </div>
 
 <div class="tip" id="tip"></div>
 <div id="toast"></div>
 
-<!-- CONTEXT MENU -->
-<div class="ctx" id="ctx">
-  <div class="cxi" data-act="lock"><span id="ctxLockTxt">🔒 Lock</span><kbd>L</kbd></div>
-  <div class="cxi" data-act="pin"><span id="ctxPinTxt">📌 Always Show Name</span><kbd>P</kbd></div>
-  <div class="cxi" data-act="edit" id="ctxEdit"><span>✎ Edit / Resize</span><kbd>E</kbd></div>
-  <div class="cxi" data-act="rotate"><span>↻ Rotate 90°</span><kbd>R</kbd></div>
-  <div class="cxi" data-act="dupe"><span>⧉ Duplicate</span><kbd>Ctrl+D</kbd></div>
-  <div class="cxi" data-act="lib" id="ctxLib"><span>📚 Save to My Items</span></div>
-  <div class="cxi sep" data-act="front"><span>▲ Bring to Front</span></div>
-  <div class="cxi" data-act="back"><span>▼ Send to Back</span></div>
-  <div class="cxi sep del" data-act="delete"><span id="ctxDelTxt">✕ Delete</span><kbd>Del</kbd></div>
+<!-- FILE MENU -->
+<div class="menu" id="fileMenu">
+  <div class="mi" data-file="versions"><span>💾 Versions…</span></div>
+  <div class="mi" data-file="share"><span>🔗 Share link…</span></div>
+  <div class="mi sep" data-file="png"><span>📷 Export image (PNG)</span></div>
+  <div class="mi" data-file="print"><span>🖨 Print / PDF</span><kbd>Ctrl+P</kbd></div>
+  <div class="mi" data-file="json"><span>⬇ Export layout file (JSON)</span></div>
+  <label class="mi" style="margin:0"><span>⬆ Import layout file…</span><input id="jsonImport" type="file" accept=".json,application/json" style="display:none" onchange="importJSON(event)"/></label>
+  <div class="mi sep del" data-file="reset"><span>⟲ Reset to default layout</span></div>
 </div>
 
-<!-- EDIT DIALOG -->
-<div class="ov" id="dlgOv">
-  <div class="dlg" style="width:440px">
-    <h2>Edit Item</h2>
-    <div class="drow"><label for="dLabel">Label</label><input id="dLabel" class="fi" type="text" maxlength="80"/></div>
-    <div class="dgrid" style="--n:3">
-      <div class="drow"><label for="dW">Width (ft)</label><input id="dW" class="fi" type="number" min="0.1" max="200" step="0.5"/></div>
-      <div class="drow"><label for="dH">Depth (ft)</label><input id="dH" class="fi" type="number" min="0.1" max="200" step="0.5"/></div>
-      <div class="drow"><label for="dRot">Rotation</label><select id="dRot" class="fi"><option value="0">0°</option><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select></div>
-    </div>
-    <div class="dgrid" style="--n:2" id="rowHeights">
-      <div class="drow"><label for="dHt">Height (ft)</label><input id="dHt" class="fi" type="number" min="0" max="60" step="0.5" placeholder="unknown"/></div>
-      <div class="drow"><label for="dElev">Mounted at (ft)</label><input id="dElev" class="fi" type="number" min="0" max="60" step="0.5" placeholder="0 = floor"/></div>
-    </div>
-    <div class="drow"><label for="dCat">Category / Layer</label><select id="dCat" class="fi catSelect" style="cursor:pointer"></select></div>
-    <div class="dsec">Clearance (ft) <small>— front = bottom edge at 0°, marked with a tick</small></div>
-    <div class="dgrid" style="--n:4">
-      <div class="drow"><label for="cF">Front</label><input id="cF" class="fi" type="number" min="0" max="50" step="0.5" placeholder="0"/></div>
-      <div class="drow"><label for="cB">Back</label><input id="cB" class="fi" type="number" min="0" max="50" step="0.5" placeholder="0"/></div>
-      <div class="drow"><label for="cL">Left</label><input id="cL" class="fi" type="number" min="0" max="50" step="0.5" placeholder="0"/></div>
-      <div class="drow"><label for="cR">Right</label><input id="cR" class="fi" type="number" min="0" max="50" step="0.5" placeholder="0"/></div>
-    </div>
-    <div class="dsec">Door <small>— place it on a wall; it swings / tracks into the room</small></div>
-    <div class="dgrid" style="--n:3">
-      <div class="drow"><label for="dDoor">Type</label><select id="dDoor" class="fi"><option value="">None</option><option value="door">Swing door</option><option value="garage">Overhead door</option></select></div>
-      <div class="drow"><label for="dDh">Door height (ft)</label><input id="dDh" class="fi" type="number" min="1" max="40" step="0.25"/></div>
-      <div class="drow" id="rowHinge"><label for="dHinge">Hinge</label><select id="dHinge" class="fi"><option value="L">West / North end</option><option value="R">East / South end</option></select></div>
-    </div>
-    <div class="dgrid" style="--n:3" id="rowGarage">
-      <div class="drow"><label for="dLift">Lift</label><select id="dLift" class="fi"><option value="std">Standard</option><option value="high">High-lift</option><option value="vert">Vertical</option><option value="low">Low-headroom</option></select></div>
-      <div class="drow"><label for="dHl">High-lift (ft)</label><input id="dHl" class="fi" type="number" min="0" max="30" step="0.5"/></div>
-      <div class="drow"><label for="dHw">Hardware</label><select id="dHw" class="fi"><option value="res">Residential</option><option value="c2">Commercial 2″</option><option value="c3">Commercial 3″</option></select></div>
-    </div>
-    <div id="doorInfo" style="font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--text-dim);min-height:16px"></div>
-    <div class="dchk"><label><input type="checkbox" id="dLocked"/>Locked</label><label><input type="checkbox" id="dPin"/>Always show name</label><label title="Rooms/zones that equipment sits inside (paint booth, bay) — never flagged as overlapping"><input type="checkbox" id="dArea"/>Zone (no overlap check)</label></div>
-    <div id="dErr" class="err"></div>
-    <div class="dacts">
-      <button class="btn" onclick="closeEdit()">Cancel</button>
-      <button class="btn pri" onclick="applyEdit()">Apply</button>
-    </div>
-  </div>
+<!-- CONTEXT MENU -->
+<div class="menu" id="ctx">
+  <div class="mi" data-act="rename" id="ctxEdit"><span>✎ Rename / edit</span><kbd>E</kbd></div>
+  <div class="mi" data-act="rotate"><span>↻ Rotate 90°</span><kbd>R</kbd></div>
+  <div class="mi" data-act="dupe"><span>⧉ Duplicate</span><kbd>Ctrl+D</kbd></div>
+  <div class="mi" data-act="lock"><span id="ctxLockTxt">🔒 Lock</span><kbd>L</kbd></div>
+  <div class="mi" data-act="pin"><span id="ctxPinTxt">📌 Always show name</span><kbd>P</kbd></div>
+  <div class="mi" data-act="lib" id="ctxLib"><span>📚 Save to My Items</span></div>
+  <div class="mi sep" data-act="front"><span>▲ Bring to front</span></div>
+  <div class="mi" data-act="back"><span>▼ Send to back</span></div>
+  <div class="mi sep del" data-act="delete"><span id="ctxDelTxt">✕ Delete</span><kbd>Del</kbd></div>
 </div>
 
 <!-- VERSIONS DIALOG -->
 <div class="ov" id="verOv">
   <div class="dlg" style="width:480px;display:flex;flex-direction:column;">
-    <h2>💾 Saved Versions</h2>
+    <h2>Saved versions</h2>
     <div style="display:flex;gap:8px;margin-bottom:12px;">
       <input id="verName" class="fi" placeholder="Version name (e.g. Option A)" maxlength="60" style="flex:1"/>
-      <button class="btn pri" onclick="saveVersion()">Save Current</button>
+      <button class="btn pri" onclick="saveVersion()">Save current</button>
     </div>
     <div id="verList" style="overflow-y:auto;flex:1;min-height:60px;max-height:50vh"></div>
-    <div style="font-size:13px;color:var(--text-dim);margin-top:8px">Versions live in this browser only. Use Share or JSON to move a layout to another device.</div>
+    <div class="hint" style="margin-top:8px">Versions live in this browser only. Use Share or Export to move a layout to another device.</div>
     <div class="dacts"><button class="btn" onclick="closeDialogs()">Close</button></div>
   </div>
 </div>
@@ -388,10 +392,10 @@ header .sub{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--t
 <!-- SHARE DIALOG -->
 <div class="ov" id="shareOv">
   <div class="dlg" style="width:520px">
-    <h2>🔗 Share Layout</h2>
-    <div style="font-size:15px;color:var(--text-dim);margin-bottom:8px">This link contains the whole layout — nothing is uploaded. Opening it offers to load the layout.</div>
+    <h2>Share layout</h2>
+    <div class="hint" style="margin-bottom:8px">This link contains the whole layout — nothing is uploaded. Opening it offers to load the layout.</div>
     <input id="shareUrl" class="fi" readonly style="font-family:'Share Tech Mono',monospace;font-size:13px"/>
-    <div class="dacts"><button class="btn" onclick="closeDialogs()">Close</button><button class="btn pri" onclick="copyShare()">Copy Link</button></div>
+    <div class="dacts"><button class="btn" onclick="closeDialogs()">Close</button><button class="btn pri" onclick="copyShare()">Copy link</button></div>
   </div>
 </div>
 
@@ -457,7 +461,7 @@ const DEFAULT_LAYOUT = {shedW:40, shedH:60, ceilH:14, items:[
   {label:'WOOD TABLE', cat:'Wood', w:50, h:30, x:110, y:245, rot:90},
   {label:'CENTRAL VAC', cat:'Shop', w:20, h:20, x:50, y:235},
   {label:'Air', cat:'Shop', w:25, h:25, x:195, y:605, locked:true, pin:true},
-  {label:'MITER TABLE', cat:'Wood', w:100, h:25, x:150.75, y:190.75, locked:true, pin:true},
+  {label:'MITER TABLE', cat:'Wood', w:91, h:25, x:150.75, y:190.75, locked:true, pin:true},
   {label:'CABINETS', cat:'Storage', w:100, h:25, x:50, y:450, rot:90, pin:true},
   {label:'WOOD TABLE', cat:'Wood', w:50, h:30, x:170, y:245, rot:90},
   {label:'BENDPAK 12APX', cat:'Structure', w:130, h:20, x:270, y:280, locked:true, pin:true, area:true},
@@ -487,46 +491,46 @@ const HEAD_CLEAR = 80/12;   // items mounted at or above standard door height (8
 const bottomOf = it => it.elev || 0;
 const topOf = it => it.ht != null ? (it.elev || 0) + it.ht : Infinity;   // unknown height = treat as full height
 
-// Library presets. Units: ft. Sizes are typical placeholders, not manufacturer specs.
+// Library presets. Units: ft. Sizes and heights (ht, elev) are typical placeholders, not manufacturer specs.
 const PRESETS = [
   {group:'Metal', items:[
-    {label:'Plasma Table', cat:'Metal', w:5, d:4, clr:{f:3}},
-    {label:'Welding Table', cat:'Metal', w:5, d:3},
-    {label:'MIG Welder', cat:'Metal', w:1.6, d:3},
-    {label:'TIG Welder', cat:'Metal', w:2, d:3},
-    {label:'Shop Press', cat:'Metal', w:2.3, d:2},
-    {label:'Metal Bandsaw', cat:'Metal', w:5, d:2, clr:{l:4, r:4}},
-    {label:'Drill Press', cat:'Metal', w:1.5, d:2, clr:{f:2}},
-    {label:'Bench Grinder', cat:'Metal', w:1.5, d:1, clr:{f:2}},
-    {label:'Blast Cabinet', cat:'Metal', w:4, d:3, clr:{f:3}},
+    {label:'Plasma Table', cat:'Metal', w:5, d:4, clr:{f:3}, ht:3},
+    {label:'Welding Table', cat:'Metal', w:5, d:3, ht:3},
+    {label:'MIG Welder', cat:'Metal', w:1.6, d:3, ht:3},
+    {label:'TIG Welder', cat:'Metal', w:2, d:3, ht:3},
+    {label:'Shop Press', cat:'Metal', w:2.3, d:2, ht:6},
+    {label:'Metal Bandsaw', cat:'Metal', w:5, d:2, clr:{l:4, r:4}, ht:4},
+    {label:'Drill Press', cat:'Metal', w:1.5, d:2, clr:{f:2}, ht:5.5},
+    {label:'Bench Grinder', cat:'Metal', w:1.5, d:1, clr:{f:2}, ht:4},
+    {label:'Blast Cabinet', cat:'Metal', w:4, d:3, clr:{f:3}, ht:6},
   ]},
   {group:'Wood', items:[
-    {label:'Table Saw', cat:'Wood', w:4, d:3, clr:{f:3}},
-    {label:'Bandsaw', cat:'Wood', w:2.2, d:2.2, clr:{f:3}},
-    {label:'Miter Station', cat:'Wood', w:10, d:2.5, clr:{f:3}},
-    {label:'Jointer', cat:'Wood', w:6, d:1.5, clr:{l:4, r:4}},
-    {label:'Planer', cat:'Wood', w:2, d:2, clr:{f:4, b:4}},
-    {label:'Router Table', cat:'Wood', w:3, d:2, clr:{f:3}},
-    {label:'Workbench', cat:'Wood', w:8, d:3, clr:{f:3}},
+    {label:'Table Saw', cat:'Wood', w:4, d:3, clr:{f:3}, ht:3},
+    {label:'Bandsaw', cat:'Wood', w:2.2, d:2.2, clr:{f:3}, ht:6},
+    {label:'Miter Station', cat:'Wood', w:10, d:2.5, clr:{f:3}, ht:3.5},
+    {label:'Jointer', cat:'Wood', w:6, d:1.5, clr:{l:4, r:4}, ht:3},
+    {label:'Planer', cat:'Wood', w:2, d:2, clr:{f:4, b:4}, ht:4},
+    {label:'Router Table', cat:'Wood', w:3, d:2, clr:{f:3}, ht:3},
+    {label:'Workbench', cat:'Wood', w:8, d:3, clr:{f:3}, ht:3},
   ]},
   {group:'Shop', items:[
-    {label:'Air Compressor', cat:'Shop', w:2.5, d:2.5},
-    {label:'Powder Coat Oven', cat:'Shop', w:4, d:4, clr:{f:4}},
-    {label:'Dust Collector', cat:'Shop', w:2.5, d:2.5},
-    {label:'Central Vac', cat:'Shop', w:2, d:2},
-    {label:'Parts Washer', cat:'Shop', w:3, d:2, clr:{f:3}},
+    {label:'Air Compressor', cat:'Shop', w:2.5, d:2.5, ht:6},
+    {label:'Powder Coat Oven', cat:'Shop', w:4, d:4, clr:{f:4}, ht:7},
+    {label:'Dust Collector', cat:'Shop', w:2.5, d:2.5, ht:7},
+    {label:'Central Vac', cat:'Shop', w:2, d:2, ht:3},
+    {label:'Parts Washer', cat:'Shop', w:3, d:2, clr:{f:3}, ht:4},
     {label:'Lift Bay', cat:'Shop', w:12, d:24},
-    {label:'Vehicle', cat:'Shop', w:6.5, d:16},
+    {label:'Vehicle', cat:'Shop', w:6.5, d:16, ht:6},
   ]},
   {group:'Storage', items:[
-    {label:'Tool Chest', cat:'Storage', w:4.5, d:2, clr:{f:3}},
-    {label:'Cabinet Run', cat:'Storage', w:10, d:2.5, clr:{f:3}},
-    {label:'Shelving', cat:'Storage', w:4, d:1.5},
-    {label:'Pallet Rack', cat:'Storage', w:8, d:3.5, clr:{f:4}},
+    {label:'Tool Chest', cat:'Storage', w:4.5, d:2, clr:{f:3}, ht:4.5},
+    {label:'Cabinet Run', cat:'Storage', w:10, d:2.5, clr:{f:3}, ht:3},
+    {label:'Shelving', cat:'Storage', w:4, d:1.5, ht:6},
+    {label:'Pallet Rack', cat:'Storage', w:8, d:3.5, clr:{f:4}, ht:10},
   ]},
   {group:'Electrical', items:[
-    {label:'200A Panel', cat:'Electrical', w:3, d:2, clr:{f:3}},
-    {label:'Subpanel', cat:'Electrical', w:2, d:1, clr:{f:3}},
+    {label:'200A Panel', cat:'Electrical', w:3, d:2, clr:{f:3}, ht:3, elev:3.5},
+    {label:'Subpanel', cat:'Electrical', w:2, d:1, clr:{f:3}, ht:2, elev:4},
   ]},
   {group:'Utilities', items:[
     {label:'120V Outlet', cat:'Power', w:1, d:1, glyph:'120'},
@@ -534,7 +538,7 @@ const PRESETS = [
     {label:'Air Drop', cat:'Air', w:1, d:1},
     {label:'Dust Port', cat:'Dust', w:1, d:1},
     {label:'Shop Light', cat:'Lighting', w:4, d:1},
-    {label:'Mini-split Head', cat:'HVAC', w:3, d:1},
+    {label:'Mini-split Head', cat:'HVAC', w:3, d:1, ht:1, elev:7.5},
     {label:'Condenser', cat:'HVAC', w:3, d:1.5, glyph:'CU'},
   ]},
   {group:'Structure', items:[
@@ -642,10 +646,10 @@ function clrZones(it){
   for (const k of Object.keys(it.clr)){
     const d = it.clr[k]*PX; if (!(d > 0)) continue;
     const side = SIDES[(SIDE_IDX[k] + it.rot/90) % 4];
-    if (side === 'S') out.push({x:r.x, y:r.y+r.h, w:r.w, h:d});
-    if (side === 'N') out.push({x:r.x, y:r.y-d, w:r.w, h:d});
-    if (side === 'W') out.push({x:r.x-d, y:r.y, w:d, h:r.h});
-    if (side === 'E') out.push({x:r.x+r.w, y:r.y, w:d, h:r.h});
+    if (side === 'S') out.push({k, x:r.x, y:r.y+r.h, w:r.w, h:d});
+    if (side === 'N') out.push({k, x:r.x, y:r.y-d, w:r.w, h:d});
+    if (side === 'W') out.push({k, x:r.x-d, y:r.y, w:d, h:r.h});
+    if (side === 'E') out.push({k, x:r.x+r.w, y:r.y, w:d, h:r.h});
   }
   return out;
 }
@@ -867,62 +871,82 @@ function computeIssues(){
   const vis = Object.entries(items).filter(([, it]) => visible(it));
   const bodies = vis.filter(([, it]) => collides(it)).map(([u, it]) => [u, rectOf(it), it]);
   const floorBodies = bodies.filter(([, , it]) => bottomOf(it) < HEAD_CLEAR);   // things you'd walk into
-  const body = new Set(), clr = new Set(), pairs = [], zones = [], over = [], trackHit = new Set();
+  const ovSet = new Set(), clr = new Set(), pairs = [], zones = [], over = [], trackHit = new Set(), list = [];
   let clrCount = 0, swingHits = 0;
+  const L = u => items[u].label;
   for (let i = 0; i < bodies.length; i++)
     for (let j = i + 1; j < bodies.length; j++){
       const [ua, ra, a] = bodies[i], [ub, rb, b] = bodies[j];
       // overlapping footprints only clash if their height ranges overlap too (e.g. a wall cabinet above a bench is fine)
-      if (overlaps(ra, rb) && bottomOf(a) < topOf(b) - 0.01 && bottomOf(b) < topOf(a) - 0.01){ pairs.push([ua, ub]); body.add(ua); body.add(ub); }
+      if (overlaps(ra, rb) && bottomOf(a) < topOf(b) - 0.01 && bottomOf(b) < topOf(a) - 0.01){
+        pairs.push([ua, ub]); ovSet.add(ua); ovSet.add(ub);
+        const r = interRect(ra, rb);
+        list.push({kind:'overlap', uids:[ua, ub], title:`${L(ua)} ↔ ${L(ub)}`, msg:`Overlap ${ft(r.w)} × ${ft(r.h)} ft`});
+      }
     }
   const I = inner();
   const doors = vis.filter(([, it]) => it.door).map(([u, it]) => [u, it, doorGeom(it)]);
+  const SIDE_NAME = {f:'Front', b:'Back', l:'Left', r:'Right'};
   for (const [u, it] of vis){
     if (!it.clr || it.wall || it.door) continue;
     for (const z of clrZones(it)){
       const out = z.x < I.l-0.5 || z.y < I.t-0.5 || z.x+z.w > I.r+0.5 || z.y+z.h > I.b+0.5;
-      const hit = out || floorBodies.some(([v, r]) => v !== u && overlaps(z, r)) || doors.some(([, , g]) => overlaps(z, g.swing));
+      const by = floorBodies.find(([v, r]) => v !== u && overlaps(z, r));
+      const sw = doors.find(([, , g]) => overlaps(z, g.swing));
+      const hit = out || !!by || !!sw;
       zones.push({u, z, hit});
-      if (hit){ clr.add(u); clrCount++; }
+      if (hit){
+        clr.add(u); clrCount++;
+        const why = by ? `blocked by ${L(by[0])}` : sw ? `crosses the ${L(sw[0])} swing` : 'runs into the wall';
+        list.push({kind:'clr', uids:by ? [u, by[0]] : [u], title:L(u), msg:`${SIDE_NAME[z.k]} clearance (${it.clr[z.k]} ft) ${why}`});
+      }
     }
   }
-  for (const [, it, g] of doors){
+  for (const [du, it, g] of doors){
     if (it.door.type !== 'door') continue;
-    for (const [v, r, ob] of bodies) if (bottomOf(ob) < Math.max(HEAD_CLEAR, it.door.dh) && swingHit(g, r)){ body.add(v); swingHits++; }
+    for (const [v, r, ob] of bodies) if (bottomOf(ob) < Math.max(HEAD_CLEAR, it.door.dh) && swingHit(g, r)){
+      ovSet.add(v); swingHits++;
+      list.push({kind:'clr', uids:[v, du], title:L(v), msg:`In the swing of ${L(du)}`});
+    }
   }
   // Overhead: ceiling height, door headroom/backroom, things reaching up into a garage-door track
   for (const [u, it] of vis){
     if (it.wall) continue;
-    if (bottomOf(it) > ceilH + 0.01){ over.push({u, msg:`mounted at ${bottomOf(it).toFixed(1)} ft — above the ${ceilH} ft ceiling`}); continue; }
+    if (bottomOf(it) > ceilH + 0.01){ over.push({u, msg:`Mounted at ${bottomOf(it).toFixed(1)} ft — above the ${ceilH} ft ceiling`}); continue; }
     if (it.ht == null) continue;
-    if (topOf(it) > ceilH + 0.01) over.push({u, msg:`top at ${topOf(it).toFixed(1)} ft is above the ${ceilH} ft ceiling`});
+    if (topOf(it) > ceilH + 0.01) over.push({u, msg:`Top at ${topOf(it).toFixed(1)} ft is above the ${ceilH} ft ceiling`});
   }
   for (const [u, it, g] of doors){
     if (it.door.type !== 'garage') continue;
     const sp = g.spec;
-    if (sp.needCeil > ceilH + 0.01) over.push({u, msg:`${LIFT_NAMES[it.door.lift]} lift needs ${sp.needCeil.toFixed(1)} ft ceiling (have ${ceilH})`});
+    if (sp.needCeil > ceilH + 0.01) over.push({u, msg:`${LIFT_NAMES[it.door.lift][0].toUpperCase() + LIFT_NAMES[it.door.lift].slice(1)} lift needs a ${sp.needCeil.toFixed(1)} ft ceiling (have ${ceilH})`});
     if (!sp.backroom) continue;
     const t = g.track;
     if (t.x < I.l - 0.5 || t.y < I.t - 0.5 || t.x + t.w > I.r + 0.5 || t.y + t.h > I.b + 0.5){
-      over.push({u, msg:`needs ${sp.backroom.toFixed(1)} ft backroom — more than the room has`}); trackHit.add(u);
+      over.push({u, msg:`Needs ${sp.backroom.toFixed(1)} ft of backroom — more than the room has`}); trackHit.add(u);
     }
     for (const [v, other] of vis){
       if (v === u || other.wall || other.door || other.ht == null) continue;   // unknown heights aren't guessed
       // the open door + track occupy a band from track height up to the required ceiling
       if (overlaps(t, rectOf(other)) && topOf(other) > sp.trackElev + 0.01 && bottomOf(other) < sp.needCeil - 0.01){
-        over.push({u:v, msg:`top at ${topOf(other).toFixed(1)} ft reaches the ${it.label} track (${sp.trackElev.toFixed(1)} ft)`});
+        over.push({u:v, door:u, msg:`Top at ${topOf(other).toFixed(1)} ft reaches the ${it.label} track (${sp.trackElev.toFixed(1)} ft)`});
         trackHit.add(u);
       }
     }
   }
+  for (const o of over) list.push({kind:'over', uids:o.door ? [o.u, o.door] : [o.u], title:L(o.u), msg:o.msg});
   const overSet = new Set(over.map(o => o.u));
-  for (const u of overSet) body.add(u);
-  return {body, clr, pairs, clrCount: clrCount + swingHits, zones, swingHits, over, overSet, trackHit};
+  const body = new Set([...ovSet, ...overSet]);
+  return {body, ovSet, clr, pairs, clrCount: clrCount + swingHits, zones, swingHits, over, overSet, trackHit, list};
 }
 function selectIssues(){
-  if (!issues.body.size && !issues.clr.size) return;
-  sel = new Set([...issues.body, ...issues.clr]);
-  afterSelChange();
+  const all = new Set(issues.list.flatMap(i => i.uids));
+  if (!all.size) return;
+  sel = all; afterSelChange();
+}
+function interRect(a, b){
+  const x = Math.max(a.x, b.x), y = Math.max(a.y, b.y);
+  return {x, y, w:Math.min(a.x+a.w, b.x+b.w) - x, h:Math.min(a.y+a.h, b.y+b.h) - y};
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -933,22 +957,34 @@ function applyFloorSize(){
   floor.style.width = fw + 'px'; floor.style.height = fh + 'px';
   for (const id of ['gridSvg', 'underlay', 'hitLayer', 'overlay']){ $(id).setAttribute('width', fw); $(id).setAttribute('height', fh); }
   $('gridFill').setAttribute('width', fw); $('gridFill').setAttribute('height', fh);
-  $('headerSub').textContent = `${shedW} × ${shedH} ft  ·  ${ceilH} ft ceiling  |  1 sq = 1 ft`;
-  $('shedW').value = shedW; $('shedH').value = shedH; $('shedC').value = ceilH;
+  $('headerSub').textContent = `${shedW} × ${shedH} ft  ·  ${ceilH} ft ceiling`;
   layoutStage();
 }
 function render(){
   applyFloorSize();
   issues = computeIssues();
-  renderItems(); renderUnderlay(); renderPins(); renderOverlay(); renderInfo(); renderLayers();
+  renderItems(); renderUnderlay(); renderPins(); renderOverlay(); renderBadge(); renderLayers(); renderInspector();
   syncUndo(); hideTip();
 }
 // Lightweight refresh while dragging
 function refreshDynamic(){
   issues = computeIssues();
-  for (const el of floor.querySelectorAll('.item')) el.classList.toggle('hit', issues.body.has(el.dataset.uid));
-  renderUnderlay(); renderPins(); renderOverlay(); renderInfo();
+  for (const el of floor.querySelectorAll('.item')) applyHitClasses(el, el.dataset.uid);
+  renderUnderlay(); renderPins(); renderOverlay(); renderBadge();
+  const ids = selIds();
+  if (ids.length === 1 && $('pX')){ const p = posFt(items[ids[0]]); $('pX').value = p.x; $('pY').value = p.y; }
 }
+function applyHitClasses(el, u){
+  el.classList.toggle('hit-overlap', issues.ovSet.has(u));
+  el.classList.toggle('hit-clr', !issues.ovSet.has(u) && issues.clr.has(u));
+  let b = el.querySelector('.obadge');
+  if (issues.overSet.has(u)){
+    if (!b){ b = document.createElement('span'); b.className = 'obadge'; b.textContent = '↥'; el.appendChild(b); }
+    b.title = issues.over.filter(o => o.u === u).map(o => o.msg).join('\n');
+  } else if (b) b.remove();
+}
+// Item fill: big rooms/zones get a fainter fill so equipment reads on top of them
+function fillAlpha(it){ const d = dims(it); return it.area ? .05 : d.w*d.h > 15000 ? .08 : .13; }
 function renderItems(){
   floor.querySelectorAll('.item').forEach(e => e.remove());
   labelFit = {};
@@ -961,51 +997,73 @@ function renderItems(){
     if (isUtil(it)) el.classList.add('util', Math.abs(d.w - d.h) > 0.5 ? 'rect' : 'round');
     if (it.locked) el.classList.add('locked');
     if (sel.has(u)) el.classList.add('selected');
-    if (issues.body.has(u)) el.classList.add('hit');
     if (it.clr) el.dataset.front = frontSide(it);
     el.style.cssText = `left:${it.x}px;top:${it.y}px;width:${d.w}px;height:${d.h}px;z-index:${zOf(it)};`
-      + `--c:${c.c};--bg:${hexA(c.c, .13)};--fg:${c.fg}`;
+      + `--c:${c.c};--bg:${hexA(c.c, fillAlpha(it))};--fg:${c.fg}`;
     const span = document.createElement('span'); span.className = 'ilabel';
-    if (isUtil(it)){
-      span.textContent = glyphOf(it);
-      span.style.fontSize = Math.max(4, Math.min(d.w, d.h) * (glyphOf(it).length > 1 ? .42 : .7)) + 'px';
-      labelFit[u] = null;
-    } else {
-      const f = fitLabel(it.label, d.w, d.h);
-      labelFit[u] = f;
-      if (f){ span.textContent = f.lines.join('\n'); span.style.fontSize = f.fs + 'px'; }
-    }
     el.appendChild(span);
+    setLabel(el, span, u, it);
+    applyHitClasses(el, u);
     frag.appendChild(el);
   }
   floor.insertBefore(frag, $('pinLayer'));
 }
+// Labels are fitted in screen pixels, so zooming in reveals names of small items and big labels stay ≤ 16 px on screen
+function setLabel(el, span, u, it){
+  const d = dims(it);
+  if (isUtil(it)){
+    const g = glyphOf(it);
+    span.textContent = g;
+    span.style.fontSize = Math.max(4, Math.min(d.w, d.h) * (g.length > 1 ? .42 : .7)) + 'px';
+    labelFit[u] = null; return;
+  }
+  const f = fitLabel(it.label, d.w*zoom, d.h*zoom);
+  labelFit[u] = f;
+  span.textContent = f ? f.lines.join('\n') : '';
+  if (f) span.style.fontSize = (f.fs/zoom) + 'px';
+}
+let labelRaf = 0;
+function updateLabels(){
+  if (labelRaf) return;
+  labelRaf = requestAnimationFrame(() => {
+    labelRaf = 0;
+    for (const el of floor.querySelectorAll('.item')){
+      const u = el.dataset.uid, it = items[u]; if (!it) continue;
+      setLabel(el, el.querySelector('.ilabel'), u, it);
+    }
+    renderPins();
+  });
+}
 function renderUnderlay(){
   let s = '';
-  const ns = 'vector-effect="non-scaling-stroke"';
+  const ns = 'vector-effect="non-scaling-stroke"', iz = 1/zoom;
   if (settings.showDoors){
-    for (const it of Object.values(items)){
+    for (const [u, it] of Object.entries(items)){
       if (!it.door || !visible(it)) continue;
       const g = doorGeom(it);
       if (it.door.type === 'garage' && g.spec.backroom > 0){
-        const t = g.track, bad = issues.trackHit && issues.trackHit.has(Object.keys(items).find(k => items[k] === it));
-        s += `<rect x="${t.x}" y="${t.y}" width="${t.w}" height="${t.h}" fill="${bad ? 'rgba(255,82,82,.08)' : 'rgba(120,120,120,.06)'}" stroke="${bad ? '#ff5252' : '#5a5a5a'}" stroke-width="1" stroke-dasharray="6 4" ${ns}/>`;
+        const t = g.track, bad = issues.trackHit.has(u);
+        s += `<rect x="${t.x}" y="${t.y}" width="${t.w}" height="${t.h}" fill="${bad ? 'rgba(206,147,216,.10)' : 'rgba(140,140,140,.05)'}" stroke="${bad ? '#ce93d8' : '#666'}" stroke-width="1" stroke-dasharray="6 4" ${ns}/>`;
+        // label runs along the door at the far end of the track, sized to fit the door's width
         const vert = g.side === 'E' || g.side === 'W';
-        s += `<text x="${t.x+t.w/2}" y="${t.y+t.h/2}" fill="${bad ? '#c04040' : '#4a4a4a'}" font-size="9" font-family="Share Tech Mono,monospace" text-anchor="middle" dominant-baseline="middle"`
-          + (vert ? ` transform="rotate(-90 ${t.x+t.w/2} ${t.y+t.h/2})"` : '')
-          + `>TRACK @ ${g.spec.trackElev.toFixed(1)} FT · ${g.spec.backroom.toFixed(1)} FT DEEP</text>`;
+        const label = `overhead track @ ${g.spec.trackElev.toFixed(1)} ft · ${g.spec.backroom.toFixed(1)} ft deep`;
+        const fs = Math.min(11*iz, (g.L - 6) / (label.length * 0.6));
+        const off = g.spec.backroom*PX - 3*iz - fs*0.7;   // far end of the track, clear of the door's name chip
+        const cx = vert ? g.hinge[0] + g.n[0]*off : t.x + t.w/2, cy = vert ? t.y + t.h/2 : g.hinge[1] + g.n[1]*off;
+        s += `<text x="${cx}" y="${cy}" fill="${bad ? '#ce93d8' : '#8a8a8a'}" font-size="${fs}" font-family="Share Tech Mono,monospace" text-anchor="middle" dominant-baseline="middle"`
+          + (vert ? ` transform="rotate(-90 ${cx} ${cy})"` : '') + `>${label}</text>`;
       }
       if (it.door.type === 'door'){
         const [hx, hy] = g.hinge, tx = hx + g.n[0]*g.L, ty = hy + g.n[1]*g.L, [jx, jy] = g.jamb;
         const cross = (tx-hx)*(jy-hy) - (ty-hy)*(jx-hx);
-        s += `<path d="M${hx} ${hy}L${tx} ${ty}A${g.L} ${g.L} 0 0 ${cross > 0 ? 1 : 0} ${jx} ${jy}" fill="rgba(150,150,150,.07)" stroke="#888" stroke-width="1" ${ns}/>`;
+        s += `<path d="M${hx} ${hy}L${tx} ${ty}A${g.L} ${g.L} 0 0 ${cross > 0 ? 1 : 0} ${jx} ${jy}" fill="rgba(150,150,150,.07)" stroke="#999" stroke-width="1" ${ns}/>`;
       }
     }
   }
   if (settings.showClr){
     for (const {z, hit} of issues.zones){
-      s += `<rect x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" fill="${hit ? 'rgba(255,82,82,.16)' : 'rgba(232,160,32,.08)'}" `
-        + `stroke="${hit ? '#ff5252' : '#a07020'}" stroke-width="1" stroke-dasharray="3 3" ${ns}/>`;
+      s += `<rect x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" fill="${hit ? 'rgba(255,183,77,.18)' : 'rgba(232,160,32,.06)'}" `
+        + `stroke="${hit ? '#ffb74d' : '#8a6420'}" stroke-width="1" stroke-dasharray="3 3" ${ns}/>`;
     }
   }
   $('underlay').innerHTML = s;
@@ -1015,10 +1073,6 @@ function renderUnderlay(){
     h += `<rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" fill="url(#hatch)" stroke="#ff5252" stroke-width="1.5" vector-effect="non-scaling-stroke"/>`;
   }
   $('hitG').innerHTML = h;
-}
-function interRect(a, b){
-  const x = Math.max(a.x, b.x), y = Math.max(a.y, b.y);
-  return {x, y, w:Math.min(a.x+a.w, b.x+b.w) - x, h:Math.min(a.y+a.h, b.y+b.h) - y};
 }
 // Name chips for pinned/selected items whose label doesn't fit inside
 function renderPins(){
@@ -1073,20 +1127,8 @@ function txt(x, y, anchor, str, fs, fill){
     + `fill="${fill}" stroke="#0f0f0f" stroke-width="${fs/4}" paint-order="stroke">${str}</text>`;
 }
 const normRect = (a, b) => ({x:Math.min(a.x, b.x), y:Math.min(a.y, b.y), w:Math.abs(b.x-a.x), h:Math.abs(b.y-a.y)});
+const esc = str => String(str).replace(/[&<>"']/g, ch => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'})[ch]);
 
-function renderInfo(){
-  const ids = [...sel].filter(u => items[u]);
-  if (!ids.length){ $('iSel').textContent = 'none'; $('iSize').textContent = '—'; }
-  else if (ids.length === 1){ const it = items[ids[0]]; $('iSel').textContent = it.label; $('iSize').textContent = sizeText(it); }
-  else { $('iSel').textContent = `${ids.length} items`; $('iSize').textContent = '—'; }
-  const el = $('iIssues'), np = issues.pairs.length, nc = issues.clrCount, no = issues.over.length;
-  if (!np && !nc && !no){ el.textContent = '✓ none'; el.className = 'ok'; el.title = ''; }
-  else {
-    el.textContent = `⚠ ${np} overlap${np === 1 ? '' : 's'} · ${nc} clearance · ${no} overhead`;
-    el.className = 'bad'; el.title = ['Click to select the items involved', ...issues.over.map(o => `${items[o.u].label}: ${o.msg}`)].join('\n');
-  }
-  renderElev();
-}
 function sizeText(it){
   const d = dims(it);
   let t = `${ft(d.w)} × ${ft(d.h)} ft`;
@@ -1095,53 +1137,18 @@ function sizeText(it){
   if (it.door) t += ` · door ${+it.door.dh.toFixed(2)} ft H`;
   return t;
 }
-// Side elevation of the selected item: floor → ceiling, with door/track/headroom where relevant
-function renderElev(){
-  const panel = $('elevPanel'), ids = selIds();
-  if (ids.length !== 1){ panel.classList.remove('show'); return; }
-  const it = items[ids[0]];
-  const sp = it.door && it.door.type === 'garage' ? garageSpec(it.door) : null;
-  const top = it.ht != null ? topOf(it) : null;
-  const maxFt = Math.max(ceilH, top || 0, sp ? sp.needCeil : 0, it.door ? it.door.dh : 0) + 1;
-  const H = 150, y0 = 180, k = H/maxFt, Y = f => y0 - f*k, X0 = 74, X1 = 124, XR = 222;
-  const t = (x, y, str, fill, anchor = 'start', fs = 11) =>
-    `<text x="${x}" y="${y}" fill="${fill}" font-size="${fs}" font-family="Share Tech Mono,monospace" text-anchor="${anchor}">${str}</text>`;
-  let s = t(6, 14, '', '#888');
-  s += `<text x="6" y="16" fill="#e8a020" font-size="13" font-weight="700" font-family="Barlow Condensed,sans-serif">${esc((it.label.length > 30 ? it.label.slice(0, 29) + '…' : it.label).toUpperCase())}</text>`;
-  s += `<line x1="8" y1="${y0}" x2="${XR}" y2="${y0}" stroke="#666" stroke-width="2"/>` + t(6, y0 + 13, '0', '#666');
-  const cBad = (top != null && top > ceilH + .01) || (sp && sp.needCeil > ceilH + .01);
-  s += `<line x1="8" y1="${Y(ceilH)}" x2="${XR}" y2="${Y(ceilH)}" stroke="${cBad ? '#ff5252' : '#888'}" stroke-width="1.5" stroke-dasharray="5 3"/>`
-     + t(XR - 2, Y(ceilH) - 3, `CEIL ${ceilH}`, cBad ? '#ff5252' : '#888', 'end');
-  const c = catOf(it).c;
-  if (it.door){
-    s += `<rect x="${X0}" y="${Y(it.door.dh)}" width="${X1 - X0}" height="${it.door.dh*k}" fill="rgba(150,150,150,.12)" stroke="#888"/>`
-       + t(X0 - 3, Y(it.door.dh) + 4, `${+it.door.dh.toFixed(2)}`, '#aaa', 'end');
-    if (sp){
-      if (sp.trackElev != null){
-        s += `<line x1="${X0}" y1="${Y(sp.trackElev)}" x2="${XR}" y2="${Y(sp.trackElev)}" stroke="#e8a020" stroke-width="2"/>`
-           + t(X1 + 2, Y(sp.trackElev) - 3, `TRACK ${sp.trackElev.toFixed(1)}`, '#e8a020');
-      }
-      s += `<line x1="${X0 - 6}" y1="${Y(sp.needCeil)}" x2="${X1 + 6}" y2="${Y(sp.needCeil)}" stroke="${sp.needCeil > ceilH + .01 ? '#ff5252' : '#81c784'}" stroke-width="1.5"/>`
-         + t(X0 - 8, Y(sp.needCeil) + 4, `need ${sp.needCeil.toFixed(1)}`, sp.needCeil > ceilH + .01 ? '#ff5252' : '#81c784', 'end', 10);
-    }
-  } else if (top != null){
-    s += `<rect x="${X0}" y="${Y(top)}" width="${X1 - X0}" height="${Math.max(1, it.ht*k)}" fill="${hexA(c, .25)}" stroke="${c}" stroke-width="1.5"/>`
-       + t(X0 - 3, Y(top) + 4, `${+top.toFixed(2)}`, '#ccc', 'end');
-    if (it.elev) s += t(X0 - 3, Y(it.elev) + 4, `${+it.elev.toFixed(2)}`, '#ccc', 'end');
-  } else {
-    const b = bottomOf(it);
-    s += `<rect x="${X0}" y="${Y(Math.max(ceilH, b))}" width="${X1 - X0}" height="${Math.max(0, ceilH - b)*k}" fill="none" stroke="${c}" stroke-width="1.5" stroke-dasharray="3 3"/>`
-       + t((X0 + X1)/2, Y(ceilH/2), 'H ?', '#888', 'middle') + t((X0 + X1)/2, Y(ceilH/2) + 13, 'set in Edit', '#666', 'middle', 9);
-  }
-  $('elevSvg').innerHTML = s;
-  panel.classList.add('show');
+function renderBadge(){
+  const b = $('issuesBadge'), n = issues.list.length;
+  b.className = 'btn ' + (n ? 'bad' : 'ok');
+  b.textContent = n ? `⚠ ${n} issue${n === 1 ? '' : 's'}` : '✓ No issues';
 }
-const esc = str => String(str).replace(/[&<>"']/g, ch => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'})[ch]);
 function renderLayers(){
   const box = $('layers'); box.textContent = '';
   const counts = {};
   for (const it of Object.values(items)) counts[it.cat] = (counts[it.cat] || 0) + 1;
+  let hiddenEmpty = 0;
   for (const [name, c] of Object.entries(CATS)){
+    if (!counts[name] && !settings.allLayers && !settings.hidden.includes(name)){ hiddenEmpty++; continue; }
     const row = document.createElement('label'); row.className = 'layer-row';
     const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !settings.hidden.includes(name);
     cb.onchange = () => {
@@ -1155,8 +1162,14 @@ function renderLayers(){
     const cnt = document.createElement('span'); cnt.className = 'cnt'; cnt.textContent = counts[name] || 0;
     row.append(cb, sw, nm, cnt); box.appendChild(row);
   }
+  if (hiddenEmpty || settings.allLayers){
+    const t = document.createElement('button'); t.className = 'linkish';
+    t.textContent = settings.allLayers ? 'Hide empty layers' : `Show ${hiddenEmpty} empty layer${hiddenEmpty === 1 ? '' : 's'}`;
+    t.onclick = () => { settings.allLayers = !settings.allLayers; saveSettings(); renderLayers(); };
+    box.appendChild(t);
+  }
   const extra = [['showClr', 'Clearance zones'], ['showDoors', 'Door swings & tracks'], ['showDims', 'Dimensions on select']];
-  const hr = document.createElement('div'); hr.style.cssText = 'border-top:1px solid var(--border);margin:5px 0'; box.appendChild(hr);
+  const hr = document.createElement('div'); hr.style.cssText = 'border-top:1px solid var(--border);margin:6px 0'; box.appendChild(hr);
   for (const [key, name] of extra){
     const row = document.createElement('label'); row.className = 'layer-row';
     const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!settings[key];
@@ -1167,7 +1180,305 @@ function renderLayers(){
 }
 function afterSelChange(){
   for (const el of floor.querySelectorAll('.item')) el.classList.toggle('selected', sel.has(el.dataset.uid));
-  renderPins(); renderOverlay(); renderInfo();
+  renderPins(); renderOverlay(); renderInspector();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Inspector (right panel): shop + issues / one item / many items
+// ═══════════════════════════════════════════════════════════════════
+function el(tag, attrs = {}, ...kids){
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)){
+    if (v === false || v == null) continue;
+    if (k === 'class') e.className = v;
+    else if (k === 'style') e.style.cssText = v;
+    else if (k.startsWith('on')) e[k] = v;
+    else e.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) e.append(c.nodeType ? c : document.createTextNode(c));
+  return e;
+}
+const fmtN = v => v == null || v === '' ? '' : String(+(+v).toFixed(2));
+// A labelled number input that commits on change (Enter / blur). parse returns {ok, value} or {err}.
+function numField(id, label, value, {unit = 'ft', min = 0, max = 200, step = 0.5, blank = false, placeholder = '', disabled = false, commit, check, errEl}){
+  const inp = el('input', {id, class:'fi', type:'number', min, max, step, placeholder, disabled, value:fmtN(value)});
+  inp.onchange = () => {
+    const raw = inp.value.trim();
+    if (raw === '' && blank){ inp.classList.remove('invalid'); if (errEl) errEl.textContent = ''; commit(null); return; }
+    const v = parseFloat(raw);
+    if (!(v >= min && v <= max)){
+      inp.classList.add('invalid');
+      if (errEl) errEl.textContent = `${label} must be ${min}–${max} ${unit}${blank ? ' (blank = unknown)' : ''}.`;
+      return;
+    }
+    const msg = check && check(v);   // validate before committing so the panel isn't re-rendered on a rejected value
+    if (msg){ inp.classList.add('invalid'); if (errEl) errEl.textContent = msg; return; }
+    inp.classList.remove('invalid'); if (errEl) errEl.textContent = '';
+    commit(v);
+  };
+  return el('div', {class:'field'}, el('label', {for:id}, label), el('div', {class:'unit', 'data-u':unit}, inp));
+}
+function selField(id, label, value, options, onChange, disabled = false){
+  const s = el('select', {id, class:'fi', disabled}, options.map(([v, t]) => el('option', {value:v}, t)));
+  s.value = value; s.onchange = () => onChange(s.value);
+  return el('div', {class:'field'}, el('label', {for:id}, label), s);
+}
+function group(title, open, aside, ...kids){
+  const d = el('details', {class:'grp', open}, el('summary', {}, title, aside ? el('span', {class:'aside'}, aside) : null), ...kids);
+  return d;
+}
+function setProp(u, fn){
+  mutate(() => {
+    const it = items[u]; if (!it) return;
+    fn(it);
+    positionWalls(); if (!it.wall) clampItem(it);
+  });
+}
+const posFt = it => { const I = inner(); return {x:fmtN((it.x - I.l)/PX), y:fmtN((it.y - I.t)/PX)}; };
+const catOptions = () => Object.keys(CATS).map(c => [c, c]);
+let inspOpen = {};   // remembers which groups the user collapsed
+function trackGroups(root){
+  for (const d of root.querySelectorAll('details.grp')){
+    const key = d.querySelector('summary').firstChild.textContent;
+    if (key in inspOpen) d.open = inspOpen[key];
+    d.addEventListener('toggle', () => { inspOpen[key] = d.open; });
+  }
+}
+function renderInspector(){
+  const head = $('inspHead'), body = $('inspBody');
+  const ae = document.activeElement, keep = ae && $('inspector').contains(ae) && ae.id ? ae.id : null;
+  const scroll = body.scrollTop;
+  head.textContent = ''; body.textContent = '';
+  const ids = selIds();
+  if (ids.length === 1) inspectOne(ids[0], head, body);
+  else if (ids.length > 1) inspectMany(ids, head, body);
+  else inspectNone(head, body);
+  trackGroups(body);
+  body.scrollTop = scroll;
+  if (keep && $(keep)) $(keep).focus();
+}
+function actionRow(ids){
+  const its = ids.map(u => items[u]);
+  const allLocked = its.every(i => i.locked), allPin = its.every(i => i.pin);
+  const b = (txt, title, fn, cls = '') => el('button', {class:'btn ' + cls, title, onclick:fn}, txt);
+  return el('div', {class:'actions'},
+    b('↻', 'Rotate 90° (R)', () => rotateSel(1)),
+    b('⧉', 'Duplicate (Ctrl+D)', duplicateSel),
+    b(allLocked ? '🔓' : '🔒', allLocked ? 'Unlock (L)' : 'Lock (L)', toggleLock, allLocked ? 'on' : ''),
+    b('📌', allPin ? 'Hide name (P)' : 'Always show name (P)', togglePin, allPin ? 'on' : ''),
+    b('▲', 'Bring to front', () => reorder(true)),
+    b('▼', 'Send to back', () => reorder(false)),
+    b('🗑', 'Delete (Del)', deleteSel, 'danger'));
+}
+function issueRows(list){
+  const KIND = {overlap:['#ff5252', '▨', 'Overlap'], clr:['#ffb74d', '⇲', 'Clearance'], over:['#ce93d8', '↥', 'Overhead']};
+  return list.map(i => {
+    const [k, ic, name] = KIND[i.kind];
+    const row = el('div', {class:'issue', style:`--k:${k}`, title:'Select and show'},
+      el('span', {class:'ic'}, ic), el('div', {}, el('small', {}, name), el('b', {}, i.title), el('div', {}, i.msg)));
+    row.onclick = () => { sel = new Set(i.uids.filter(u => items[u] && visible(items[u]))); afterSelChange(); centerOn(i.uids[0]); };
+    return row;
+  });
+}
+function inspectNone(head, body){
+  head.append(el('div', {class:'insp-title'}, 'Shop'),
+              el('div', {class:'hint'}, 'Click an item to edit it. Shift-click or drag a box to select several.'));
+  const err = el('div', {class:'ferr', id:'shedErr'});
+  const shopFields = el('div', {class:'fgrid', style:'--n:3'},
+    numField('shedW', 'Width', shedW, {min:10, max:200, step:1, commit:() => applyShedSize(), errEl:err}),
+    numField('shedH', 'Depth', shedH, {min:10, max:200, step:1, commit:() => applyShedSize(), errEl:err}),
+    numField('shedC', 'Ceiling', ceilH, {min:6, max:60, step:0.25, commit:() => applyShedSize(), errEl:err}));
+  shopFields.querySelector('#shedC').title = 'Clear ceiling height — the lowest point, e.g. bottom of trusses';
+  body.append(group('Shop size', true, 'outside walls', shopFields, err));
+  const legend = el('div', {class:'legend'},
+    el('span', {style:'--k:#ff5252'}, 'Overlap'), el('span', {style:'--k:#ffb74d'}, 'Clearance'), el('span', {style:'--k:#ce93d8'}, 'Overhead ↥'));
+  const n = issues.list.length;
+  const g = group('Issues', true, n ? `${n} found` : null, legend,
+    n ? issueRows(issues.list) : el('div', {class:'empty-ok'}, '✓ No problems found'));
+  g.id = 'issuesGrp';
+  body.append(g);
+  const unknown = Object.values(items).filter(i => collides(i) && i.ht == null).length;
+  if (unknown) body.append(el('div', {class:'hint', style:'margin-top:8px'},
+    `${unknown} item${unknown === 1 ? ' has' : 's have'} no height yet, so overhead checks skip ${unknown === 1 ? 'it' : 'them'}.`));
+}
+function inspectMany(ids, head, body){
+  const locked = ids.filter(u => items[u].locked).length;
+  head.append(el('div', {class:'insp-title'}, `${ids.length} items selected` + (locked ? ` · ${locked} locked` : '')), actionRow(ids));
+  const a = (t, title, fn) => el('button', {class:'btn', title, onclick:fn}, t);
+  body.append(group('Align', true, 'unlocked items',
+    el('div', {class:'align-row'}, a('⇤', 'Align left edges', () => alignSel('l')), a('↔', 'Align centers (horizontal)', () => alignSel('c')),
+      a('⇥', 'Align right edges', () => alignSel('r')), a('⋯', 'Distribute horizontally', () => distributeSel('x'))),
+    el('div', {class:'align-row', style:'margin-top:4px'}, a('⤒', 'Align top edges', () => alignSel('t')), a('↕', 'Align middles (vertical)', () => alignSel('m')),
+      a('⤓', 'Align bottom edges', () => alignSel('b')), a('⋮', 'Distribute vertically', () => distributeSel('y')))));
+  const mine = issues.list.filter(i => i.uids.some(u => sel.has(u)));
+  if (mine.length) body.append(group('Issues', true, `${mine.length}`, issueRows(mine)));
+}
+function inspectOne(u, head, body){
+  const it = items[u], c = catOf(it), isDoor = !!it.door, isWall = !!it.wall;
+  const err = el('div', {class:'ferr'});
+  const name = el('input', {id:'pName', class:'fi name-in', type:'text', maxlength:80, value:it.label});
+  name.onchange = () => { const v = name.value.trim(); if (!v){ name.value = it.label; return; } setProp(u, o => { o.label = v; }); };
+  head.append(el('div', {class:'insp-title', style:`--c:${c.c}`}, el('span', {class:'sw'}), it.cat + (isDoor ? ' · door' : isWall ? ' · outer wall' : '') + (it.locked ? ' · locked' : '')),
+              name, actionRow([u]));
+  // Size & position
+  const p = posFt(it), I = inner();
+  const sizeCommit = key => v => setProp(u, o => { o[key] = +(v*PX).toFixed(2); });
+  const sizeCheck = key => v => {
+    const w = key === 'w' ? v : it.w/PX, h = key === 'h' ? v : it.h/PX;
+    if (it.wall || it.door || it.cat === 'Structure' || isUtil(it)) return null;
+    const e = {textContent:''}; return tooBigMsg(w, h, it.rot, e) ? null : e.textContent;
+  };
+  body.append(group('Size & position', true, null,
+    el('div', {class:'fgrid'},
+      numField('pW', 'Width', it.w/PX, {min:0.1, disabled:isWall, commit:sizeCommit('w'), check:sizeCheck('w'), errEl:err}),
+      numField('pD', 'Depth', it.h/PX, {min:0.1, disabled:isWall, commit:sizeCommit('h'), check:sizeCheck('h'), errEl:err}),
+      numField('pX', 'From west wall', p.x, {min:-50, max:250, step:0.5, disabled:isWall, commit:v => setProp(u, o => { o.x = I.l + v*PX; }), errEl:err}),
+      numField('pY', 'From north wall', p.y, {min:-50, max:250, step:0.5, disabled:isWall, commit:v => setProp(u, o => { o.y = I.t + v*PX; }), errEl:err}),
+      selField('pRot', 'Rotation', String(it.rot), [['0', '0°'], ['90', '90°'], ['180', '180°'], ['270', '270°']],
+        v => setProp(u, o => { const d0 = dims(o), cx = o.x + d0.w/2, cy = o.y + d0.h/2; o.rot = +v; const d = dims(o); o.x = cx - d.w/2; o.y = cy - d.h/2; }), isWall),
+      selField('pCat', 'Category', it.cat, catOptions(), v => setProp(u, o => { o.cat = v; }))),
+    err));
+  // Height (not for doors / outer walls)
+  if (!isDoor && !isWall){
+    const herr = el('div', {class:'ferr'});
+    body.append(group('Height', true, `ceiling ${ceilH} ft`,
+      el('div', {class:'fgrid'},
+        numField('pHt', 'Height', it.ht, {min:0.1, max:60, blank:true, placeholder:'unknown', commit:v => setProp(u, o => { if (v == null) delete o.ht; else o.ht = v; }), errEl:herr}),
+        numField('pElev', 'Mounted at', it.elev || '', {min:0, max:60, blank:true, placeholder:'floor', commit:v => setProp(u, o => { if (v) o.elev = v; else delete o.elev; }), errEl:herr})),
+      herr, el('div', {id:'elevBox', style:'margin-top:8px'}, elevSvg(it))));
+  }
+  // Clearance (equipment)
+  if (!isDoor && !isWall && !isUtil(it)){
+    const cerr = el('div', {class:'ferr'}), cl = it.clr || {};
+    const cf = (k, label) => numField('c' + k.toUpperCase(), label, cl[k] || '', {min:0, max:50, blank:true, placeholder:'0',
+      commit:v => setProp(u, o => { const n = Object.assign({}, o.clr); if (v) n[k] = v; else delete n[k]; if (Object.keys(n).length) o.clr = n; else delete o.clr; }), errEl:cerr});
+    body.append(group('Clearance', !!it.clr, 'working space, ft',
+      el('div', {class:'clr-cross', style:`--c:${c.c}`},
+        el('div'), cf('b', 'Back'), el('div'),
+        cf('l', 'Left'), el('div', {class:'box'}, 'front'), cf('r', 'Right'),
+        el('div'), cf('f', 'Front'), el('div')),
+      cerr, el('div', {class:'hint', style:'margin-top:6px'}, 'Front is the edge with the tick mark; it turns with the item.')));
+  }
+  // Door
+  if (isDoor) body.append(doorGroup(u, it));
+  // Options
+  const opts = group('Options', !isDoor && !isWall ? false : true, null);
+  const chk = (id, label, val, fn, title) => {
+    const cb = el('input', {type:'checkbox', id}); cb.checked = !!val; cb.onchange = () => setProp(u, o => fn(o, cb.checked));
+    return el('label', {class:'chk', title}, cb, label);
+  };
+  if (!isDoor && !isWall) opts.append(chk('pArea', 'Zone — equipment can sit inside it (no overlap check)', it.area, (o, v) => { if (v) o.area = true; else delete o.area; },
+    'For rooms and bays like a paint booth'));
+  if (!isWall) opts.append(selField('pDoorType', 'Door', it.door ? it.door.type : '', [['', 'Not a door'], ['door', 'Swing door'], ['garage', 'Overhead (garage) door']],
+    v => setProp(u, o => { if (!v) delete o.door; else o.door = cleanItem({door:{type:v}}).door; delete o.ht; delete o.elev; })));
+  opts.append(el('button', {class:'btn sm', style:'margin-top:8px', onclick:saveSelToLib}, '📚 Save to My Items'));
+  body.append(opts);
+  // This item's issues
+  const mine = issues.list.filter(i => i.uids.includes(u));
+  if (mine.length) body.insertBefore(group('Issues', true, `${mine.length}`, issueRows(mine)), body.firstChild);
+}
+function doorGroup(u, it){
+  const d = it.door, g = doorGeom(it), sp = g.spec, derr = el('div', {class:'ferr'});
+  const set = (k, v) => setProp(u, o => { o.door = Object.assign({}, o.door, {[k]:v}); if (o.door.type === 'garage' && o.door.lift !== 'high') o.door.hl = 0; });
+  const fields = [numField('pDh', 'Door height', d.dh, {min:1, max:40, step:0.25, commit:v => set('dh', v),
+    check:v => d.type === 'garage' && d.lift === 'high' && d.hl >= v ? 'Door height must be more than the high-lift amount.' : null, errEl:derr})];
+  if (d.type === 'door') fields.push(selField('pHinge', 'Hinge', d.hinge, [['L', 'West / north end'], ['R', 'East / south end']], v => set('hinge', v)));
+  if (d.type === 'garage'){
+    fields.push(selField('pLift', 'Lift', d.lift, [['std', 'Standard'], ['high', 'High-lift'], ['vert', 'Vertical'], ['low', 'Low-headroom']], v => set('lift', v)));
+    fields.push(selField('pHw', 'Hardware', d.hw, [['res', 'Residential'], ['c2', 'Commercial 2″ track'], ['c3', 'Commercial 3″ track']], v => set('hw', v)));
+    if (d.lift === 'high') fields.push(numField('pHl', 'High-lift amount', d.hl || '', {min:0.5, max:Math.max(0.5, d.dh - 0.5), step:0.5,
+      commit:v => set('hl', v), errEl:derr}));
+  }
+  const grp = group('Door', true, d.type === 'garage' ? 'overhead' : 'swing', el('div', {class:'fgrid'}, fields), derr);
+  if (sp){
+    const I = inner(), room = (g.side === 'N' || g.side === 'S') ? (I.b - I.t)/PX : (I.r - I.l)/PX;
+    const row = (k, need, have, ok) => [el('span', {class:'k'}, k), el('span', {}, need), el('span', {class:ok ? 'ok' : 'bad'}, have)];
+    grp.append(el('div', {class:'door-info'},
+      el('span', {class:'k'}, ''), el('span', {class:'k'}, 'needs'), el('span', {class:'k'}, 'have'),
+      row('Ceiling', `${sp.needCeil.toFixed(1)} ft`, `${ceilH} ft`, sp.needCeil <= ceilH + .01),
+      sp.backroom ? row('Backroom', `${sp.backroom.toFixed(1)} ft`, `${room.toFixed(1)} ft`, sp.backroom <= room + .01) : [],
+      sp.trackElev != null ? [el('span', {class:'k'}, 'Track at'), el('span', {}, `${sp.trackElev.toFixed(1)} ft`), el('span')] : []));
+    grp.append(el('div', {class:'hint', style:'margin-top:6px;font-size:13px'}, 'Manufacturer minimums (Clopay, Garaga), before an opener.'));
+  }
+  grp.append(el('div', {id:'elevBox', style:'margin-top:8px'}, elevSvg(it)));
+  return grp;
+}
+// Side elevation of one item: floor → ceiling, with door / track / headroom where relevant
+function elevSvg(it){
+  const sp = it.door && it.door.type === 'garage' ? garageSpec(it.door) : null;
+  const top = it.ht != null ? topOf(it) : null;
+  const maxFt = Math.max(ceilH, top || 0, sp ? sp.needCeil : 0, it.door ? it.door.dh : 0, bottomOf(it)) + 1;
+  const W = 276, H = 150, y0 = 165, k = H/maxFt, Y = f => y0 - f*k, X0 = 96, X1 = 156, XR = W - 8;
+  const t = (x, y, str, fill, anchor = 'start', fs = 12) =>
+    `<text x="${x}" y="${y}" fill="${fill}" font-size="${fs}" font-family="Share Tech Mono,monospace" text-anchor="${anchor}">${esc(str)}</text>`;
+  let s = `<line x1="8" y1="${y0}" x2="${XR}" y2="${y0}" stroke="#777" stroke-width="2"/>` + t(8, y0 + 14, 'floor', '#777');
+  const cBad = (top != null && top > ceilH + .01) || (sp && sp.needCeil > ceilH + .01) || bottomOf(it) > ceilH + .01;
+  s += `<line x1="8" y1="${Y(ceilH)}" x2="${XR}" y2="${Y(ceilH)}" stroke="${cBad ? '#ff5252' : '#999'}" stroke-width="1.5" stroke-dasharray="5 3"/>`
+     + t(XR, Y(ceilH) - 4, `ceiling ${ceilH}`, cBad ? '#ff5252' : '#999', 'end');
+  const c = catOf(it).c;
+  if (it.door){
+    s += `<rect x="${X0}" y="${Y(it.door.dh)}" width="${X1 - X0}" height="${it.door.dh*k}" fill="rgba(150,150,150,.12)" stroke="#999"/>`
+       + t((X0 + X1)/2, Y(it.door.dh/2) + 4, `door ${+it.door.dh.toFixed(2)}`, '#bbb', 'middle');
+    if (sp){
+      if (sp.trackElev != null){
+        s += `<line x1="${X0}" y1="${Y(sp.trackElev)}" x2="${XR}" y2="${Y(sp.trackElev)}" stroke="#e8a020" stroke-width="2"/>`
+           + t(XR, Y(sp.trackElev) + 14, `track ${sp.trackElev.toFixed(1)}`, '#e8a020', 'end');
+      }
+      const bad = sp.needCeil > ceilH + .01;
+      s += `<line x1="${X0 - 4}" y1="${Y(sp.needCeil)}" x2="${X1 + 4}" y2="${Y(sp.needCeil)}" stroke="${bad ? '#ff5252' : '#81c784'}" stroke-width="2"/>`
+         + t(X0 - 6, Y(sp.needCeil) + 4, `needs ${sp.needCeil.toFixed(1)}`, bad ? '#ff5252' : '#81c784', 'end');
+    }
+  } else if (top != null){
+    s += `<rect x="${X0}" y="${Y(top)}" width="${X1 - X0}" height="${Math.max(1, it.ht*k)}" fill="${hexA(c, .3)}" stroke="${c}" stroke-width="1.5"/>`
+       + t(X0 - 6, Y(top) + 4, `top ${+top.toFixed(2)}`, '#ddd', 'end');
+    if (it.elev) s += t(X0 - 6, Y(it.elev) + 4, `at ${+it.elev.toFixed(2)}`, '#ddd', 'end');
+  } else {
+    const b = bottomOf(it);
+    s += `<rect x="${X0}" y="${Y(Math.max(ceilH, b))}" width="${X1 - X0}" height="${Math.max(0, ceilH - b)*k}" fill="none" stroke="${c}" stroke-width="1.5" stroke-dasharray="3 3"/>`
+       + t((X0 + X1)/2, Y(ceilH/2), 'height?', '#aaa', 'middle');
+  }
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', `0 0 ${W} 180`); svg.innerHTML = s;
+  return svg;
+}
+function focusName(){ const n = $('pName'); if (n){ n.focus(); n.select(); } if (inPortrait()) $('inspector').classList.remove('min'); }
+function openEdit(u){ if (!items[u]) return; sel = new Set([u]); afterSelChange(); focusName(); }
+const inPortrait = () => matchMedia('(max-width:1100px) and (orientation:portrait)').matches;
+function showIssues(){
+  sel.clear(); afterSelChange();
+  $('inspector').classList.remove('min');
+  const g = $('issuesGrp'); if (g){ g.open = true; inspOpen.Issues = true; g.scrollIntoView({block:'start'}); }
+}
+function centerOn(u){
+  const it = items[u]; if (!it) return;
+  const r = rectOf(it);
+  wrap.scrollLeft = parseFloat(floor.style.left) + (r.x + r.w/2)*zoom - wrap.clientWidth/2;
+  wrap.scrollTop = parseFloat(floor.style.top) + (r.y + r.h/2)*zoom - wrap.clientHeight/2;
+}
+function alignSel(mode){
+  const ids = movable(); if (ids.length < 2) return;
+  mutate(() => {
+    const rs = ids.map(u => rectOf(items[u]));
+    const L = Math.min(...rs.map(r => r.x)), R = Math.max(...rs.map(r => r.x + r.w));
+    const T = Math.min(...rs.map(r => r.y)), B = Math.max(...rs.map(r => r.y + r.h));
+    ids.forEach((u, i) => {
+      const it = items[u], r = rs[i];
+      if (mode === 'l') it.x = L; if (mode === 'r') it.x = R - r.w; if (mode === 'c') it.x = (L + R)/2 - r.w/2;
+      if (mode === 't') it.y = T; if (mode === 'b') it.y = B - r.h; if (mode === 'm') it.y = (T + B)/2 - r.h/2;
+      clampItem(it);
+    });
+  });
+}
+function distributeSel(axis){
+  const ids = movable(); if (ids.length < 3){ toast('Select at least 3 unlocked items to distribute'); return; }
+  mutate(() => {
+    const k = axis === 'x' ? 'w' : 'h';
+    const rs = ids.map(u => [u, rectOf(items[u])]).sort((a, b) => a[1][axis] - b[1][axis]);
+    const start = rs[0][1][axis], end = Math.max(...rs.map(([, r]) => r[axis] + r[k]));
+    const gap = (end - start - rs.reduce((s, [, r]) => s + r[k], 0)) / (rs.length - 1);
+    let pos = start;
+    for (const [u, r] of rs){ items[u][axis] = pos; pos += r[k] + gap; clampItem(items[u]); }
+  });
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1203,16 +1514,13 @@ function zoomFit(){
   wrap.scrollTop = (stage.offsetHeight - wrap.clientHeight)/2;
   afterZoom();
 }
-const sliderToZoom = v => ZMIN * Math.pow(ZMAX/ZMIN, v/1000);
-const zoomToSlider = z => Math.round(1000 * Math.log(z/ZMIN) / Math.log(ZMAX/ZMIN));
 function afterZoom(){
   $('zoomPct').textContent = Math.round(zoom*100) + '%';
-  $('zoomSlider').value = zoomToSlider(zoom);
   const opts = [1, 2, 5, 10, 20, 50, 100];
   const f = opts.find(o => o*PX*zoom >= 60) || 100;
   $('scaleBar').style.width = (f*PX*zoom) + 'px';
   $('scaleLbl').textContent = f + ' ft';
-  renderOverlay(); hideTip();
+  renderOverlay(); renderUnderlay(); updateLabels(); hideTip();
 }
 function viewCenter(){ const r = wrap.getBoundingClientRect(); return fp({clientX:r.left + wrap.clientWidth/2, clientY:r.top + wrap.clientHeight/2}); }
 
@@ -1382,7 +1690,7 @@ wrap.addEventListener('contextmenu', e => {
 });
 floor.addEventListener('dblclick', e => {
   const el = e.target.closest('.item'); if (!el || mode === 'measure') return;
-  sel = new Set([el.dataset.uid]); afterSelChange(); openEdit(el.dataset.uid);
+  openEdit(el.dataset.uid);
 });
 // Hover tooltip
 floor.addEventListener('pointerover', e => {
@@ -1553,7 +1861,7 @@ function renderLibrary(){
   groups.push({name:'My Items', list:mine.map((p, i) => ['my:' + i, p]), mine:true});
   for (const g of groups){
     const det = document.createElement('details'); det.className = 'lib-group';
-    const sum = document.createElement('summary'); sum.textContent = `${g.name} (${g.list.length})`;
+    const sum = document.createElement('summary'); sum.append(g.name); const n = document.createElement('span'); n.className = 'n'; n.textContent = g.list.length; sum.append(n);
     const list = document.createElement('div'); list.className = 'lib-items';
     if (!g.list.length){ const e = document.createElement('div'); e.style.cssText = 'font-size:13px;color:var(--text-dim)'; e.textContent = 'Right-click an item → Save to My Items.'; list.appendChild(e); }
     for (const [key, p] of g.list){
@@ -1561,7 +1869,7 @@ function renderLibrary(){
       b.style.setProperty('--c', (hasCat(p.cat) ? CATS[p.cat] : CATS.Custom).c);
       b.title = 'Click to add · drag onto floor';
       const nm = document.createElement('span'); nm.textContent = p.label;
-      const sz = document.createElement('span'); sz.className = 'sz'; sz.textContent = `${p.w}×${p.d}`;
+      const sz = document.createElement('span'); sz.className = 'sz'; sz.textContent = `${p.w}×${p.d}` + (p.ht ? ` ↥${p.ht}` : '');
       b.append(nm, sz);
       if (g.mine){
         const x = document.createElement('span'); x.className = 'x'; x.textContent = '✕'; x.title = 'Remove from My Items';
@@ -1583,7 +1891,7 @@ function showCtxAt(x, y){
   const ids = selIds(); if (!ids.length) return;
   const m = $('ctx');
   $('ctxLockTxt').textContent = ids.every(u => items[u].locked) ? '🔓 Unlock' : '🔒 Lock';
-  $('ctxPinTxt').textContent = ids.every(u => items[u].pin) ? '📌 Hide Name' : '📌 Always Show Name';
+  $('ctxPinTxt').textContent = ids.every(u => items[u].pin) ? '📌 Hide name' : '📌 Always show name';
   $('ctxDelTxt').textContent = ids.length > 1 ? `✕ Delete ${ids.length} items` : '✕ Delete';
   $('ctxEdit').classList.toggle('dis', ids.length !== 1);
   $('ctxLib').classList.toggle('dis', ids.length !== 1);
@@ -1595,99 +1903,32 @@ function showCtxAt(x, y){
 }
 function hideCtx(){ $('ctx').classList.remove('show'); }
 $('ctx').addEventListener('click', e => {
-  const a = e.target.closest('.cxi'); if (!a) return;
+  const a = e.target.closest('.mi'); if (!a) return;
   hideCtx();
-  ({lock:toggleLock, pin:togglePin, edit:() => openEdit(selIds()[0]), rotate:() => rotateSel(1), dupe:duplicateSel,
+  ({lock:toggleLock, pin:togglePin, rename:focusName, rotate:() => rotateSel(1), dupe:duplicateSel,
     lib:saveSelToLib, front:() => reorder(true), back:() => reorder(false), delete:deleteSel})[a.dataset.act]?.();
 });
-document.addEventListener('pointerdown', e => { if (!$('ctx').contains(e.target)) hideCtx(); });
-
-// ═══════════════════════════════════════════════════════════════════
-//  Edit dialog
-// ═══════════════════════════════════════════════════════════════════
-function openEdit(u){
-  const it = items[u]; if (!it) return;
-  dlgUid = u;
-  $('dLabel').value = it.label;
-  $('dW').value = +(it.w/PX).toFixed(2); $('dH').value = +(it.h/PX).toFixed(2);
-  $('dRot').value = it.rot; $('dCat').value = it.cat;
-  const c = it.clr || {};
-  $('cF').value = c.f || ''; $('cB').value = c.b || ''; $('cL').value = c.l || ''; $('cR').value = c.r || '';
-  $('dHt').value = it.ht != null ? it.ht : ''; $('dElev').value = it.elev || '';
-  $('dDoor').value = it.door ? it.door.type : '';
-  $('dHinge').value = it.door ? it.door.hinge : 'L';
-  $('dDh').value = it.door ? it.door.dh : '';
-  $('dLift').value = it.door && it.door.lift || 'std';
-  $('dHl').value = it.door && it.door.hl || '';
-  $('dHw').value = it.door && it.door.hw || 'res';
-  syncDoorFields();
-  $('dLocked').checked = !!it.locked; $('dPin').checked = !!it.pin; $('dArea').checked = !!it.area;
-  const wall = !!it.wall;
-  for (const id of ['dW', 'dH', 'dRot']) $(id).disabled = wall;
-  $('dErr').textContent = '';
-  $('dlgOv').classList.add('show');
-  if (!matchMedia('(pointer: coarse)').matches) $('dLabel').focus();
+document.addEventListener('pointerdown', e => {
+  if (!$('ctx').contains(e.target)) hideCtx();
+  if (!$('fileMenu').contains(e.target) && e.target !== $('btnFile')) $('fileMenu').classList.remove('show');
+});
+// File menu
+function toggleFileMenu(e){
+  const m = $('fileMenu');
+  if (m.classList.contains('show')){ m.classList.remove('show'); return; }
+  const r = $('btnFile').getBoundingClientRect();
+  m.classList.add('show');
+  m.style.top = (r.bottom + 4) + 'px';
+  m.style.left = Math.max(4, r.right - m.offsetWidth) + 'px';
 }
-// Show only the door fields that apply, and the computed clearances
-function syncDoorFields(){
-  const t = $('dDoor').value;
-  $('dDh').disabled = !t;
-  const dhv = parseFloat($('dDh').value);
-  if (t && (!$('dDh').value || (t === 'door' && dhv === 10) || (t === 'garage' && dhv === 6.67))) $('dDh').value = t === 'garage' ? 10 : 6.67;
-  // doors & walls: generic height / mount fields don't apply
-  const it = items[dlgUid];
-  $('rowHeights').style.display = t || (it && it.wall) ? 'none' : '';
-  $('rowHinge').style.visibility = t === 'door' ? 'visible' : 'hidden';
-  $('rowGarage').style.display = t === 'garage' ? '' : 'none';
-  $('dHl').disabled = $('dLift').value !== 'high';
-  const info = $('doorInfo');
-  if (t !== 'garage'){ info.textContent = ''; return; }
-  const d = {dh:parseFloat($('dDh').value) || 0, lift:$('dLift').value, hl:parseFloat($('dHl').value) || 0, hw:$('dHw').value};
-  const sp = garageSpec(d);
-  info.textContent = `Needs ${sp.needCeil.toFixed(1)} ft ceiling` + (sp.trackElev != null ? ` · track at ${sp.trackElev.toFixed(1)} ft, ${sp.backroom.toFixed(1)} ft deep` : ' · no horizontal track')
-    + ' — manufacturer minimums, before opener';
-  info.style.color = sp.needCeil > ceilH + .01 ? '#ff8a80' : 'var(--text-dim)';
-}
-for (const id of ['dDoor', 'dDh', 'dLift', 'dHl', 'dHw']) $(id).addEventListener('input', syncDoorFields);
-function closeEdit(){ $('dlgOv').classList.remove('show'); dlgUid = null; }
-function applyEdit(){
-  if (!dlgUid || !items[dlgUid]) return closeEdit();
-  const err = $('dErr'); err.textContent = '';
-  const label = $('dLabel').value.trim();
-  const w = parseFloat($('dW').value), h = parseFloat($('dH').value);
-  const cv = id => { const v = $(id).value.trim(); return v === '' ? 0 : parseFloat(v); };
-  const clr = {f:cv('cF'), b:cv('cB'), l:cv('cL'), r:cv('cR')};
-  const htRaw = $('dHt').value.trim(), ht = htRaw === '' ? null : parseFloat(htRaw), elev = cv('dElev');
-  const dt = $('dDoor').value, dh = parseFloat($('dDh').value), hl = cv('dHl');
-  if (!label) return void (err.textContent = 'Label is required.');
-  if (!(w > 0 && w <= 200) || !(h > 0 && h <= 200)) return void (err.textContent = 'Width and depth must be 0–200 ft.');
-  const cur = items[dlgUid], nc = $('dCat').value, rot = +$('dRot').value;
-  if (!cur.wall && nc !== 'Structure' && !CATS[nc]?.util && !$('dDoor').value && !tooBigMsg(w, h, rot, err)) return;
-  if (Object.values(clr).some(v => !(v >= 0 && v <= 50))) return void (err.textContent = 'Clearances must be 0–50 ft.');
-  if (ht !== null && !(ht > 0 && ht <= 60)) return void (err.textContent = 'Height must be 0–60 ft (blank = unknown).');
-  if (!(elev >= 0 && elev <= 60)) return void (err.textContent = 'Mounted-at must be 0–60 ft.');
-  if (dt && !(dh >= 1 && dh <= 40)) return void (err.textContent = 'Door height must be 1–40 ft.');
-  if (dt === 'garage' && $('dLift').value === 'high' && !(hl > 0 && hl < dh)) return void (err.textContent = 'High-lift must be more than 0 and less than the door height — use Vertical for a full-height lift.');
-  const u = dlgUid;
-  mutate(() => {
-    const it = items[u];
-    it.label = label; it.cat = hasCat($('dCat').value) ? $('dCat').value : 'Custom';
-    if (!it.wall){ it.w = +(w*PX).toFixed(2); it.h = +(h*PX).toFixed(2); it.rot = +$('dRot').value; }
-    const c = {}; for (const k in clr) if (clr[k] > 0) c[k] = clr[k];
-    if (Object.keys(c).length) it.clr = c; else delete it.clr;
-    if (ht !== null && !dt && !it.wall) it.ht = ht; else delete it.ht;
-    if (elev > 0 && !dt && !it.wall) it.elev = elev; else delete it.elev;
-    if (dt){
-      it.door = {type:dt, hinge:$('dHinge').value === 'R' ? 'R' : 'L', dh};
-      if (dt === 'garage') Object.assign(it.door, {lift:$('dLift').value, hl:$('dLift').value === 'high' ? hl : 0, hw:$('dHw').value});
-    } else delete it.door;
-    if ($('dLocked').checked) it.locked = true; else delete it.locked;
-    if ($('dPin').checked) it.pin = true; else delete it.pin;
-    if ($('dArea').checked) it.area = true; else delete it.area;
-    positionWalls(); if (!it.wall) clampItem(it);
-  });
-  closeEdit();
-}
+$('fileMenu').addEventListener('click', e => {
+  const a = e.target.closest('[data-file]'); if (!a) return;
+  $('fileMenu').classList.remove('show');
+  ({versions:openVersions, share:openShare, png:exportPNG, print:printLayout, json:exportJSON, reset:resetLayout})[a.dataset.file]();
+});
+$('jsonImport').addEventListener('click', () => $('fileMenu').classList.remove('show'));
+// First-run hint
+function dismissHint(){ settings.hintDone = true; saveSettings(); $('firstHint').style.display = 'none'; }
 
 // ═══════════════════════════════════════════════════════════════════
 //  Shed size
@@ -1695,7 +1936,7 @@ function applyEdit(){
 function applyShedSize(){
   const w = Math.round(parseFloat($('shedW').value)), h = Math.round(parseFloat($('shedH').value));
   const c = parseFloat($('shedC').value);
-  const err = $('shedErr'); err.textContent = '';
+  const err = $('shedErr') || {}; err.textContent = '';
   if (!(w >= 10 && w <= 200) || !(h >= 10 && h <= 200)){ err.textContent = 'Width and depth must be 10–200 ft.'; return; }
   if (!(c >= 6 && c <= 60)){ err.textContent = 'Ceiling must be 6–60 ft.'; return; }
   if (w === shedW && h === shedH){ if (c !== ceilH) mutate(() => { ceilH = c; }); return; }
@@ -1740,11 +1981,13 @@ document.addEventListener('keydown', e => {
   if (openOv){
     if (e.key === 'Escape'){ e.preventDefault(); closeDialogs(); }
     else if (e.key === 'Enter' && tag !== 'SELECT' && tag !== 'BUTTON'){
-      if (openOv.id === 'dlgOv'){ e.preventDefault(); applyEdit(); }
       if (openOv.id === 'verOv' && document.activeElement.id === 'verName'){ e.preventDefault(); saveVersion(); }
     }
     return;
   }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p'){ e.preventDefault(); printLayout(); return; }
+  // inspector fields commit on Enter (blur fires 'change'); Esc leaves the field
+  if ((textEntry || tag === 'SELECT') && $('inspector').contains(ae) && (e.key === 'Enter' || e.key === 'Escape')){ e.preventDefault(); ae.blur(); return; }
   if (textEntry) return;   // text fields keep their native undo/typing
   const mod = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
   if (typing && !mod) return;   // select / slider keep their arrow keys; Ctrl shortcuts still work
@@ -1948,11 +2191,16 @@ function renderCanvas(theme = 'dark', scale = 2){
   }
   // door swings, tracks, clearance
   if (settings.showDoors){
-    for (const it of Object.values(items)){
+    for (const [du, it] of Object.entries(items)){
       if (!it.door || !visible(it)) continue;
       const d = doorGeom(it);
       if (it.door.type === 'garage' && d.spec.backroom > 0){
-        g.setLineDash([6, 4]); g.strokeStyle = T.track; g.lineWidth = 1; g.strokeRect(d.track.x, d.track.y, d.track.w, d.track.h); g.setLineDash([]);
+        const bad = issues.trackHit.has(du);
+        g.setLineDash([6, 4]); g.strokeStyle = bad ? '#ab47bc' : T.track; g.lineWidth = bad ? 1.5 : 1; g.strokeRect(d.track.x, d.track.y, d.track.w, d.track.h); g.setLineDash([]);
+        const vert = d.side === 'E' || d.side === 'W', cx = d.track.x + d.track.w/2, cy = d.track.y + d.track.h/2;
+        g.save(); g.translate(cx, cy); if (vert) g.rotate(-Math.PI/2);
+        g.fillStyle = bad ? '#ab47bc' : T.track; g.font = '9px "Share Tech Mono",monospace'; g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.fillText(`overhead track @ ${d.spec.trackElev.toFixed(1)} ft · ${d.spec.backroom.toFixed(1)} ft deep`, 0, 0); g.restore();
       }
       if (it.door.type === 'door'){
         const [hx, hy] = d.hinge, [jx, jy] = d.jamb, tx = hx + d.n[0]*d.L, ty = hy + d.n[1]*d.L;
@@ -1975,12 +2223,18 @@ function renderCanvas(theme = 'dark', scale = 2){
   const chips = [];
   for (const [u, it] of order){
     const cc = catOf(it), r = rectOf(it), util = isUtil(it);
-    g.fillStyle = hexA(cc.c, light ? .16 : .13); g.strokeStyle = cc.c; g.lineWidth = 1.5;
+    g.fillStyle = hexA(cc.c, light ? fillAlpha(it) + .03 : fillAlpha(it)); g.strokeStyle = cc.c; g.lineWidth = 1.5;
     g.beginPath();
     if (util && Math.abs(r.w - r.h) <= 0.5) g.arc(r.x + r.w/2, r.y + r.h/2, r.w/2 - .75, 0, Math.PI*2);
     else g.rect(r.x + .75, r.y + .75, r.w - 1.5, r.h - 1.5);
     g.fill(); g.stroke();
-    if (issues.body.has(u)){ g.setLineDash([4, 3]); g.strokeStyle = '#ff5252'; g.lineWidth = 2; g.strokeRect(r.x - 1, r.y - 1, r.w + 2, r.h + 2); g.setLineDash([]); }
+    if (issues.ovSet.has(u) || issues.clr.has(u)){
+      g.setLineDash([4, 3]); g.strokeStyle = issues.ovSet.has(u) ? '#ff5252' : '#f59e0b'; g.lineWidth = 2; g.strokeRect(r.x - 1, r.y - 1, r.w + 2, r.h + 2); g.setLineDash([]);
+    }
+    if (issues.overSet.has(u)){
+      g.fillStyle = '#ab47bc'; g.fillRect(r.x + r.w - 9, r.y, 9, 9);
+      g.fillStyle = '#fff'; g.font = '900 8px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('↥', r.x + r.w - 4.5, r.y + 5);
+    }
     const fg = light ? darken(cc.c, .35) : cc.fg;
     g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle';
     if (util){
@@ -2047,14 +2301,14 @@ function init(){
   if (![0, 5, 10, 15, 20, 25, 30, 35, 40].includes(+settings.snap)) settings.snap = 10;
   $('snapSelect').value = settings.snap;
   $('snapSelect').onchange = e => { settings.snap = +e.target.value; saveSettings(); e.target.blur(); };
-  for (const id of ['shedW', 'shedH', 'shedC']) $(id).addEventListener('keydown', e => { if (e.key === 'Enter'){ e.target.blur(); applyShedSize(); } });
   $('cName').addEventListener('keydown', e => { if (e.key === 'Enter') addCustom(); });
-  $('zoomSlider').addEventListener('input', e => setZoom(sliderToZoom(+e.target.value)));
+  if (!settings.hintDone) $('firstHint').style.display = '';
+  $('inspHead').addEventListener('click', e => { if (inPortrait() && e.target.classList.contains('insp-title')) $('inspector').classList.toggle('min'); });
   renderLibrary();
   render();
   zoomFit();
   if (document.fonts) document.fonts.ready.then(() => render());
-  window.addEventListener('resize', () => { layoutStage(); renderOverlay(); });
+  window.addEventListener('resize', () => { layoutStage(); renderOverlay(); updateLabels(); });
   checkShareHash();
 }
 init();
