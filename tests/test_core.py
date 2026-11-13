@@ -21,11 +21,11 @@ async def main():
         b=await launch(p)
         ctx=await b.new_context(viewport={'width':1500,'height':950})
         # --- legacy migration: old-format (v13) save captured from the previous app version
-        await ctx.add_init_script("if(!sessionStorage.seeded){localStorage.setItem('ws_planner_v13',"+json.dumps(LEGACY)+");sessionStorage.seeded=1}")
         legacy=LEGACY
         pg=await ctx.new_page(); errs=[]
         pg.on('pageerror',lambda e:errs.append(str(e))); pg.on('dialog',lambda d:asyncio.ensure_future(d.accept()))
-        await pg.goto(URL); await pg.wait_for_timeout(500)
+        await pg.goto(URL); await pg.evaluate('(v)=>{localStorage.clear();localStorage.setItem("ws_planner_v13",v)}', LEGACY)
+        await pg.reload(); await pg.wait_for_timeout(500)
         m=await pg.evaluate("()=>{const s=Object.values(items).find(i=>i.label==='MY SAW');return s&&{x:s.x,n:Object.keys(items).length,walls:Object.values(items).filter(i=>i.wall).length,doors:Object.values(items).filter(i=>i.door).map(d=>[d.w,d.h,d.door.type])}}")
         ok('legacy v13 state migrated', m and m['x']==200 and m['n']==30 and m['walls']==4, str(m))
         await pg.evaluate("()=>{localStorage.clear()}"); await pg.reload(); await pg.wait_for_timeout(500)
